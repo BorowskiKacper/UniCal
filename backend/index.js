@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 app.get("/api/process", async (req, res) => {
     const response = await client.responses.create({
         model: "gpt-4.1-nano",
-        input: "Write a one-sentence bedtime story about a unicorn."
+        input: "Extract the calendar events from the following text: SPCH 11100 Tue/Thurs 2pm-3:15pm; ANTH 20100 Mon/Wed 12:30 to 1:45pm; CSC 10300 Tue/Thurs 11 to 11:50am and Fri 11 to 12:40pm; MATH 34600 Tue/Thurs 9:30am - 10:45am; CSC 10400 Tue/Thurs 4 to 5:40pm and Fri 1 to 2:40pm"
     });
 
     console.log(`Response: ${response.output_text}`);
