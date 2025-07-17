@@ -13,6 +13,7 @@ function ScheduleInput() {
     if (inputText.trim() !== "") {
       setSubmittedText(inputText);
       setInputText("");
+      // Send text to backend for processing
     }
   };
 
