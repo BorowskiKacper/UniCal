@@ -13,27 +13,9 @@ function App() {
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
       <h1>UniCal</h1>
-      {/* <div>
-        <label htmlFor="myInput">Enter something:</label>
-        <input
-          id="myInput"
-          type="text"
-          value={inputText}
-          onChange={handleChange}
-        />
-        <p>You typed: {inputText}</p>
-      </div> */}
       <ScheduleInput />
-      <div className="card">
+      <div>
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
@@ -41,9 +23,6 @@ function App() {
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   );
 }

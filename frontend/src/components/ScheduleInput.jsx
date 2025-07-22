@@ -24,9 +24,12 @@ function ScheduleInput() {
   };
 
   return (
-    <div>
-      <label htmlFor="myInput">Enter something:</label>
+    <div className="bg-amber-100">
+      <label className="border-2 rounded-2xl p-2 m-2" htmlFor="myInput">
+        Enter something:
+      </label>
       <input
+        className="border-2 rounded-2xl p-2 m-2"
         id="myInput"
         type="text"
         value={inputText}
@@ -34,7 +37,7 @@ function ScheduleInput() {
         onSubmit={handleSubmit}
         onKeyDown={handleKeyDown}
       />
-      <p>You typed: {inputText}</p>
+      <p className="border-2 rounded-2xl p-2 m-2">You typed: {inputText}</p>
       {submittedText && <p>You submitted: {submittedText}</p>}
     </div>
   );
