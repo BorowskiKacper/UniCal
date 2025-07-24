@@ -8,7 +8,7 @@ const WeeklyContainer = () => {
       <p
         className={
           weekday === lastWeekDay
-            ? `font-mono font-extrabold text-2xl mr-[8px]`
+            ? `font-mono font-extrabold text-2xl mr-[16px]`
             : "font-mono font-extrabold text-2xl "
         }
       >
@@ -58,7 +58,7 @@ const WeeklyContainer = () => {
           {weekdaysHead}
         </div>
       </div>
-      <div className="h-9/10 overflow-y-scroll scroll-smooth scrollbar-thin scrollbar-thumb-sky-700 ">
+      <div className="h-9/10 overflow-y-scroll scroll-smooth scrollbar scrollbar-thumb-sky-700 ">
         <div className=" flex flex-row ">
           <div className="w-1/10 ">{hoursSideBar}</div>
           <div className="w-9/10 ">
