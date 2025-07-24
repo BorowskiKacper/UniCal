@@ -49,7 +49,7 @@ const WeeklyContainer = () => {
           {weekdaysHead}
         </div>
       </div>
-      <div className="h-9/10 overflow-y-scroll">
+      <div className="h-9/10 overflow-y-scroll scrollbar-overlay">
         <div className=" flex flex-row ">
           <div className="w-1/10 ">{hoursSideBar}</div>
           <div className="w-9/10 ">
