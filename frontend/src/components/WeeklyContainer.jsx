@@ -2,9 +2,18 @@ import React from "react";
 
 const WeeklyContainer = () => {
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const lastWeekDay = weekdays[weekdays.length - 1];
   const weekdaysHead = weekdays.map((weekday) => (
     <div key={weekday}>
-      <p className="font-mono font-extrabold text-2xl">{weekday}</p>
+      <p
+        className={
+          weekday === lastWeekDay
+            ? `font-mono font-extrabold text-2xl mr-[16px]`
+            : "font-mono font-extrabold text-2xl "
+        }
+      >
+        {weekday}
+      </p>
     </div>
   ));
   const hours = [
@@ -49,7 +58,7 @@ const WeeklyContainer = () => {
           {weekdaysHead}
         </div>
       </div>
-      <div className="h-9/10 overflow-y-scroll scrollbar-overlay">
+      <div className="h-9/10 overflow-y-scroll overflow-overlay">
         <div className=" flex flex-row ">
           <div className="w-1/10 ">{hoursSideBar}</div>
           <div className="w-9/10 ">
