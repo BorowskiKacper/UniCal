@@ -37,14 +37,17 @@ const WeeklyContainer = () => {
       <p className="font-mono font-bold text-sm my-8 text-right mr-3">{hour}</p>
     </div>
   ));
-  const gridColumn = [...Array(7)].map((_, index) => (
-    <div key={index} className="border-1 bg-yellow-300 p-3 w-full"></div>
-  ));
+  // const gridColumn = [...Array(7)].map((_, index) => (
+  //   <div key={index} className="border-1 bg-yellow-300 p-3 w-full"></div>
+  // ));
   //   const gridRow = [...Array(7)].map((_, index) => (
   //     <div key={index + 10} className="border-1 bg-yellow-300 p-3 w-full">
   //       <div className="flex "> {gridRow}</div>
   //     </div>
   //   ));
+  const gridItems = [...Array(7 * 24)].map((_, index) => (
+    <div key={index} className="border-b-1 border-r-1"></div>
+  ));
 
   return (
     <div className="flex flex-col border-y-1 border-r-2 rounded-r-3xl w-15/16 h-150 overflow-hidden bg-indigo-50">
@@ -58,7 +61,10 @@ const WeeklyContainer = () => {
         <div className=" flex flex-row ">
           <div className="w-1/10 ">{hoursSideBar}</div>
           <div className="w-9/10 ">
-            <div className="flex "> {gridColumn}</div>
+            {/* <div className="flex "> {gridColumn}</div> */}
+            <div className="grid grid-cols-7 grid-rows-24 bg-blue-50 h-full w-full">
+              {gridItems}
+            </div>
           </div>
         </div>
       </div>
