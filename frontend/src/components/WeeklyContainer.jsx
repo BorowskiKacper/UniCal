@@ -1,4 +1,5 @@
 import React from "react";
+import clsx from "clsx";
 
 const WeeklyContainer = () => {
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -49,6 +50,15 @@ const WeeklyContainer = () => {
   const gridItems = [...Array(7 * 24)].map((_, index) => (
     <div key={`Item-${index}`} className="border-b-1 border-r-1"></div>
   ));
+  const eventCols = [...Array(7)].map((_, index) => <div></div>);
+  const minsPerDay = 60 * 24;
+  const eventLength = 80;
+  const height = (eventLength / minsPerDay) * 100;
+  const top = (18 / 24) * 100;
+  const eventStyle = {
+    top: `${top}%`,
+    height: `${height}%`,
+  };
 
   return (
     <div className="flex flex-col border-y-1 border-r-2 rounded-r-3xl w-15/16 h-150 overflow-hidden bg-indigo-50">
@@ -65,9 +75,15 @@ const WeeklyContainer = () => {
             {hoursSideBar}
             <div key="Hour--post"></div>
           </div>
-          <div className="w-9/10 ">
-            <div className="grid grid-cols-7 grid-rows-24 bg-blue-50 h-full w-full">
+          <div className="w-9/10 relative">
+            <div className="absolute  grid grid-cols-7 grid-rows-24 bg-blue-50 h-full w-full">
               {gridItems}
+            </div>
+            <div
+              className="absolute  bg-sky-500 rounded-3xl"
+              style={eventStyle}
+            >
+              <p>Lorem ipsum</p>
             </div>
           </div>
         </div>
