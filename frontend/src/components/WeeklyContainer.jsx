@@ -42,8 +42,11 @@ const WeeklyContainer = () => {
     "11 PM",
   ];
   const hoursSideBar = hours.map((hour) => (
-    <div key={`Hour-${hour}`} className="text-right row-span-2">
-      <p className="font-mono font-bold text-sm my-8  mr-3 ">{hour}</p>
+    <div
+      key={`Hour-${hour}`}
+      className="text-right row-span-2  flex justify-end items-center"
+    >
+      <p className="font-mono font-bold text-sm   mr-3">{hour}</p>
     </div>
   ));
   const gridItems = [...Array(7 * 24)].map((_, index) => (
@@ -65,7 +68,7 @@ const WeeklyContainer = () => {
 
   return (
     <div className="flex flex-col border-y-1 border-r-2 rounded-r-3xl w-15/16 h-150 overflow-hidden bg-indigo-50">
-      <div className="h-1/10 flex flex-row bg-red-50">
+      <div className="h-1/10 flex flex-row bg-red-50 ">
         <div className="w-1/10 bg-amber-50 border-r-1"></div>
         <div className="w-9/10 flex flex-row justify-around items-center border-b-1">
           {weekdaysHead}
@@ -73,10 +76,15 @@ const WeeklyContainer = () => {
       </div>
       <div className="h-9/10 overflow-y-scroll scroll-smooth scrollbar scrollbar-thumb-sky-700 ">
         <div className=" flex flex-row ">
-          <div className="w-1/10 grid grid-rows-48">
-            <div key="Hour--pre"></div>
+          <div className="w-1/10 grid grid-rows-48 h-200">
+            {/* Modify height here ^^^^^^^^^^^^^^^^^^^^^^^ */}
+            <div key="Hour--pre" className="row-span-1">
+              <p></p>
+            </div>
             {hoursSideBar}
-            <div key="Hour--post"></div>
+            <div key="Hour--post" className="row-span-1">
+              <p></p>
+            </div>
           </div>
           <div className="w-9/10 relative">
             <div className="absolute  grid grid-cols-7 grid-rows-24 bg-blue-50 h-full w-full">
@@ -87,7 +95,7 @@ const WeeklyContainer = () => {
               className="absolute  bg-sky-500 rounded-3xl w-full"
               style={eventStyle}
             >
-              <p>Lorem ipsum</p>
+              <p>Lorem, ipsum .</p>
             </div>
           </div>
         </div>
