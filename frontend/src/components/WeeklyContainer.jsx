@@ -53,11 +53,6 @@ const WeeklyContainer = () => {
   const grid = [...Array(7 * 24)].map((_, index) => (
     <div key={`Item-${index}`} className="border-b-1 border-r-1"></div>
   ));
-  const eventCols = [...Array(7)].map((_, index) => (
-    <div key={`eventCol-${index}`} className="relative  h-full w-full">
-      {/* CalendarEvent component will go in here :) */}
-    </div>
-  ));
 
   return (
     <div className="flex flex-col border-y-1 border-r-2 rounded-r-3xl w-15/16 h-150 overflow-hidden bg-indigo-50">
@@ -86,10 +81,6 @@ const WeeklyContainer = () => {
             <div className="absolute w-full h-full">
               <CalendarEventGrid weekdays={weekdays} />
             </div>
-            {/* <div className="absolute flex w-full h-full ">{eventCols}</div>
-            <>
-              <CalendarEvent />
-            </> */}
           </div>
         </div>
       </div>

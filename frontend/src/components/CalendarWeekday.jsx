@@ -2,9 +2,13 @@ import React from "react";
 import CalendarEvent from "./CalendarEvent";
 
 const CalendarWeekday = ({ events }) => {
-  return events.map((event) => {
-    return <CalendarEvent key={event.className} event={event} />;
-  });
+  return (
+    <div className="relative w-full h-full ">
+      {events.map((event) => (
+        <CalendarEvent key={event.className} event={event} />
+      ))}
+    </div>
+  );
 };
 
 export default CalendarWeekday;

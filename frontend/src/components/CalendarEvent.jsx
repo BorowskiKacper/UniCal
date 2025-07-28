@@ -1,7 +1,6 @@
 import React from "react";
 
 const CalendarEvent = ({ event }) => {
-  //   props currently do't de anything, but they will once I create CalendarEventGrid functionality
   const eventStartHour = Number(event.time.slice(0, 2));
   const eventStartMinute = Number(event.time.slice(3, 5));
   const eventEndHour = Number(event.time.slice(6, 8));
@@ -12,18 +11,11 @@ const CalendarEvent = ({ event }) => {
   const eventLengthMinutes =
     (eventEndHour - eventStartHour) * 60 + (eventEndMinute - eventStartMinute);
   const height = (eventLengthMinutes / minsPerDay) * 100;
-  console.log(`class: ${event.id}`);
-  console.log(
-    `minsPerDay: ${minsPerDay} | top: ${top} | eventLengthMinutes: ${eventLengthMinutes} | height: ${height}`
-  );
 
   function handleOnclick() {
-    console.log(eventHeight);
+    console.log(`Clicked ${event.className}`);
   }
 
-  //   const eventLength = 200;
-  //   const height = (eventLength / minsPerDay) * 100;
-  //   const top = (18 / 24) * 100;
   const eventStyle = {
     top: `${top}%`,
     height: `${height}%`,

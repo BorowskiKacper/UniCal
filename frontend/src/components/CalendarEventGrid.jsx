@@ -46,21 +46,19 @@ const CalendarEventGrid = ({ weekdays }) => {
   });
   calendarEvents.forEach((event) => {
     const { weekDay } = event;
-    // if (!eventsByWeekday[weekDay]) {
-    //   eventsByWeekday[weekDay] = [];
-    // }
     eventsByWeekday[weekDay].push(event);
   });
 
-  const calendarWeekdays = weekdays.map((weekday) => (
-    <div key={weekday} className="relative w-full h-full ">
-      <CalendarWeekday events={eventsByWeekday[weekday]} />
+  return (
+    <div className="flex w-full h-full ">
+      {weekdays.map((weekday) => (
+        <CalendarWeekday
+          key={weekday}
+          events={eventsByWeekday[weekday] ?? []}
+        />
+      ))}
     </div>
-  ));
-
-  //   <div className="absolute flex w-full h-full ">{eventCols}</div>;
-  //   add  stuff columns in this div ^^^^^^
-  return <div className="flex w-full h-full ">{calendarWeekdays}</div>;
+  );
 };
 
 export default CalendarEventGrid;
