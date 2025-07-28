@@ -1,4 +1,5 @@
 import React from "react";
+import CalendarEventGrid from "./CalendarEventGrid";
 
 const WeeklyContainer = () => {
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -49,7 +50,7 @@ const WeeklyContainer = () => {
       <p className="font-mono font-bold text-sm   mr-3">{hour}</p>
     </div>
   ));
-  const gridItems = [...Array(7 * 24)].map((_, index) => (
+  const grid = [...Array(7 * 24)].map((_, index) => (
     <div key={`Item-${index}`} className="border-b-1 border-r-1"></div>
   ));
   const eventCols = [...Array(7)].map((_, index) => (
@@ -57,14 +58,6 @@ const WeeklyContainer = () => {
       {/* CalendarEvent component will go in here :) */}
     </div>
   ));
-  const minsPerDay = 60 * 24;
-  const eventLength = 80;
-  const height = (eventLength / minsPerDay) * 100;
-  const top = (18 / 24) * 100;
-  const eventStyle = {
-    top: `${top}%`,
-    height: `${height}%`,
-  };
 
   return (
     <div className="flex flex-col border-y-1 border-r-2 rounded-r-3xl w-15/16 h-150 overflow-hidden bg-indigo-50">
@@ -88,15 +81,15 @@ const WeeklyContainer = () => {
           </div>
           <div className="w-9/10 relative">
             <div className="absolute  grid grid-cols-7 grid-rows-24 bg-blue-50 h-full w-full">
-              {gridItems}
+              {grid}
             </div>
-            <div className="absolute flex w-full h-full ">{eventCols}</div>
-            <div
-              className="absolute  bg-sky-500 rounded-3xl w-full"
-              style={eventStyle}
-            >
-              <p>Lorem, ipsum .</p>
+            <div className="absolute w-full h-full">
+              <CalendarEventGrid weekdays={weekdays} />
             </div>
+            {/* <div className="absolute flex w-full h-full ">{eventCols}</div>
+            <>
+              <CalendarEvent />
+            </> */}
           </div>
         </div>
       </div>
