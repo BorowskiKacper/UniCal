@@ -21,13 +21,10 @@ const CalendarEvent = ({ event }) => {
     height: `${height}%`,
   };
   return (
-    <div
-      style={eventStyle}
-      className="absolute  bg-sky-500 rounded-3xl w-full "
-    >
-      <button className="text-[12px] w-full  border-r-3 border-b-3  border-green-500 bg-amber-50">
-        {event.className}
-      </button>
+    <div style={eventStyle} className="absolute w-full  ">
+      <div className="bg-amber-100 rounded-md w-full h-full ring-1 p-1 ring-amber-400  overflow-hidden">
+        <button className="text-[12px] w-full h-full">{event.className}</button>
+      </div>
     </div>
   );
 };

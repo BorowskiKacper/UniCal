@@ -1,45 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CalendarWeekday from "./CalendarWeekday";
 
 const CalendarEventGrid = ({ weekdays }) => {
-  // Define callback functions here
-  // const removeEvent = event => {
-
-  // }
-  let calendarEvents = [
+  const [calendarEvents, setCalendarEvents] = useState([
     {
       weekDay: "Tue",
       time: "14:00-15:15",
       location: "Shepard Hall Rm S-276",
       links: [],
-      id: "Foundations of Speech Communication SPCH 11100-Tue-14:00-15:15",
-      className: "Foundations of Speech Communication SPCH 11100",
+      id: "test-1",
+      className: "test-1",
     },
     {
       weekDay: "Thu",
       time: "14:00-15:15",
       location: "Shepard Hall Rm S-276",
       links: [],
-      id: "Foundations of Speech Communication SPCH 11100-Thu-14:00-15:15",
-      className: "Foundations of Speech Communication SPCH 11100",
+      id: "test-2",
+      className: "test-2",
     },
     {
       weekDay: "Mon",
       time: "12:30-13:45",
       location: "NAC Rm 6/213",
       links: [],
-      id: "Cross-Cultural Perspectives ANTH 20100-Mon-12:30-13:45",
-      className: "Cross-Cultural Perspectives ANTH 20100",
+      id: "test-3",
+      className: "test-3",
     },
-    {
-      weekDay: "Wed",
-      time: "12:30-13:45",
-      location: "NAC Rm 6/213",
-      links: [],
-      id: "Cross-Cultural Perspectives ANTH 20100-Wed-12:30-13:45",
-      className: "Cross-Cultural Perspectives ANTH 20100",
-    },
-  ];
+  ]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/process")
+      .then((res) => res.json())
+      .then((val) => setCalendarEvents(val));
+  }, []);
+  // Define callback functions here
+  // const removeEvent = event => {
+
+  // }
   const eventsByWeekday = {};
   weekdays.map((weekday) => {
     eventsByWeekday[weekday] = [];
