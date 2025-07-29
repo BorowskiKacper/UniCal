@@ -33,17 +33,15 @@ const WeeklyContainer = () => {
   ]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/process")
-      .then((res) => res.json())
-      .then((val) => setCalendarEvents(val));
-    console.log(`Fetched calendarEvents from backend in WeeklyContainer.jsx`);
-  }, []);
+    const fetchEvents = async () => {
+      const response = await fetch("http://localhost:3000/api/process");
+      const data = await response.json();
+      setCalendarEvents(data);
+      console.log("Successfully fetched and set calendarEvents:", data);
+    };
 
-  // useEffect(() => {
-  //   const modEvent = (<div className="w-1/3 h-full">
-  //   <ModifyEvent activeEvent={activeEvent}/>
-  // </div>)
-  // }, [activeEvent])
+    fetchEvents();
+  }, []);
 
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const lastWeekDay = weekdays[weekdays.length - 1];

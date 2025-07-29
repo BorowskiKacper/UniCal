@@ -11,7 +11,11 @@ const CalendarEventGrid = ({ calendarEvents, weekdays, setActiveEvent }) => {
   });
   calendarEvents.forEach((event) => {
     const { weekDay } = event;
-    eventsByWeekday[weekDay].push(event);
+    if (weekDay === "Thur" || weekDay === "thur" || weekDay === "thu") {
+      eventsByWeekday["Thu"].push(event);
+    } else {
+      eventsByWeekday[weekDay].push(event);
+    }
   });
 
   return (
