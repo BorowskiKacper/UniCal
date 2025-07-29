@@ -1,6 +1,6 @@
 import React from "react";
 
-const CalendarEvent = ({ event, setActiveEvent }) => {
+const CalendarEvent = ({ id, event, setActiveEventId }) => {
   const eventStartHour = Number(event.time.slice(0, 2));
   const eventStartMinute = Number(event.time.slice(3, 5));
   const eventEndHour = Number(event.time.slice(6, 8));
@@ -14,9 +14,9 @@ const CalendarEvent = ({ event, setActiveEvent }) => {
 
   function handleOnclick() {
     console.log(`Clicked ${event.className}`);
-    setActiveEvent(event);
+    setActiveEventId(id);
     console.log(
-      `Called setActiveEvent function in CalendarEvent.jsx with event by id: ${event.id}`
+      `Called setActiveEvent function in CalendarEvent.jsx with event by id: ${id}`
     );
   }
 
@@ -28,7 +28,7 @@ const CalendarEvent = ({ event, setActiveEvent }) => {
     <div style={eventStyle} className="absolute w-full  ">
       <div className="bg-amber-100 rounded-md w-full h-full ring-1 p-1 ring-amber-400  overflow-hidden">
         <button onClick={handleOnclick} className="text-[12px] w-full h-full">
-          {event.className}
+          {id}
         </button>
       </div>
     </div>

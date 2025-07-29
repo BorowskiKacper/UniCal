@@ -79,16 +79,16 @@ app.get("/api/process", async (req, res) => {
 
     const parsedResponse = validationResult.data
 
-    const calendarEvents = [];
+    const calendarEvents = {};
     // const colors = []
 
     for (const i in parsedResponse.courses) {
         // const color = colors[i]
         for (const properties of parsedResponse.courses[i].occurences) {
-            properties.id = `${parsedResponse.courses[i].className}-${properties.weekDay}-${properties.time}`;
+            const id = `${parsedResponse.courses[i].className}-${properties.weekDay}-${properties.time}`;
             properties.className = parsedResponse.courses[i].className;
             // properties.color = color
-            calendarEvents.push(properties);
+            calendarEvents[id] = properties;
         }        
     }
     

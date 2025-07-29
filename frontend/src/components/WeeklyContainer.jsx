@@ -4,33 +4,30 @@ import EventPopup from "./EventPopup";
 import HorizontalGridLines from "./HorizontalGridLines";
 
 const WeeklyContainer = () => {
-  const [activeEvent, setActiveEvent] = useState("");
-  const [calendarEvents, setCalendarEvents] = useState([
-    {
+  const [activeEventId, setActiveEventId] = useState("");
+  const [calendarEvents, setCalendarEvents] = useState({
+    "test-1": {
       weekDay: "Tue",
       time: "14:00-15:15",
       location: "Shepard Hall Rm S-276",
       links: [],
-      id: "test-1",
       className: "test-1",
     },
-    {
+    "test-2": {
       weekDay: "Thu",
       time: "14:00-15:15",
       location: "Shepard Hall Rm S-276",
       links: [],
-      id: "test-2",
       className: "test-2",
     },
-    {
+    "test-3": {
       weekDay: "Mon",
       time: "12:30-13:45",
       location: "NAC Rm 6/213",
       links: [],
-      id: "test-3",
       className: "test-3",
     },
-  ]);
+  });
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -43,10 +40,13 @@ const WeeklyContainer = () => {
     fetchEvents();
   }, []);
 
-  const handleEventNameChange = (newName) => {
-    setActiveEvent((prevEvent) => ({
-      ...prevEvent,
-      className: newName,
+  const handleEventPropChange = ({ property, value }) => {
+    setCalendarEvents((prevEvents) => ({
+      ...prevEvents,
+      [activeEventId]: {
+        ...prevEvents,
+        [property]: value,
+      },
     }));
   };
 
@@ -104,8 +104,8 @@ const WeeklyContainer = () => {
       {/* {modEvent} */}
       <div className="w-1/3 h-full">
         <EventPopup
-          activeEvent={activeEvent}
-          setEventName={handleEventNameChange}
+          activeEvent={calendarEvents[activeEventId] ?? ""}
+          setEventProperty={handleEventPropChange}
         />
       </div>
       <div className="flex flex-col border-y-1 border-r-2 rounded-r-3xl w-full h-full  overflow-hidden bg-indigo-50">
@@ -132,7 +132,7 @@ const WeeklyContainer = () => {
               <div className="absolute w-full h-full">
                 <CalendarEventGrid
                   calendarEvents={calendarEvents}
-                  setActiveEvent={setActiveEvent}
+                  setActiveEventId={setActiveEventId}
                   weekdays={weekdays}
                 />
               </div>

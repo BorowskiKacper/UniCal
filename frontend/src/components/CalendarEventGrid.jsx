@@ -1,30 +1,26 @@
 import CalendarWeekday from "./CalendarWeekday";
 
-const CalendarEventGrid = ({ calendarEvents, weekdays, setActiveEvent }) => {
-  // Define callback functions here
-  // const removeEvent = event => {
-
-  // }
+const CalendarEventGrid = ({ calendarEvents, weekdays, setActiveEventId }) => {
   const eventsByWeekday = {};
   weekdays.map((weekday) => {
-    eventsByWeekday[weekday] = [];
+    eventsByWeekday[weekday] = {};
   });
-  calendarEvents.forEach((event) => {
-    const { weekDay } = event;
+  for (let id in calendarEvents) {
+    const { weekDay } = calendarEvents[id];
     if (weekDay === "Thur" || weekDay === "Thurs") {
-      eventsByWeekday["Thu"].push(event);
+      eventsByWeekday["Thu"][id] = calendarEvents[id];
     } else {
-      eventsByWeekday[weekDay].push(event);
+      eventsByWeekday[weekDay][id] = calendarEvents[id];
     }
-  });
+  }
 
   return (
     <div className="flex w-full h-full ">
       {weekdays.map((weekday) => (
         <CalendarWeekday
           key={weekday}
-          events={eventsByWeekday[weekday] ?? []}
-          setActiveEvent={setActiveEvent}
+          events={eventsByWeekday[weekday]}
+          setActiveEventId={setActiveEventId}
         />
       ))}
     </div>
