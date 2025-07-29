@@ -15,7 +15,12 @@ function App() {
   return (
     <div className="w-full h-full">
       <h1>UniCal</h1>
-      <WeeklyContainer />
+
+      <div className="flex items-center flex-col overflow-y-auto ">
+        <div className=" h-150">upload</div>
+        <WeeklyContainer />
+        <div className="h-40"></div>
+      </div>
     </div>
   );
 }

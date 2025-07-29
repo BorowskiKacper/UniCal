@@ -1,5 +1,6 @@
 import React from "react";
 import CalendarEventGrid from "./CalendarEventGrid";
+import ModifyEvent from "./ModifyEvent";
 
 const WeeklyContainer = () => {
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -55,31 +56,36 @@ const WeeklyContainer = () => {
   ));
 
   return (
-    <div className="flex flex-col border-y-1 border-r-2 rounded-r-3xl w-15/16 h-150 overflow-hidden bg-indigo-50">
-      <div className="h-1/10 flex flex-row bg-red-50 ">
-        <div className="w-1/10 bg-amber-50 border-r-1"></div>
-        <div className="w-9/10 flex flex-row justify-around items-center border-b-1">
-          {weekdaysHead}
-        </div>
+    <div className="flex h-150  w-15/16   ">
+      <div className="w-1/3 h-full">
+        <ModifyEvent />
       </div>
-      <div className="h-9/10 overflow-y-scroll scroll-smooth scrollbar scrollbar-thumb-sky-700 ">
-        <div className=" flex flex-row ">
-          <div className="w-1/10 grid grid-rows-48 h-200">
-            {/* Modify height here ^^^^^^^^^^^^^^^^^^^^^^^ */}
-            <div key="Hour--pre" className="row-span-1">
-              <p></p>
-            </div>
-            {hoursSideBar}
-            <div key="Hour--post" className="row-span-1">
-              <p></p>
-            </div>
+      <div className="flex flex-col border-y-1 border-r-2 rounded-r-3xl w-full h-full  overflow-hidden bg-indigo-50">
+        <div className="h-1/10 flex flex-row bg-red-50 ">
+          <div className="w-1/10 bg-amber-50 border-r-1"></div>
+          <div className="w-9/10 flex flex-row justify-around items-center border-b-1">
+            {weekdaysHead}
           </div>
-          <div className="w-9/10 relative">
-            <div className="absolute  grid grid-cols-7 grid-rows-24 bg-blue-50 h-full w-full">
-              {grid}
+        </div>
+        <div className="h-9/10 overflow-y-scroll scroll-smooth scrollbar scrollbar-thumb-sky-700 ">
+          <div className=" flex flex-row ">
+            <div className="w-1/10 grid grid-rows-48 h-200">
+              {/* Modify height here ^^^^^^^^^^^^^^^^^^^^^^^ */}
+              <div key="Hour--pre" className="row-span-1">
+                <p></p>
+              </div>
+              {hoursSideBar}
+              <div key="Hour--post" className="row-span-1">
+                <p></p>
+              </div>
             </div>
-            <div className="absolute w-full h-full">
-              <CalendarEventGrid weekdays={weekdays} />
+            <div className="w-9/10 relative">
+              <div className="absolute  grid grid-cols-7 grid-rows-24 bg-blue-50 h-full w-full">
+                {grid}
+              </div>
+              <div className="absolute w-full h-full">
+                <CalendarEventGrid weekdays={weekdays} />
+              </div>
             </div>
           </div>
         </div>
