@@ -1,9 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CalendarEventGrid from "./CalendarEventGrid";
 import ModifyEvent from "./ModifyEvent";
 import HorizontalGridLines from "./HorizontalGridLines";
 
 const WeeklyContainer = () => {
+  const [activeEvent, setActiveEvent] = useState("");
+  const [calendarEvents, setCalendarEvents] = useState([
+    {
+      weekDay: "Tue",
+      time: "14:00-15:15",
+      location: "Shepard Hall Rm S-276",
+      links: [],
+      id: "test-1",
+      className: "test-1",
+    },
+    {
+      weekDay: "Thu",
+      time: "14:00-15:15",
+      location: "Shepard Hall Rm S-276",
+      links: [],
+      id: "test-2",
+      className: "test-2",
+    },
+    {
+      weekDay: "Mon",
+      time: "12:30-13:45",
+      location: "NAC Rm 6/213",
+      links: [],
+      id: "test-3",
+      className: "test-3",
+    },
+  ]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/process")
+      .then((res) => res.json())
+      .then((val) => setCalendarEvents(val));
+    console.log(`Fetched calendarEvents from backend in WeeklyContainer.jsx`);
+  }, []);
+
+  // useEffect(() => {
+  //   const modEvent = (<div className="w-1/3 h-full">
+  //   <ModifyEvent activeEvent={activeEvent}/>
+  // </div>)
+  // }, [activeEvent])
+
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const lastWeekDay = weekdays[weekdays.length - 1];
   const weekdaysHead = weekdays.map((weekday) => (
@@ -52,14 +93,12 @@ const WeeklyContainer = () => {
       <p className="font-mono font-bold text-sm   mr-3">{hour}</p>
     </div>
   ));
-  const grid = [...Array(24)].map((_, index) => (
-    <div key={`Item-${index}`} className="border-b-1 "></div>
-  ));
 
   return (
     <div className="flex h-150  w-15/16   ">
+      {/* {modEvent} */}
       <div className="w-1/3 h-full">
-        <ModifyEvent />
+        <ModifyEvent activeEvent={activeEvent} />
       </div>
       <div className="flex flex-col border-y-1 border-r-2 rounded-r-3xl w-full h-full  overflow-hidden bg-indigo-50">
         <div className="h-1/10 flex flex-row bg-red-50 ">
@@ -83,7 +122,11 @@ const WeeklyContainer = () => {
             <div className="w-9/10 relative">
               <HorizontalGridLines />
               <div className="absolute w-full h-full">
-                <CalendarEventGrid weekdays={weekdays} />
+                <CalendarEventGrid
+                  calendarEvents={calendarEvents}
+                  setActiveEvent={setActiveEvent}
+                  weekdays={weekdays}
+                />
               </div>
             </div>
           </div>

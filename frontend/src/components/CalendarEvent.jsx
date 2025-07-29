@@ -1,6 +1,6 @@
 import React from "react";
 
-const CalendarEvent = ({ event }) => {
+const CalendarEvent = ({ event, setActiveEvent }) => {
   const eventStartHour = Number(event.time.slice(0, 2));
   const eventStartMinute = Number(event.time.slice(3, 5));
   const eventEndHour = Number(event.time.slice(6, 8));
@@ -14,6 +14,10 @@ const CalendarEvent = ({ event }) => {
 
   function handleOnclick() {
     console.log(`Clicked ${event.className}`);
+    setActiveEvent(event);
+    console.log(
+      `Called setActiveEvent function in CalendarEvent.jsx with event by id: ${event.id}`
+    );
   }
 
   const eventStyle = {
