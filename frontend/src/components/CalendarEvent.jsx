@@ -23,7 +23,9 @@ const CalendarEvent = ({ event }) => {
   return (
     <div style={eventStyle} className="absolute w-full  ">
       <div className="bg-amber-100 rounded-md w-full h-full ring-1 p-1 ring-amber-400  overflow-hidden">
-        <button className="text-[12px] w-full h-full">{event.className}</button>
+        <button onClick={handleOnclick} className="text-[12px] w-full h-full">
+          {event.className}
+        </button>
       </div>
     </div>
   );
