@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CalendarEventGrid from "./CalendarEventGrid";
-import ModifyEvent from "./ModifyEvent";
+import EventPopup from "./EventPopup";
 import HorizontalGridLines from "./HorizontalGridLines";
 
 const WeeklyContainer = () => {
@@ -42,6 +42,13 @@ const WeeklyContainer = () => {
 
     fetchEvents();
   }, []);
+
+  const handleEventNameChange = (newName) => {
+    setActiveEvent((prevEvent) => ({
+      ...prevEvent,
+      className: newName,
+    }));
+  };
 
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const lastWeekDay = weekdays[weekdays.length - 1];
@@ -96,7 +103,10 @@ const WeeklyContainer = () => {
     <div className="flex h-150  w-15/16   ">
       {/* {modEvent} */}
       <div className="w-1/3 h-full">
-        <ModifyEvent activeEvent={activeEvent} />
+        <EventPopup
+          activeEvent={activeEvent}
+          setEventName={handleEventNameChange}
+        />
       </div>
       <div className="flex flex-col border-y-1 border-r-2 rounded-r-3xl w-full h-full  overflow-hidden bg-indigo-50">
         <div className="h-1/10 flex flex-row bg-red-50 ">
