@@ -40,11 +40,11 @@ const WeeklyContainer = () => {
     fetchEvents();
   }, []);
 
-  const handleEventPropChange = ({ property, value }) => {
+  const handleEventPropChange = ({ activeEventId, property, value }) => {
     setCalendarEvents((prevEvents) => ({
       ...prevEvents,
       [activeEventId]: {
-        ...prevEvents,
+        ...prevEvents[activeEventId],
         [property]: value,
       },
     }));
@@ -104,7 +104,9 @@ const WeeklyContainer = () => {
       {/* {modEvent} */}
       <div className="w-1/3 h-full">
         <EventPopup
+          key={activeEventId}
           activeEvent={calendarEvents[activeEventId] ?? ""}
+          activeEventId={activeEventId}
           setEventProperty={handleEventPropChange}
         />
       </div>

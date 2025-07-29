@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const ModifyInput = ({ setEventProperty, text, property }) => {
+const ModifyInput = ({ activeEventId, setEventProperty, text, property }) => {
   const [value, setValue] = useState(text);
 
   const handleChange = (event) => {
@@ -12,7 +12,7 @@ const ModifyInput = ({ setEventProperty, text, property }) => {
     if (value.trim() !== "") {
       console.log("dumbit");
       // callback(event.target.value);
-      setEventProperty({ property, value });
+      setEventProperty({ activeEventId, property, value });
       // setSubmittedText(inputText);
       // setInputText("");
     }
