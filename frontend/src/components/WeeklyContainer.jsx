@@ -1,6 +1,7 @@
 import React from "react";
 import CalendarEventGrid from "./CalendarEventGrid";
 import ModifyEvent from "./ModifyEvent";
+import HorizontalGridLines from "./HorizontalGridLines";
 
 const WeeklyContainer = () => {
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -51,8 +52,8 @@ const WeeklyContainer = () => {
       <p className="font-mono font-bold text-sm   mr-3">{hour}</p>
     </div>
   ));
-  const grid = [...Array(7 * 24)].map((_, index) => (
-    <div key={`Item-${index}`} className="border-b-1 border-r-1"></div>
+  const grid = [...Array(24)].map((_, index) => (
+    <div key={`Item-${index}`} className="border-b-1 "></div>
   ));
 
   return (
@@ -80,9 +81,7 @@ const WeeklyContainer = () => {
               </div>
             </div>
             <div className="w-9/10 relative">
-              <div className="absolute  grid grid-cols-7 grid-rows-24 bg-blue-50 h-full w-full">
-                {grid}
-              </div>
+              <HorizontalGridLines />
               <div className="absolute w-full h-full">
                 <CalendarEventGrid weekdays={weekdays} />
               </div>
