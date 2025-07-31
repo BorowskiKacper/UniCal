@@ -17,7 +17,7 @@ const eventSchema = z.object({
     weekDay: z.string(),
     time: z.string(),
     location: z.string(),
-    links: z.array(z.string()),
+    // links: z.array(z.string()),
 });
 
 const courseSchema = z.object({
@@ -39,7 +39,7 @@ app.get("/api/process", async (req, res) => {
     const processCountCapacity = 3;  
     const coursesInput = "Foundations of Speech Communication SPCH 11100 Shepard Hall Rm S-276 Tue/Thurs 2pm-3:15pm; Cross-Cultural Perspectives ANTH 20100 NAC Rm 6/213 Mon/Wed 12:30 to 1:45pm; Introduction to Computing for Majors CSC 10300 Marshak Rm MR3 Tue/Thurs 11 to 11:50am and NAC Rm 7/118 Fri 11 to 12:40pm; Elements of Linear Algebra MATH 34600 NAC Rm 5/110 Tue/Thurs 9:30am - 10:45am; Discrete Mathematical Structures 1 CSC 10400 Shepard Hall Rm S-205 Tue/Thurs 4 to 5:40pm and NAC Rm 7/306 Fri 1 to 2:40pm"
     const checkMoreThanOneCourseInstructions = "Determine whether there is more than one course from the following: ";
-    const processInputInstructions = "ENSURE TO EXTRACT EVERY CLASS | From the following text, extract class names. And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: 00:00-23:59), location (building and room, or remote), and possibly any links (like a zoom link if given) . Extract the calendar events from the following text: ";
+    const processInputInstructions = "ENSURE TO EXTRACT EVERY CLASS | From the following text, extract class names. And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: 00:00-23:59), location (building and room, or remote). Extract the calendar events from the following text: ";
 
     const processInput = async (input) => {
         const response = await client.responses.parse({
@@ -87,7 +87,9 @@ app.get("/api/process", async (req, res) => {
         for (const properties of parsedResponse.courses[i].occurences) {
             const id = `${parsedResponse.courses[i].className}-${properties.weekDay}-${properties.time}`;
             properties.className = parsedResponse.courses[i].className;
-            const [startTime, endTime] = properties.time.split("-");
+            properties.description = `Location: ${properties.location}`;
+            delete properties.location;
+            let [startTime, endTime] = properties.time.split("-");
             if (startTime.length === 4) {
                 startTime = "0" + startTime;
             }
