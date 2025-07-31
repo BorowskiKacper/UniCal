@@ -87,6 +87,14 @@ app.get("/api/process", async (req, res) => {
         for (const properties of parsedResponse.courses[i].occurences) {
             const id = `${parsedResponse.courses[i].className}-${properties.weekDay}-${properties.time}`;
             properties.className = parsedResponse.courses[i].className;
+            const [startTime, endTime] = properties.time.split("-");
+            if (startTime.length === 4) {
+                startTime = "0" + startTime;
+            }
+            if (endTime.length === 4) {
+                endTime = "0" + endTime;
+            }
+            properties.time = startTime + "-" + endTime;
             // properties.color = color
             calendarEvents[id] = properties;
         }        
