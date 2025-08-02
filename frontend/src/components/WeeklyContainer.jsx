@@ -9,23 +9,23 @@ const WeeklyContainer = () => {
     "test-1": {
       weekDay: "Tue",
       time: "14:00-15:15",
-      location: "Shepard Hall Rm S-276",
-      links: [],
+      description: "Shepard Hall Rm S-276",
       className: "test-1",
+      reminder: 30,
     },
     "test-2": {
       weekDay: "Thu",
       time: "14:00-15:15",
-      location: "Shepard Hall Rm S-276",
-      links: [],
+      description: "Shepard Hall Rm S-276",
       className: "test-2",
+      reminder: 30,
     },
     "test-3": {
       weekDay: "Mon",
       time: "12:30-13:45",
-      location: "NAC Rm 6/213",
-      links: [],
+      description: "NAC Rm 6/213",
       className: "test-3",
+      reminder: 30,
     },
   });
 
