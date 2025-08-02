@@ -37,12 +37,12 @@ const WeeklyContainer = () => {
     fetchEvents();
   }, []);
 
-  const handleEventPropChange = ({ activeEventId, property, value }) => {
+  const handleEventPropChange = (properties) => {
     setCalendarEvents((prevEvents) => ({
       ...prevEvents,
       [activeEventId]: {
         ...prevEvents[activeEventId],
-        [property]: value,
+        ...properties,
       },
     }));
   };

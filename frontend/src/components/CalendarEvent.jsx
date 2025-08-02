@@ -28,7 +28,7 @@ const CalendarEvent = ({ id, event, setActiveEventId }) => {
     <div style={eventStyle} className="absolute w-full  ">
       <div className="bg-amber-100 rounded-md w-full h-full ring-1 p-1 ring-amber-400  overflow-hidden">
         <button onClick={handleOnclick} className="text-[12px] w-full h-full">
-          {id}
+          {event.className}
         </button>
       </div>
     </div>
