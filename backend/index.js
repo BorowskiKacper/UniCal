@@ -88,7 +88,7 @@ app.get("/api/process", async (req, res) => {
             const id = `${parsedResponse.courses[i].className}-${properties.weekDay}-${properties.time}`;
             properties.className = parsedResponse.courses[i].className;
             properties.description = `Location: ${properties.location}`;
-            properties.reminder = 30;
+
             delete properties.location;
             let [startTime, endTime] = properties.time.split("-");
             if (startTime.length === 4) {
