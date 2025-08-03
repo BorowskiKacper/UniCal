@@ -1,12 +1,35 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-import ScheduleInput from "./components/ScheduleInput";
 import WeeklyContainer from "./components/WeeklyContainer";
+import UploadContainer from "./components/UploadContainer";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [calendarEvents, setCalendarEvents] = useState({
+    test: {
+      weekDay: "Tue",
+      time: "14:00-15:15",
+      className: "test",
+      description: "Location: test",
+    },
+  });
+  const [activeEventId, setActiveEventId] = useState("test");
+
+  const fetchEvents = async (text) => {
+    const response = await fetch("http://localhost:3000/api/process");
+    const data = await response.json();
+    setCalendarEvents(data);
+    console.log("Successfully fetched and set calendarEvents:", data);
+  };
+
+  const handleEventPropChange = (properties) => {
+    setCalendarEvents((prevEvents) => ({
+      ...prevEvents,
+      [activeEventId]: {
+        ...prevEvents[activeEventId],
+        ...properties,
+      },
+    }));
+  };
 
   // const handleChange = (event) => {
   //   setInputText(event.target.value);
@@ -17,8 +40,13 @@ function App() {
       <h1>UniCal</h1>
 
       <div className="flex items-center flex-col overflow-y-auto ">
-        <div className=" h-150">upload</div>
-        <WeeklyContainer />
+        <UploadContainer fetchEvents={fetchEvents} />
+        <WeeklyContainer
+          calendarEvents={calendarEvents}
+          handleEventPropChange={handleEventPropChange}
+          setActiveEventId={setActiveEventId}
+          activeEventId={activeEventId}
+        />
         <div className="h-40"></div>
       </div>
     </div>

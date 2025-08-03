@@ -3,49 +3,37 @@ import CalendarEventGrid from "./CalendarEventGrid";
 import EventPopup from "./EventPopup";
 import HorizontalGridLines from "./HorizontalGridLines";
 
-const WeeklyContainer = () => {
-  const [activeEventId, setActiveEventId] = useState("");
-  const [calendarEvents, setCalendarEvents] = useState({
-    "test-1": {
-      weekDay: "Tue",
-      time: "14:00-15:15",
-      description: "Shepard Hall Rm S-276",
-      className: "test-1",
-    },
-    "test-2": {
-      weekDay: "Thu",
-      time: "14:00-15:15",
-      description: "Shepard Hall Rm S-276",
-      className: "test-2",
-    },
-    "test-3": {
-      weekDay: "Mon",
-      time: "12:30-13:45",
-      description: "NAC Rm 6/213",
-      className: "test-3",
-    },
-  });
+const WeeklyContainer = (
+  handleEventPropChange,
+  activeEventId,
+  setActiveEventId,
+  calendarEvents
+) => {
+  // const [activeEventId, setActiveEventId] = useState("");
+  // const [calendarEvents, setCalendarEvents] = useState(calEvents);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      const response = await fetch("http://localhost:3000/api/process");
-      const data = await response.json();
-      setCalendarEvents(data);
-      console.log("Successfully fetched and set calendarEvents:", data);
-    };
+  // useEffect(() => {
+  //   const fetchEvents = async () => {
+  //     const response = await fetch("http://localhost:3000/api/process");
+  //     const data = await response.json();
+  //     setCalendarEvents(data);
+  //     console.log("Successfully fetched and set calendarEvents:", data);
+  //   };
 
-    fetchEvents();
-  }, []);
+  //   fetchEvents();
+  // }, []);
 
-  const handleEventPropChange = (properties) => {
-    setCalendarEvents((prevEvents) => ({
-      ...prevEvents,
-      [activeEventId]: {
-        ...prevEvents[activeEventId],
-        ...properties,
-      },
-    }));
-  };
+  // const handleEventPropChange = (properties) => {
+  //   setCalendarEvents((prevEvents) => ({
+  //     ...prevEvents,
+  //     [activeEventId]: {
+  //       ...prevEvents[activeEventId],
+  //       ...properties,
+  //     },
+  //   }));
+  // };
+  console.log("Rendering WeeklyContainer");
+  console.log(calendarEvents);
 
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const lastWeekDay = weekdays[weekdays.length - 1];
