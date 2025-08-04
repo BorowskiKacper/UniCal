@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const UploadContainer = ({ fetchEvents }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -17,6 +17,22 @@ const UploadContainer = ({ fetchEvents }) => {
     console.log(selectedImage);
   };
 
+  useEffect(() => {
+    if (selectedImage) {
+      const type = selectedImage.type;
+      if (
+        !(
+          type === "image/jpeg" ||
+          type === "image/png" ||
+          type === "image/webp"
+        )
+      ) {
+        setSelectedImage(null);
+        alert("Invalid file type. Only PNG, JPEG, and WEBP are allowed.");
+      }
+    }
+  }, [selectedImage]);
+
   return (
     <div className="flex flex-col items-center justify-center w-15/16 h-full m-5">
       <label htmlFor="file-upload">
@@ -24,6 +40,7 @@ const UploadContainer = ({ fetchEvents }) => {
           type="file"
           id="file-upload"
           className="file:bg-blue-500 file:text-white file:border-none file:p-2 file:rounded-md file:cursor-pointer"
+          accept="image/jpeg, image/png, image/webp"
           onChange={(event) => setSelectedImage(event.target.files[0])}
         />
       </label>

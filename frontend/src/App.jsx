@@ -14,16 +14,29 @@ function App() {
   });
   const [activeEventId, setActiveEventId] = useState("");
 
-  const fetchEvents = async (isText, payload) => {
+  const fetchEvents = async ({ isText, payload }) => {
     // Pass in either text or image, but not both
+
     console.log("Fetching events");
-    const response = await fetch("http://localhost:3000/api/process", {
-      method: "POST",
-      headers: {
-        "content-Type": "application/json",
-      },
-      body: JSON.stringify({ isText, payload }),
-    });
+    let response;
+
+    if (isText) {
+      response = await fetch("http://localhost:3000/api/process-text", {
+        method: "POST",
+        headers: {
+          "content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: payload }),
+      });
+    } else {
+      const formData = new FormData();
+      formData.append("image", payload);
+      (response = await fetch("http://localhost:3000/api/process-image")),
+        {
+          method: "POST",
+          body: formData,
+        };
+    }
 
     if (!response.ok) {
       const errorData = await response.json();
