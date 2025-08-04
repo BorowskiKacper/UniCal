@@ -3,12 +3,12 @@ import CalendarEventGrid from "./CalendarEventGrid";
 import EventPopup from "./EventPopup";
 import HorizontalGridLines from "./HorizontalGridLines";
 
-const WeeklyContainer = (
+const WeeklyContainer = ({
   handleEventPropChange,
   activeEventId,
   setActiveEventId,
-  calendarEvents
-) => {
+  calendarEvents,
+}) => {
   // const [activeEventId, setActiveEventId] = useState("");
   // const [calendarEvents, setCalendarEvents] = useState(calEvents);
 

@@ -12,9 +12,10 @@ function App() {
       description: "Location: test",
     },
   });
-  const [activeEventId, setActiveEventId] = useState("test");
+  const [activeEventId, setActiveEventId] = useState("");
 
   const fetchEvents = async (text) => {
+    console.log("Fetching events");
     const response = await fetch("http://localhost:3000/api/process");
     const data = await response.json();
     setCalendarEvents(data);
