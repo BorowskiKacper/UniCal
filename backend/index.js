@@ -11,6 +11,7 @@ const PORT = process.env.PORT; // 3000;
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 const client = new OpenAI();
 
 const eventSchema = z.object({
@@ -34,10 +35,15 @@ app.get("/", (req, res) => {
     res.send("Hello World");
 });
 
-app.get("/api/process", async (req, res) => {
+app.post("/api/process", async (req, res) => {
+    const {coursesInput} = req.body;
+
+    if (!coursesInput) {
+        return res.status(400).json({message: "No input text provided"});
+    }
+    
     let processCount = 0;
     const processCountCapacity = 3;  
-    const coursesInput = "Foundations of Speech Communication SPCH 11100 Shepard Hall Rm S-276 Tue/Thurs 2pm-3:15pm; Cross-Cultural Perspectives ANTH 20100 NAC Rm 6/213 Mon/Wed 12:30 to 1:45pm; Introduction to Computing for Majors CSC 10300 Marshak Rm MR3 Tue/Thurs 11 to 11:50am and NAC Rm 7/118 Fri 11 to 12:40pm; Elements of Linear Algebra MATH 34600 NAC Rm 5/110 Tue/Thurs 9:30am - 10:45am; Discrete Mathematical Structures 1 CSC 10400 Shepard Hall Rm S-205 Tue/Thurs 4 to 5:40pm and NAC Rm 7/306 Fri 1 to 2:40pm"
     const checkMoreThanOneCourseInstructions = "Determine whether there is more than one course from the following: ";
     const processInputInstructions = "ENSURE TO EXTRACT EVERY CLASS | From the following text, extract class names. And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: 00:00-23:59), location (building and room, or remote). Extract the calendar events from the following text: ";
 

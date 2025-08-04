@@ -16,7 +16,20 @@ function App() {
 
   const fetchEvents = async (text) => {
     console.log("Fetching events");
-    const response = await fetch("http://localhost:3000/api/process");
+    const response = await fetch("http://localhost:3000/api/process", {
+      method: "POST",
+      headers: {
+        "content-Type": "application/json",
+      },
+      body: JSON.stringify({ coursesInput: text }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error from server:", errorData.message);
+      return;
+    }
+
     const data = await response.json();
     setCalendarEvents(data);
     console.log("Successfully fetched and set calendarEvents:", data);
