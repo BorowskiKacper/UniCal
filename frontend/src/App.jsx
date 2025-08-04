@@ -14,14 +14,15 @@ function App() {
   });
   const [activeEventId, setActiveEventId] = useState("");
 
-  const fetchEvents = async (text) => {
+  const fetchEvents = async (isText, payload) => {
+    // Pass in either text or image, but not both
     console.log("Fetching events");
     const response = await fetch("http://localhost:3000/api/process", {
       method: "POST",
       headers: {
         "content-Type": "application/json",
       },
-      body: JSON.stringify({ coursesInput: text }),
+      body: JSON.stringify({ isText, payload }),
     });
 
     if (!response.ok) {
@@ -45,15 +46,11 @@ function App() {
     }));
   };
 
-  // const handleChange = (event) => {
-  //   setInputText(event.target.value);
-  // };
-
   return (
     <div className="w-full h-full">
       <h1>UniCal</h1>
 
-      <div className="flex items-center flex-col overflow-y-auto ">
+      <div className="flex items-center flex-col overflow-y-auto w-full h-full ">
         <UploadContainer fetchEvents={fetchEvents} />
         <WeeklyContainer
           calendarEvents={calendarEvents}
