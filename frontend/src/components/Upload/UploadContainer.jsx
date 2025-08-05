@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import RadioButton from "./RadioButton";
 import UploadImage from "./UploadImage";
 import UploadText from "./UploadText";
+import SubmitButton from "../SubmitButton";
 
 const UploadContainer = ({ fetchEvents }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -52,12 +53,7 @@ const UploadContainer = ({ fetchEvents }) => {
       ) : (
         <UploadText text={text} onChange={(text) => setText(text)} />
       )}
-      <button
-        className="bg-blue-500 text-white p-2 rounded-md"
-        onClick={handleSubmit}
-      >
-        Generate
-      </button>
+      <SubmitButton text={"Generate"} onClick={handleSubmit} />
     </div>
   );
 };

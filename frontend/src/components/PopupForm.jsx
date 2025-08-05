@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import SubmitButton from "./SubmitButton";
 
 const PopupForm = ({ activeEvent, setEventProperty }) => {
   const [title, setTitle] = useState(activeEvent.className);
@@ -106,6 +107,7 @@ const PopupForm = ({ activeEvent, setEventProperty }) => {
             ref={inputRefs[4]}
           />
         </div>
+        <SubmitButton text={"Save"} onClick={handleSubmit} />
       </form>
     </div>
   );
