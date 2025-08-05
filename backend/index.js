@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
-import "./process-input.js";
 
 dotenv.config();
 const PORT = process.env.PORT; // 3000;
@@ -62,45 +61,26 @@ async function imageOpenAI(base64ImageUrl) {
   });
 }
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-
-app.post("/api/process-text", async (req, res) => {
-  const { text } = req.body;
-  if (!text) {
-    return res.status(400).json({ message: "No text provided" });
-  }
-
+// Ensure AI parsed input correctly
+async function isAtLeastOneCourse(instructions) {
+  const response = await client.responses.parse({
+    model: "gpt-4.1-nano",
+    input: instructions,
+    text: {
+      format: zodTextFormat(courseCountSchema, "atleastOne"),
+    },
+  });
+  return response;
+}
+async function validateResponse(courses) {
+  // THIS FUNCTION IS NOT COMPLETE.
   let processCount = 0;
   const processCountCapacity = 3;
   const checkMoreThanOneCourseInstructions =
     "Determine whether there is more than one course from the following: ";
 
-  const processInput = async (input) => {
-    const response = await client.responses.parse({
-      model: "gpt-4.1-nano",
-      input: input,
-      text: {
-        format: zodTextFormat(coursesSchema, "courses"),
-      },
-    });
-    processCount++;
-    return response;
-  };
-  const checkMoreThanOneCourse = async (input) => {
-    const response = await client.responses.parse({
-      model: "gpt-4.1-nano",
-      input: input,
-      text: {
-        format: zodTextFormat(courseCountSchema, "atleastOne"),
-      },
-    });
-    return response;
-  };
-
   let [atLeastOneCourse, response] = await Promise.all([
-    checkMoreThanOneCourse(checkMoreThanOneCourseInstructions + coursesInput),
+    checkMoreThanOneCourse(checkMoreThanOneCourseInstructions + courses),
     processInput(processInputInstructions + coursesInput),
   ]);
   let parsedAtLeastOneCourse = JSON.parse(atLeastOneCourse.output_text);
@@ -129,13 +109,13 @@ app.post("/api/process-text", async (req, res) => {
     }
   }
 
-  const parsedResponse = validationResult.data;
+  const parsedResponse = validationResult.data; // This is what you'll likely return
+}
 
+function createCalendarEvents(parsedResponse) {
   const calendarEvents = {};
-  // const colors = []
 
   for (const i in parsedResponse.courses) {
-    // const color = colors[i]
     for (const properties of parsedResponse.courses[i].occurences) {
       const id = `${parsedResponse.courses[i].className}-${properties.weekDay}-${properties.time}`;
       properties.className = parsedResponse.courses[i].className;
@@ -150,10 +130,41 @@ app.post("/api/process-text", async (req, res) => {
         endTime = "0" + endTime;
       }
       properties.time = startTime + "-" + endTime;
-      // properties.color = color
       calendarEvents[id] = properties;
     }
   }
+
+  return calendarEvents;
+}
+
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
+
+app.post("/api/process-text", async (req, res) => {
+  console.log("in /api/process-text");
+
+  const { text } = req.body;
+  if (!text) {
+    return res.status(400).json({ message: "No text provided" });
+  }
+  console.log(`Processing: ${text}`);
+  let response = await textOpenAI(text);
+  console.log(`Processed response: ${response}`);
+
+  let validationResult = coursesSchema.safeParse(
+    JSON.parse(response.output_text)
+  );
+
+  if (!validationResult.success) {
+    console.error("Zod validation failed:", validationResult.error);
+    return res.status(500).json({
+      message: "AI response was not in the expected format. Please try again.",
+    });
+  }
+
+  const calendarEvents = createCalendarEvents(validationResult.data);
+  console.log(`Calendar Events: ${JSON.stringify(calendarEvents)}`);
 
   res.json(calendarEvents);
 });
