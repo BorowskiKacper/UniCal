@@ -39,6 +39,13 @@ const UploadContainer = ({ fetchEvents }) => {
 
   return (
     <div className="flex flex-col items-center justify-center w-15/16 h-full m-5">
+      <label htmlFor="toggle-use-image">useImage</label>
+      <input
+        type="checkbox"
+        id="toggle-use-image"
+        checked={useImage}
+        onChange={(event) => setUseImage(event.target.checked)}
+      ></input>
       <label htmlFor="file-upload">
         <input
           type="file"
