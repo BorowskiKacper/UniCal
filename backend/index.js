@@ -27,7 +27,13 @@ const courseSchema = z.object({
   className: z.string(),
   occurences: z.array(eventSchema),
 });
-const coursesSchema = z.object({ courses: z.array(courseSchema) });
+// const coursesSchema = z.object({
+//   courses: z.array(courseSchema),
+//   unsure: z.string(),
+// });
+const coursesSchema = z.object({
+  courses: z.array(courseSchema),
+});
 const courseCountSchema = z.object({ atLeastOne: z.boolean() });
 
 // AI functions
@@ -50,8 +56,11 @@ async function textOpenAI(courseText) {
 }
 
 async function imageOpenAI(base64ImageUrl) {
-  const processInputInstructions =
-    "ENSURE TO EXTRACT EVERY CLASS | From the following image, extract class names. And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: HH:MM-HH:MM; don't include AM and/or PM), location (building and room, or remote). Extract the calendar events from the following image: ";
+  // const processInputInstructions =
+  // "First tell me what you're unsure of (what may be challenging to process). Don't include notes such as 'Enrolled', 'Seats', and 'Wait List' as part of the course details; focus solely on class names, times, and locations. From the following image, extract class names (Ensure each classname is accurate). And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: HH:MM-HH:MM; don't include AM and/or PM), location (building and room, or remote).  Extract the calendar events from the following image: ";
+  //   const processInputInstructions =
+  //     "From the following image, extract class names (usually the classname is above LEC) (the image structure is class code, class name, weekdays and times, section (ex: LEC 007; don't care about section)). And for each classname, find all occurences (times when the class occurs. Almost all classes should contain at least two lectures). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: HH:MM-HH:MM; don't include AM and/or PM), location (building and room, or remote).  Extract the calendar events from the following image: ";
+  const processInputInstructions = "Extract all test from this image";
   const response = await client.responses.parse({
     model: "gpt-4.1-nano",
     input: [
@@ -66,9 +75,9 @@ async function imageOpenAI(base64ImageUrl) {
         ],
       },
     ],
-    text: {
-      format: zodTextFormat(coursesSchema, "courses"),
-    },
+    // text: {
+    //   format: zodTextFormat(coursesSchema, "courses"),
+    // },
   });
 
   return response;
@@ -127,6 +136,7 @@ async function validateResponse(courses) {
 
 function createCalendarEvents(parsedResponse) {
   const calendarEvents = {};
+  console.log(`What model response is unsure of: ${parsedResponse.unsure}`);
 
   for (const i in parsedResponse.courses) {
     for (const properties of parsedResponse.courses[i].occurences) {
@@ -193,7 +203,9 @@ app.post("/api/process-image", upload.single("image"), async (req, res) => {
   console.log(`req.file.mimetype: ${req.file.mimetype}`);
   const imageUrl = `data:${req.file.mimetype};base64,${imageAsBase64}`;
 
-  let response = await imageOpenAI(imageUrl);
+  let imageResponse = await imageOpenAI(imageUrl);
+  console.log(`-------Text Response------- ${imageResponse.output_text}`);
+  let response = await textOpenAI(imageResponse.output_text);
 
   let validationResult = coursesSchema.safeParse(
     JSON.parse(response.output_text)
