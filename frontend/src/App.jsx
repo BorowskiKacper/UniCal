@@ -31,13 +31,11 @@ function App() {
     } else {
       const formData = new FormData();
       formData.append("image", payload);
-      (response = await fetch("http://localhost:3000/api/process-image")),
-        {
-          method: "POST",
-          body: formData,
-        };
+      response = await fetch("http://localhost:3000/api/process-image", {
+        method: "POST",
+        body: formData,
+      });
     }
-
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Error from server:", errorData.message);

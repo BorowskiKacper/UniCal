@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
+import multer from "multer";
 
 dotenv.config();
 const PORT = process.env.PORT; // 3000;
@@ -12,6 +13,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 const client = new OpenAI();
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // Zod schemas for validating AI response format
 const eventSchema = z.object({
@@ -30,12 +34,14 @@ const courseCountSchema = z.object({ atLeastOne: z.boolean() });
 async function textOpenAI(courseText) {
   const processInputInstructions =
     "ENSURE TO EXTRACT EVERY CLASS | From the following text, extract class names. And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: 00:00-23:59), location (building and room, or remote). Extract the calendar events from the following text: ";
+  const input = processInputInstructions + courseText;
   const response = await client.responses.parse({
     model: "gpt-4.1-nano",
-    input: [
-      { role: "system", content: processInputInstructions },
-      { role: "user", content: courseText },
-    ],
+    // input: [
+    //   { role: "system", content: processInputInstructions },
+    //   { role: "user", content: courseText },
+    // ],
+    input: input,
     text: {
       format: zodTextFormat(coursesSchema, "courses"),
     },
@@ -49,16 +55,23 @@ async function imageOpenAI(base64ImageUrl) {
   const response = await client.responses.parse({
     model: "gpt-4.1-nano",
     input: [
-      { role: "system", content: processInputInstructions },
       {
         role: "user",
-        content: {
-          type: "input_image",
-          image_url: base64ImageUrl,
-        },
+        content: [
+          { type: "input_text", text: processInputInstructions },
+          {
+            type: "input_image",
+            image_url: base64ImageUrl,
+          },
+        ],
       },
     ],
+    text: {
+      format: zodTextFormat(coursesSchema, "courses"),
+    },
   });
+
+  return response;
 }
 
 // Ensure AI parsed input correctly
@@ -151,6 +164,37 @@ app.post("/api/process-text", async (req, res) => {
   console.log(`Processing: ${text}`);
   let response = await textOpenAI(text);
   console.log(`Processed response: ${response}`);
+
+  let validationResult = coursesSchema.safeParse(
+    JSON.parse(response.output_text)
+  );
+
+  if (!validationResult.success) {
+    console.error("Zod validation failed:", validationResult.error);
+    return res.status(500).json({
+      message: "AI response was not in the expected format. Please try again.",
+    });
+  }
+
+  const calendarEvents = createCalendarEvents(validationResult.data);
+  console.log(`Calendar Events: ${JSON.stringify(calendarEvents)}`);
+
+  res.json(calendarEvents);
+});
+
+app.post("/api/process-image", upload.single("image"), async (req, res) => {
+  console.log("In /api/process-image");
+
+  if (!req.file) {
+    return res.status(400).json({ message: "No image file provided" });
+  }
+  console.log("image provided");
+
+  const imageAsBase64 = req.file.buffer.toString("base64");
+  console.log(`req.file.mimetype: ${req.file.mimetype}`);
+  const imageUrl = `data:${req.file.mimetype};base64,${imageAsBase64}`;
+
+  let response = await imageOpenAI(imageUrl);
 
   let validationResult = coursesSchema.safeParse(
     JSON.parse(response.output_text)
