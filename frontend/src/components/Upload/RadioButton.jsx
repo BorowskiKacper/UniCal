@@ -3,7 +3,7 @@ import React from "react";
 const RadioButton = ({ options, selectedOption, onChange }) => {
   return (
     <div className="flex space-x-2 border-[3px] border-purple-400 rounded-xl select-none">
-      {options.map((option, index) => (
+      {options.map((option) => (
         <label
           key={option}
           className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"

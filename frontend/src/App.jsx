@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import WeeklyContainer from "./components/WeeklyContainer";
-import UploadContainer from "./components/UploadContainer";
+import UploadContainer from "./components/Upload/UploadContainer";
 
 function App() {
   const [calendarEvents, setCalendarEvents] = useState({

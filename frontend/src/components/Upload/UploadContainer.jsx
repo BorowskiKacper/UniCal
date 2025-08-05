@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import RadioButton from "./RadioButton";
+import UploadImage from "./UploadImage";
+import UploadText from "./UploadText";
 
 const UploadContainer = ({ fetchEvents }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -45,34 +47,16 @@ const UploadContainer = ({ fetchEvents }) => {
         selectedOption={useImage ? "image" : "text"}
         onChange={(value) => setUseImage(value === "image")}
       />
-      <label htmlFor="toggle-use-image">useImage</label>
-      <input
-        type="checkbox"
-        id="toggle-use-image"
-        checked={useImage}
-        onChange={(event) => setUseImage(event.target.checked)}
-      ></input>
-      <label htmlFor="file-upload">
-        <input
-          type="file"
-          id="file-upload"
-          className="file:bg-blue-500 file:text-white file:border-none file:p-2 file:rounded-md file:cursor-pointer"
-          accept="image/jpeg, image/png, image/webp"
-          onChange={(event) => setSelectedImage(event.target.files[0])}
-        />
-      </label>
-      <label htmlFor="paragraph">Enter your schedule here</label>
-      <textarea
-        id="paragraph"
-        className="w-full h-40 p-2 border border-gray-300 rounded-md"
-        value={text}
-        onChange={(event) => setText(event.target.value)}
-      ></textarea>
+      {useImage ? (
+        <UploadImage onChange={(file) => setSelectedImage(file)} />
+      ) : (
+        <UploadText text={text} onChange={(text) => setText(text)} />
+      )}
       <button
         className="bg-blue-500 text-white p-2 rounded-md"
         onClick={handleSubmit}
       >
-        Submit
+        Generate
       </button>
     </div>
   );
