@@ -19,8 +19,8 @@ const upload = multer({ storage });
 
 // Zod schemas for validating AI response format
 const eventSchema = z.object({
-  weekDay: z.string(),
-  time: z.string(),
+  weekDay: z.string().length(3),
+  time: z.string().length(11),
   location: z.string(),
 });
 const courseSchema = z.object({
@@ -51,7 +51,7 @@ async function textOpenAI(courseText) {
 
 async function imageOpenAI(base64ImageUrl) {
   const processInputInstructions =
-    "ENSURE TO EXTRACT EVERY CLASS | From the following image, extract class names. And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: 00:00-23:59), location (building and room, or remote). Extract the calendar events from the following image: ";
+    "ENSURE TO EXTRACT EVERY CLASS | From the following image, extract class names. And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: HH:MM-HH:MM; don't include AM and/or PM), location (building and room, or remote). Extract the calendar events from the following image: ";
   const response = await client.responses.parse({
     model: "gpt-4.1-nano",
     input: [
@@ -188,7 +188,6 @@ app.post("/api/process-image", upload.single("image"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No image file provided" });
   }
-  console.log("image provided");
 
   const imageAsBase64 = req.file.buffer.toString("base64");
   console.log(`req.file.mimetype: ${req.file.mimetype}`);
