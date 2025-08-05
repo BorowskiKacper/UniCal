@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import RadioButton from "./RadioButton";
 
 const UploadContainer = ({ fetchEvents }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -39,6 +40,11 @@ const UploadContainer = ({ fetchEvents }) => {
 
   return (
     <div className="flex flex-col items-center justify-center w-15/16 h-full m-5">
+      <RadioButton
+        options={["image", "text"]}
+        selectedOption={useImage ? "image" : "text"}
+        onChange={(value) => setUseImage(value === "image")}
+      />
       <label htmlFor="toggle-use-image">useImage</label>
       <input
         type="checkbox"
