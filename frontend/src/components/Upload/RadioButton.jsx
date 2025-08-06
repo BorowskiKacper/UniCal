@@ -14,7 +14,10 @@ const RadioButton = ({ options, selectedOption, onChange }) => {
             value={option}
             className="peer hidden"
             checked={selectedOption === option}
-            onChange={() => onChange(option)}
+            onChange={() => {
+              console.log(`option: ${option}`);
+              onChange(option);
+            }}
           />
           <span className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[blueviolet] peer-checked:to-[violet] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out">
             {option}

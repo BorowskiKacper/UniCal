@@ -107,7 +107,7 @@ const PopupForm = ({ activeEvent, setEventProperty }) => {
             ref={inputRefs[4]}
           />
         </div>
-        <SubmitButton text={"Save"} onClick={handleSubmit} />
+        <SubmitButton text={"Save"} onClick={handleSubmit} isDisabled={false} />
       </form>
     </div>
   );

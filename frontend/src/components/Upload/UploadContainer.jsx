@@ -41,8 +41,14 @@ const UploadContainer = ({ fetchEvents }) => {
     }
   }, [selectedImage]);
 
+  let fileName;
+  if (selectedImage) {
+    fileName = selectedImage.name;
+  }
+
   return (
     <div className="flex flex-col items-center justify-center w-15/16 h-full m-5">
+      <div>{fileName}</div>
       <RadioButton
         options={["image", "text"]}
         selectedOption={useImage ? "image" : "text"}
@@ -53,7 +59,11 @@ const UploadContainer = ({ fetchEvents }) => {
       ) : (
         <UploadText text={text} onChange={(text) => setText(text)} />
       )}
-      <SubmitButton text={"Generate"} onClick={handleSubmit} />
+      <SubmitButton
+        text={"Generate"}
+        onClick={handleSubmit}
+        isDisabled={useImage ? selectedImage === null : text === ""}
+      />
     </div>
   );
 };
