@@ -163,20 +163,47 @@ function createCalendarEvents(parsedResponse) {
 
 // Gets and processes college semester calendar
 const processPdfSchema = z.object({
-  events: z.array(z.object({ date: z.string(), events: z.array(z.string()) })),
+  events: z.array(
+    z.object({ event: z.string(), dateStart: z.string(), dateEnd: z.string() })
+  ),
+});
+
+const categorizeEventSchema = z.object({
+  events: z.array(
+    z.object({
+      categorization: z.string(),
+      dateStart: z.string(),
+      dateEnd: z.string(),
+    })
+  ),
 });
 
 async function processSemesterCalendar(calendarText) {
   const processInstructions =
-    "Given this jumbled text extracted from a pdf of a course calendar, find all events and their corresponding date: ";
-  const response = await client.responses.parse({
+    "Given this text extracted from a pdf of a semester calendar, find all events: ";
+  const response1 = await client.responses.parse({
     model: "gpt-4.1-nano",
     input: processInstructions + calendarText,
     text: {
-      format: zodTextFormat(processPdfSchema, "date: event"),
+      format: zodTextFormat(processPdfSchema, "date_event"),
     },
   });
-  return response.output_text;
+  console.log(`response1: ${response1.output_text}`);
+  const processEventsIntructions =
+    "Categorize each of the following events as 'Classes Start', 'No Class', 'Classes follow [weekday] schedule', 'Classes End', 'Finals week', 'Other': ";
+  const response2 = await client.responses.parse({
+    model: "gpt-4.1-nano",
+    input: processEventsIntructions + response1.output_text,
+    text: {
+      format: zodTextFormat(categorizeEventSchema, "categorize"),
+    },
+  });
+  console.log(`response2: ${response2.output_text}`);
+
+  return {
+    response1: JSON.parse(response1.output_text),
+    esponse2: JSON.parse(response2.output_text),
+  };
 }
 
 async function getSemesterCalendar() {
