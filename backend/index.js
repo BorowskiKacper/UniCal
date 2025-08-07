@@ -5,6 +5,7 @@ import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import multer from "multer";
+import pdf from "pdf-parse";
 
 dotenv.config();
 const PORT = process.env.PORT; // 3000;
@@ -159,6 +160,55 @@ function createCalendarEvents(parsedResponse) {
 
   return calendarEvents;
 }
+
+// Gets and processes college semester calendar
+const processPdfSchema = z.object({
+  events: z.array(z.object({ date: z.string(), events: z.array(z.string()) })),
+});
+
+async function processSemesterCalendar(calendarText) {
+  const processInstructions =
+    "Given this jumbled text extracted from a pdf of a course calendar, find all events and their corresponding date: ";
+  const response = await client.responses.parse({
+    model: "gpt-4.1-nano",
+    input: processInstructions + calendarText,
+    text: {
+      format: zodTextFormat(processPdfSchema, "date: event"),
+    },
+  });
+  return response.output_text;
+}
+
+async function getSemesterCalendar() {
+  const url =
+    "https://www.ccny.cuny.edu/sites/default/files/2025-04/Fall%202025%20Academic%20Calendar.pdf";
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const pdfBuffer = await response.arrayBuffer();
+    const data = await pdf(pdfBuffer);
+    console.log(`PDF text: ${data.text}`);
+    return data.text;
+  } catch (error) {
+    console.error("Error fetching or parsing PDF:", error);
+    throw new Error("Failed to get semester calendar.");
+  }
+}
+
+app.get("/ccny", async (req, res) => {
+  try {
+    const calendarText = await getSemesterCalendar();
+    const processed = await processSemesterCalendar(calendarText);
+    console.log("Processed");
+    res.json({ processed: processed });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// api endpoints
 
 app.get("/", (req, res) => {
   res.send("Hello World");
