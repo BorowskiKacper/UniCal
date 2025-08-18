@@ -11,6 +11,12 @@ function App() {
       className: "test",
       description: "Location: test",
     },
+    test2: {
+      weekDay: "Wed",
+      time: "14:00-18:15",
+      className: "test2",
+      description: "Location: test2",
+    },
   });
   const [activeEventId, setActiveEventId] = useState("");
 
@@ -58,7 +64,7 @@ function App() {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full bg-slate-950">
       <h1>UniCal</h1>
 
       <div className="flex items-center flex-col overflow-y-auto w-full h-full ">

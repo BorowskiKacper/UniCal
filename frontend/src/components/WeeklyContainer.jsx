@@ -9,32 +9,6 @@ const WeeklyContainer = ({
   setActiveEventId,
   calendarEvents,
 }) => {
-  // const [activeEventId, setActiveEventId] = useState("");
-  // const [calendarEvents, setCalendarEvents] = useState(calEvents);
-
-  // useEffect(() => {
-  //   const fetchEvents = async () => {
-  //     const response = await fetch("http://localhost:3000/api/process");
-  //     const data = await response.json();
-  //     setCalendarEvents(data);
-  //     console.log("Successfully fetched and set calendarEvents:", data);
-  //   };
-
-  //   fetchEvents();
-  // }, []);
-
-  // const handleEventPropChange = (properties) => {
-  //   setCalendarEvents((prevEvents) => ({
-  //     ...prevEvents,
-  //     [activeEventId]: {
-  //       ...prevEvents[activeEventId],
-  //       ...properties,
-  //     },
-  //   }));
-  // };
-  console.log("Rendering WeeklyContainer");
-  console.log(calendarEvents);
-
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const lastWeekDay = weekdays[weekdays.length - 1];
   const weekdaysHead = weekdays.map((weekday) => (
@@ -42,8 +16,8 @@ const WeeklyContainer = ({
       <p
         className={
           weekday === lastWeekDay
-            ? `font-mono font-extrabold text-2xl mr-[16px]`
-            : "font-mono font-extrabold text-2xl "
+            ? `font-mono font-extrabold md:text-2xl mr-[16px]`
+            : "font-mono font-extrabold md:text-2xl "
         }
       >
         {weekday}
@@ -85,26 +59,25 @@ const WeeklyContainer = ({
   ));
 
   return (
-    <div className="flex h-150  w-15/16   ">
-      {/* {modEvent} */}
-      <div className="w-1/3 h-full">
+    <div className="flex h-150  w-15/16">
+      {/* <div className="w-1/3 h-full">
         <EventPopup
           key={activeEventId}
           activeEvent={calendarEvents[activeEventId] ?? ""}
           activeEventId={activeEventId}
           setEventProperty={handleEventPropChange}
         />
-      </div>
-      <div className="flex flex-col border-y-1 border-r-2 rounded-r-3xl w-full h-full  overflow-hidden bg-indigo-50">
-        <div className="h-1/10 flex flex-row bg-red-50 ">
-          <div className="w-1/10 bg-amber-50 border-r-1"></div>
-          <div className="w-9/10 flex flex-row justify-around items-center border-b-1">
+      </div> */}
+      <div className="flex flex-col  rounded-3xl w-full h-full  overflow-hidden bg-gray-800 text-gray-300">
+        <div className="h-1/10 flex flex-row  ">
+          <div className="w-15  "></div>
+          <div className="w-full flex flex-row justify-around items-center border-b-1">
             {weekdaysHead}
           </div>
         </div>
         <div className="h-9/10 overflow-y-scroll scroll-smooth scrollbar scrollbar-thumb-sky-700 ">
           <div className=" flex flex-row ">
-            <div className="w-1/10 grid grid-rows-48 h-200">
+            <div className="w-15 grid grid-rows-48 h-200">
               {/* Modify height here ^^^^^^^^^^^^^^^^^^^^^^^ */}
               <div key="Hour--pre" className="row-span-1">
                 <p></p>
@@ -114,7 +87,7 @@ const WeeklyContainer = ({
                 <p></p>
               </div>
             </div>
-            <div className="w-9/10 relative">
+            <div className="w-full relative">
               <HorizontalGridLines />
               <div className="absolute w-full h-full">
                 <CalendarEventGrid
