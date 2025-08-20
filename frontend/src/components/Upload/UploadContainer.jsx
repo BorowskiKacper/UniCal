@@ -10,16 +10,32 @@ const UploadContainer = ({ fetchEvents }) => {
     "Foundations of Speech Communication SPCH 11100 Shepard Hall Rm S-276 Tue/Thurs 2pm-3:15pm; Cross-Cultural Perspectives ANTH 20100 NAC Rm 6/213 Mon/Wed 12:30 to 1:45pm; Introduction to Computing for Majors CSC 10300 Marshak Rm MR3 Tue/Thurs 11 to 11:50am and NAC Rm 7/118 Fri 11 to 12:40pm; Elements of Linear Algebra MATH 34600 NAC Rm 5/110 Tue/Thurs 9:30am - 10:45am; Discrete Mathematical Structures 1 CSC 10400 Shepard Hall Rm S-205 Tue/Thurs 4 to 5:40pm and NAC Rm 7/306 Fri 1 to 2:40pm"
   );
   const [useImage, setUseImage] = useState(true);
+  const [isLoadingCalendar, setIsLoadingCalendar] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (isLoadingCalendar) return;
+
     if (useImage) {
       if (!selectedImage) {
         alert("Please select an image before submitting.");
         return;
       }
-      fetchEvents({ isText: false, payload: selectedImage });
-    } else {
-      fetchEvents({ isText: true, payload: text });
+    }
+
+    setIsLoadingCalendar(true);
+
+    try {
+      await fetchEvents({
+        isText: !useImage,
+        payload: useImage ? selectedImage : text,
+      });
+    } catch (error) {
+      console.error("Error getting Calendar Events", error);
+      alert(
+        "An error has occured while generating your Calendar. Please try again."
+      );
+    } finally {
+      setIsLoadingCalendar(false);
     }
 
     console.log(selectedImage);
@@ -84,6 +100,7 @@ const UploadContainer = ({ fetchEvents }) => {
             text={"Generate Calendar"}
             onClick={handleSubmit}
             isDisabled={useImage ? selectedImage === null : text === ""}
+            isLoading={isLoadingCalendar}
           />
         </div>
       </div>
