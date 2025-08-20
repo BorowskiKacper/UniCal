@@ -19,6 +19,7 @@ const CalendarEventGrid = ({ calendarEvents, weekdays, setActiveEventId }) => {
       {weekdays.map((weekday) => (
         <CalendarWeekday
           key={weekday}
+          weekday={weekday}
           events={eventsByWeekday[weekday]}
           setActiveEventId={setActiveEventId}
         />
