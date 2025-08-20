@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import RadioButton from "./RadioButton";
 import UploadImage from "./UploadImage";
 import UploadText from "./UploadText";
@@ -24,22 +24,6 @@ const UploadContainer = ({ fetchEvents }) => {
 
     console.log(selectedImage);
   };
-
-  useEffect(() => {
-    if (selectedImage) {
-      const type = selectedImage.type;
-      if (
-        !(
-          type === "image/jpeg" ||
-          type === "image/png" ||
-          type === "image/webp"
-        )
-      ) {
-        setSelectedImage(null);
-        alert("Invalid file type. Only PNG, JPEG, and WEBP are allowed.");
-      }
-    }
-  }, [selectedImage]);
 
   let fileName;
   if (selectedImage) {
