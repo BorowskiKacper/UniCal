@@ -65,11 +65,11 @@ const WeeklyContainer = ({
           <div className="max-h-[500px] sm:max-h-[600px] md:max-h-[700px] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800/50">
             <div className="flex min-h-[800px] min-w-[640px] sm:min-w-0">
               {/* Time Column */}
-              <div className="w-12 sm:w-16 md:w-20 flex-shrink-0 bg-slate-800/30 border-r border-slate-700/30">
-                <div className="sticky top-0 z-10 bg-slate-800/90 backdrop-blur-sm border-b border-slate-700/50">
+              <div className="w-12 sm:w-16 md:w-20 flex-shrink-0 bg-slate-800 ">
+                <div className="sticky top-0 z-10 bg-slate-800 backdrop-blur-sm border-b border-slate-700">
                   <div className="py-3 md:py-4 text-center">
                     <p className="font-bold text-xs sm:text-sm md:text-lg lg:text-xl truncate">
-                      <span className="text-transparent">M</span>
+                      <span className="text-transparent">:)</span>
                     </p>
                     <div className="w-4 sm:w-6 md:w-8 h-0.5 bg-transparent mx-auto mt-1 md:mt-2 " />
                   </div>
