@@ -2,15 +2,39 @@ import React from "react";
 
 const SubmitButton = ({ text, onClick, isDisabled }) => {
   return (
-    <div>
-      <button
-        className="bg-blue-500 text-white p-2 rounded-md disabled:bg-blue-300"
-        onClick={onClick}
-        disabled={isDisabled}
-      >
-        {text}
-      </button>
-    </div>
+    <button
+      className={`
+        relative px-8 py-3 rounded-xl font-semibold  transition-all duration-200 ease-in-out
+        ${
+          isDisabled
+            ? "bg-slate-600/50 text-slate-400 cursor-not-allowed"
+            : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-lg hover:shadow-xl hover:shadow-blue-500/25 hover:scale-105 active:scale-95"
+        }
+        focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-slate-800
+        min-w-[140px] group
+      `}
+      onClick={onClick}
+      disabled={isDisabled}
+    >
+      <span className="flex items-center justify-center space-x-2">
+        {!isDisabled && (
+          <svg
+            className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
+          </svg>
+        )}
+        <span>{text}</span>
+      </span>
+    </button>
   );
 };
 

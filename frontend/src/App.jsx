@@ -64,19 +64,39 @@ function App() {
   };
 
   return (
-    <div className="w-full h-full bg-slate-950">
-      <h1>UniCal</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-700/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <img
+                  src="src/assets/calendar-days-svg-white.svg"
+                  alt="Calendar Icon"
+                />
+              </div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                UniCal
+              </h1>
+            </div>
+            <div className="text-slate-400 text-sm hidden sm:block">
+              AI-Powered Schedule Management
+            </div>
+          </div>
+        </div>
+      </header>
 
-      <div className="flex items-center flex-col overflow-y-auto w-full h-full ">
-        <UploadContainer fetchEvents={fetchEvents} />
-        <WeeklyContainer
-          calendarEvents={calendarEvents}
-          handleEventPropChange={handleEventPropChange}
-          setActiveEventId={setActiveEventId}
-          activeEventId={activeEventId}
-        />
-        <div className="h-40"></div>
-      </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          <UploadContainer fetchEvents={fetchEvents} />
+          <WeeklyContainer
+            calendarEvents={calendarEvents}
+            handleEventPropChange={handleEventPropChange}
+            setActiveEventId={setActiveEventId}
+            activeEventId={activeEventId}
+          />
+        </div>
+      </main>
     </div>
   );
 }

@@ -15,7 +15,7 @@ const CalendarEventGrid = ({ calendarEvents, weekdays, setActiveEventId }) => {
   }
 
   return (
-    <div className="flex w-full h-full ">
+    <div className="flex w-full h-full">
       {weekdays.map((weekday) => (
         <CalendarWeekday
           key={weekday}

@@ -47,24 +47,63 @@ const UploadContainer = ({ fetchEvents }) => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center w-15/16 h-full m-5">
-      <div>{fileName}</div>
-      <RadioButton
-        options={["image", "text"]}
-        selectedOption={useImage ? "image" : "text"}
-        onChange={(value) => setUseImage(value === "image")}
-      />
-      {useImage ? (
-        <UploadImage onChange={(file) => setSelectedImage(file)} />
-      ) : (
-        <UploadText text={text} onChange={(text) => setText(text)} />
-      )}
-      <SubmitButton
-        text={"Generate"}
-        onClick={handleSubmit}
-        isDisabled={useImage ? selectedImage === null : text === ""}
-      />
-    </div>
+    <section className="w-full max-w-4xl mx-auto">
+      <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 md:p-8 shadow-2xl">
+        <header className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+            Upload Your Schedule
+          </h2>
+          <p className="text-slate-400 text-sm md:text-base">
+            Upload an image of your schedule or paste the text directly
+          </p>
+        </header>
+
+        {fileName && useImage && (
+          <div className="mb-6 p-3 bg-slate-700/50 rounded-lg border border-slate-600/50">
+            <div className="flex items-center space-x-2">
+              <svg
+                className="w-5 h-5 text-blue-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              <span className="text-slate-300 text-sm font-medium truncate">
+                {fileName}
+              </span>
+            </div>
+          </div>
+        )}
+
+        <RadioButton
+          options={["image", "text"]}
+          selectedOption={useImage ? "image" : "text"}
+          onChange={(value) => setUseImage(value === "image")}
+        />
+
+        <div className="mb-8">
+          {useImage ? (
+            <UploadImage onChange={(file) => setSelectedImage(file)} />
+          ) : (
+            <UploadText text={text} onChange={(text) => setText(text)} />
+          )}
+        </div>
+
+        <div className="flex justify-center">
+          <SubmitButton
+            text={"Generate Calendar"}
+            onClick={handleSubmit}
+            isDisabled={useImage ? selectedImage === null : text === ""}
+          />
+        </div>
+      </div>
+    </section>
   );
 };
 
