@@ -48,6 +48,7 @@ const WeeklyContainer = ({
 
   const [popupAnchorRect, setPopupAnchorRect] = useState(null);
   const calendarContainerRef = useRef(null);
+  const scrollTargetRef = useRef(null);
 
   const handleEventClick = (id, rect) => {
     setActiveEventId(id);
@@ -63,6 +64,18 @@ const WeeklyContainer = ({
     setActiveEventId("");
     setPopupAnchorRect(null);
   };
+
+  useEffect(() => {
+    if ("test" in calendarEvents) return;
+
+    const scrollToTarget = () => {
+      scrollTargetRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    };
+    scrollToTarget();
+  }, [calendarEvents]);
 
   return (
     <div className="w-full max-w-7xl mx-auto">
@@ -104,6 +117,15 @@ const WeeklyContainer = ({
 
               {/* Calendar Grid */}
               <div className="flex-1 relative bg-slate-900/20 min-w-0">
+                <div className="absolute inset-0">
+                  <div className="h-full w-full flex flex-col">
+                    <div className="flex-9/24 w-full"></div>
+                    <div
+                      className="flex-17/24 w-full"
+                      ref={scrollTargetRef}
+                    ></div>
+                  </div>
+                </div>
                 <HorizontalGridLines />
                 <div className="absolute inset-0">
                   <CalendarEventGrid
