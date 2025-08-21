@@ -133,7 +133,11 @@ const PopupForm = ({ activeEvent, setEventProperty, weekdays = [] }) => {
               ref={inputRefs[3]}
             >
               {weekdays.map((weekday, i) => (
-                <option key={i} value={weekday}>
+                <option
+                  className="bg-slate-900 w-full text-slate-400"
+                  key={i}
+                  value={weekday}
+                >
                   {weekday}
                 </option>
               ))}
