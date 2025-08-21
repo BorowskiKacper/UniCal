@@ -119,7 +119,7 @@ const WeeklyContainer = ({
         <EventPopup
           activeEvent={activeEvent}
           anchorRect={popupAnchorRect}
-          calendarContainerRect={calendarContainerRef.current.getBoundingClientRect()}
+          calendarContainerRect={calendarContainerRef.current?.getBoundingClientRect()}
           setEventProperty={handleEventPropChange}
           onClose={closePopup}
         />

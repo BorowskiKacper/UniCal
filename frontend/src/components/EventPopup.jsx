@@ -41,8 +41,6 @@ const EventPopup = ({
       const spaceLeftOfContainer =
         (viewportWidth - calendarContainerRect?.width) / 2 || 100;
 
-      console.log("above container pixels:", calendarContainerRect.top);
-
       const spaceRight = viewportWidth - anchorRect.right - margin;
       const spaceLeft = anchorRect.left - margin;
       const side = spaceLeft < spaceRight ? "right" : "left";
