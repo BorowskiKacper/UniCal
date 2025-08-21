@@ -1,6 +1,6 @@
 import React from "react";
 
-const CalendarEvent = ({ id, event, setActiveEventId }) => {
+const CalendarEvent = ({ id, event, onEventClick }) => {
   const eventStartHour = Number(event.time.slice(0, 2));
   const eventStartMinute = Number(event.time.slice(3, 5));
   const eventEndHour = Number(event.time.slice(6, 8));
@@ -12,12 +12,11 @@ const CalendarEvent = ({ id, event, setActiveEventId }) => {
     (eventEndHour - eventStartHour) * 60 + (eventEndMinute - eventStartMinute);
   const height = (eventLengthMinutes / minsPerDay) * 100;
 
-  function handleOnclick() {
-    console.log(`Clicked ${event.className}`);
-    setActiveEventId(id);
-    console.log(
-      `Called setActiveEvent function in CalendarEvent.jsx with event by id: ${id}`
-    );
+  function handleOnclick(e) {
+    const target = e.currentTarget;
+    const container = target.closest(".calendar-event-anchor");
+    const rect = (container || target).getBoundingClientRect();
+    onEventClick?.(id, rect);
   }
 
   const eventStyle = {
@@ -47,7 +46,10 @@ const CalendarEvent = ({ id, event, setActiveEventId }) => {
   };
 
   return (
-    <div style={eventStyle} className="absolute w-full px-1">
+    <div
+      style={eventStyle}
+      className="absolute w-full px-1 calendar-event-anchor"
+    >
       <div
         className={`
         bg-gradient-to-br ${getEventColors(event.className)}

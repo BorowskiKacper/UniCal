@@ -1,6 +1,6 @@
 import CalendarWeekday from "./CalendarWeekday";
 
-const CalendarEventGrid = ({ calendarEvents, weekdays, setActiveEventId }) => {
+const CalendarEventGrid = ({ calendarEvents, weekdays, onEventClick }) => {
   const eventsByWeekday = {};
   weekdays.map((weekday) => {
     eventsByWeekday[weekday] = {};
@@ -21,7 +21,7 @@ const CalendarEventGrid = ({ calendarEvents, weekdays, setActiveEventId }) => {
           key={weekday}
           weekday={weekday}
           events={eventsByWeekday[weekday]}
-          setActiveEventId={setActiveEventId}
+          onEventClick={onEventClick}
         />
       ))}
     </div>

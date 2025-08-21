@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import CalendarEventGrid from "./CalendarEventGrid";
-import EventPopup from "./EventPopup";
 import HorizontalGridLines from "./HorizontalGridLines";
+import EventPopup from "./EventPopup";
 
 const WeeklyContainer = ({
   handleEventPropChange,
@@ -46,6 +46,24 @@ const WeeklyContainer = ({
     </div>
   ));
 
+  const [popupAnchorRect, setPopupAnchorRect] = useState(null);
+  const calendarContainerRef = useRef(null);
+
+  const handleEventClick = (id, rect) => {
+    setActiveEventId(id);
+    setPopupAnchorRect(rect);
+  };
+
+  const activeEvent = useMemo(() => {
+    if (!activeEventId) return null;
+    return calendarEvents[activeEventId] ?? null;
+  }, [activeEventId, calendarEvents]);
+
+  const closePopup = () => {
+    setActiveEventId("");
+    setPopupAnchorRect(null);
+  };
+
   return (
     <div className="w-full max-w-7xl mx-auto">
       {/* Calendar Header */}
@@ -59,7 +77,10 @@ const WeeklyContainer = ({
       </div>
 
       {/* Calendar Container */}
-      <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
+      <div
+        className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden"
+        ref={calendarContainerRef}
+      >
         {/* Calendar Body */}
         <div className="relative">
           <div className="max-h-[500px] sm:max-h-[600px] md:max-h-[700px] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800/50">
@@ -87,7 +108,7 @@ const WeeklyContainer = ({
                 <div className="absolute inset-0">
                   <CalendarEventGrid
                     calendarEvents={calendarEvents}
-                    setActiveEventId={setActiveEventId}
+                    onEventClick={handleEventClick}
                     weekdays={weekdays}
                   />
                 </div>
@@ -95,6 +116,13 @@ const WeeklyContainer = ({
             </div>
           </div>
         </div>
+        <EventPopup
+          activeEvent={activeEvent}
+          anchorRect={popupAnchorRect}
+          calendarContainerRect={calendarContainerRef.current.getBoundingClientRect()}
+          setEventProperty={handleEventPropChange}
+          onClose={closePopup}
+        />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React from "react";
 import CalendarEvent from "./CalendarEvent";
 
-const CalendarWeekday = ({ weekday, events, setActiveEventId }) => {
+const CalendarWeekday = ({ weekday, events, onEventClick }) => {
   return (
     <div className="relative w-full h-full border-r border-slate-700/20 last:border-r-0 flex flex-col">
       <div className="sticky top-0 z-10 bg-slate-800/90 backdrop-blur-sm border-b border-slate-700/50">
@@ -21,7 +21,7 @@ const CalendarWeekday = ({ weekday, events, setActiveEventId }) => {
               key={id}
               id={id}
               event={event}
-              setActiveEventId={setActiveEventId}
+              onEventClick={onEventClick}
             />
           );
         })}
