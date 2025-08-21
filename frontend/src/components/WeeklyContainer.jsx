@@ -144,6 +144,7 @@ const WeeklyContainer = ({
           calendarContainerRect={calendarContainerRef.current?.getBoundingClientRect()}
           setEventProperty={handleEventPropChange}
           onClose={closePopup}
+          weekdays={weekdays}
         />
       </div>
     </div>

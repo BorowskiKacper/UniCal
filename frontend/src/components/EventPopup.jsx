@@ -7,6 +7,7 @@ const EventPopup = ({
   calendarContainerRect,
   onClose,
   setEventProperty,
+  weekdays,
 }) => {
   const isOpen = Boolean(activeEvent);
 
@@ -109,6 +110,7 @@ const EventPopup = ({
             <PopupForm
               activeEvent={activeEvent}
               setEventProperty={setEventProperty}
+              weekdays={weekdays}
             />
           </div>
         </div>
@@ -136,6 +138,7 @@ const EventPopup = ({
             <PopupForm
               activeEvent={activeEvent}
               setEventProperty={setEventProperty}
+              weekdays={weekdays}
             />
           </div>
         </div>
