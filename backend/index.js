@@ -20,8 +20,8 @@ const upload = multer({ storage });
 
 // Zod schemas for validating AI response format
 const eventSchema = z.object({
-  weekDay: z.string().length(3),
-  time: z.string().length(11),
+  weekDay: z.enum(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]),
+  time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$/), // Matches format "HH:MM-HH:MM"
   location: z.string(),
 });
 const courseSchema = z.object({
@@ -43,7 +43,7 @@ async function textOpenAI(courseText) {
     "ENSURE TO EXTRACT EVERY CLASS | From the following text, extract class names. And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: 00:00-23:59), location (building and room, or remote). Extract the calendar events from the following text: ";
   const input = processInputInstructions + courseText;
   const response = await client.responses.parse({
-    model: "gpt-4.1-nano",
+    model: "gpt-5-nano",
     // input: [
     //   { role: "system", content: processInputInstructions },
     //   { role: "user", content: courseText },
@@ -56,12 +56,11 @@ async function textOpenAI(courseText) {
   return response;
 }
 
-async function imageOpenAI(base64ImageUrl) {
+async function imageOpenAI(base64ImageUrl, processInputInstructions) {
   // const processInputInstructions =
   // "First tell me what you're unsure of (what may be challenging to process). Don't include notes such as 'Enrolled', 'Seats', and 'Wait List' as part of the course details; focus solely on class names, times, and locations. From the following image, extract class names (Ensure each classname is accurate). And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: HH:MM-HH:MM; don't include AM and/or PM), location (building and room, or remote).  Extract the calendar events from the following image: ";
   //   const processInputInstructions =
   //     "From the following image, extract class names (usually the classname is above LEC) (the image structure is class code, class name, weekdays and times, section (ex: LEC 007; don't care about section)). And for each classname, find all occurences (times when the class occurs. Almost all classes should contain at least two lectures). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: HH:MM-HH:MM; don't include AM and/or PM), location (building and room, or remote).  Extract the calendar events from the following image: ";
-  const processInputInstructions = "Extract all test from this image";
   const response = await client.responses.parse({
     model: "gpt-4.1-nano",
     input: [
@@ -135,6 +134,7 @@ async function validateResponse(courses) {
   const parsedResponse = validationResult.data; // This is what you'll likely return
 }
 
+// Creates calendar events to be sent to frontend
 function createCalendarEvents(parsedResponse) {
   const calendarEvents = {};
   console.log(`What model response is unsure of: ${parsedResponse.unsure}`);
@@ -162,78 +162,85 @@ function createCalendarEvents(parsedResponse) {
 }
 
 // Gets and processes college semester calendar
-const processPdfSchema = z.object({
-  events: z.array(
-    z.object({ event: z.string(), dateStart: z.string(), dateEnd: z.string() })
-  ),
-});
+// const processPdfSchema = z.object({
+//   events: z.array(
+//     z.object({
+//       event: z.string(),
+//       dateStart: z.string().date(),
+//       dateEnd: z.string().date(),
+//     })
+//   ),
+// });
 
-const categorizeEventSchema = z.object({
-  events: z.array(
-    z.object({
-      categorization: z.string(),
-      dateStart: z.string(),
-      dateEnd: z.string(),
-    })
-  ),
-});
+// const categorizeEventSchema = z.object({
+//   firstDayOfClasses: z.string().date(),
+//   noClass: z.array(z.string().date()),
+//   classFollowXSchedule: z.array(
+//     z.object({
+//       date: z.string().date(),
+//       followsWeekday: z.string().length(3),
+//     })
+//   ),
+//   lastDayOfClasses: z.string().date(),
+//   finals: z.array(z.string().date()),
+// });
 
-async function processSemesterCalendar(calendarText) {
-  const processInstructions =
-    "Given this text extracted from a pdf of a semester calendar, find all events: ";
-  const response1 = await client.responses.parse({
-    model: "gpt-4.1-nano",
-    input: processInstructions + calendarText,
-    text: {
-      format: zodTextFormat(processPdfSchema, "date_event"),
-    },
-  });
-  console.log(`response1: ${response1.output_text}`);
-  const processEventsIntructions =
-    "Categorize each of the following events as 'Classes Start', 'No Class', 'Classes follow [weekday] schedule', 'Classes End', 'Finals week', 'Other': ";
-  const response2 = await client.responses.parse({
-    model: "gpt-4.1-nano",
-    input: processEventsIntructions + response1.output_text,
-    text: {
-      format: zodTextFormat(categorizeEventSchema, "categorize"),
-    },
-  });
-  console.log(`response2: ${response2.output_text}`);
+// async function processSemesterCalendar(calendarText) {
+//   const processInstructions =
+//     "Given this text extracted from a pdf of a semester calendar, find all events: ";
+//   const response1 = await client.responses.parse({
+//     model: "gpt-4.1-nano",
+//     input: processInstructions + calendarText,
+//     text: {
+//       format: zodTextFormat(processPdfSchema, "date_event"),
+//     },
+//   });
+//   console.log(`response1: ${response1.output_text}`);
+//   const processEventsIntructions =
+//     "Categorize each of the following events as 'Classes Start', 'No Class', 'Classes follow [weekday] schedule', 'Classes End', 'Finals week': ";
+//   const response2 = await client.responses.parse({
+//     model: "gpt-4.1-nano",
+//     input: processEventsIntructions + response1.output_text,
+//     text: {
+//       format: zodTextFormat(categorizeEventSchema, "categorize"),
+//     },
+//   });
+//   console.log(`response2: ${response2.output_text}`);
 
-  return {
-    response1: JSON.parse(response1.output_text),
-    esponse2: JSON.parse(response2.output_text),
-  };
-}
+//   return {
+//     response1: JSON.parse(response1.output_text),
+//     esponse2: JSON.parse(response2.output_text),
+//   };
+// }
 
-async function getSemesterCalendar() {
-  const url =
-    "https://www.ccny.cuny.edu/sites/default/files/2025-04/Fall%202025%20Academic%20Calendar.pdf";
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const pdfBuffer = await response.arrayBuffer();
-    const data = await pdf(pdfBuffer);
-    console.log(`PDF text: ${data.text}`);
-    return data.text;
-  } catch (error) {
-    console.error("Error fetching or parsing PDF:", error);
-    throw new Error("Failed to get semester calendar.");
-  }
-}
+// async function getSemesterCalendar() {
+//   const url =
+//     "https://www.ccny.cuny.edu/sites/default/files/2025-04/Fall%202025%20Academic%20Calendar.pdf";
+//   try {
+//     const response = await fetch(url);
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+//     const pdfBuffer = await response.arrayBuffer();
+//     const data = await pdf(pdfBuffer);
+//     console.log(`PDF text: ${data.text}`);
+//     return data.text;
+//   } catch (error) {
+//     console.error("Error fetching or parsing PDF:", error);
+//     throw new Error("Failed to get semester calendar.");
+//   }
+// }
 
-app.get("/ccny", async (req, res) => {
-  try {
-    const calendarText = await getSemesterCalendar();
-    const processed = await processSemesterCalendar(calendarText);
-    console.log("Processed");
-    res.json({ processed: processed });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// app.get("/ccny", async (req, res) => {
+//   try {
+//     const calendarText = await getSemesterCalendar();
+//     const processed = await processSemesterCalendar(calendarText);
+//     console.log("Processed");
+//     res.json({ processed: processed });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
 
 // api endpoints
 
@@ -280,9 +287,18 @@ app.post("/api/process-image", upload.single("image"), async (req, res) => {
   console.log(`req.file.mimetype: ${req.file.mimetype}`);
   const imageUrl = `data:${req.file.mimetype};base64,${imageAsBase64}`;
 
-  let imageResponse = await imageOpenAI(imageUrl);
+  const instructionsExtractTextFromImage = "Extract all text from this image: ";
+  let imageResponse = await imageOpenAI(
+    imageUrl,
+    instructionsExtractTextFromImage
+  );
   console.log(`-------Text Response------- ${imageResponse.output_text}`);
   let response = await textOpenAI(imageResponse.output_text);
+
+  // const instructionsValidateImage =
+  //   "Are all events correclty extracted from this image. Events: " + response;
+
+  // const validationResponse =
 
   let validationResult = coursesSchema.safeParse(
     JSON.parse(response.output_text)
