@@ -100,13 +100,40 @@ const EventPopup = ({
         >
           <div className="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
             <h3 className="text-sm font-semibold">Edit event</h3>
-            <button
-              onClick={onClose}
-              className="text-slate-400 hover:text-slate-200 transition-colors"
-              aria-label="Close"
-            >
-              ✕
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  eventDelete();
+                  onClose();
+                }}
+                className="text-slate-400 hover:text-red-400 transition-colors"
+                aria-label="Delete event"
+                title="Delete event"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="w-5 h-5"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2m-6 5v6m4-6v6"
+                  />
+                </svg>
+              </button>
+              <button
+                onClick={onClose}
+                className="text-slate-400 hover:text-slate-200 transition-colors"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
           </div>
           <div className="p-4 max-h-[80vh] overflow-y-auto">
             <PopupForm
@@ -130,13 +157,40 @@ const EventPopup = ({
           <div className="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
             <div className="h-1.5 w-10 bg-slate-600/60 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 -top-2" />
             <h3 className="text-base font-semibold">Edit event</h3>
-            <button
-              onClick={onClose}
-              className="text-slate-400 hover:text-slate-200 transition-colors"
-              aria-label="Close"
-            >
-              ✕
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  eventDelete?.();
+                  onClose?.();
+                }}
+                className="text-slate-400 hover:text-red-400 transition-colors"
+                aria-label="Delete event"
+                title="Delete event"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="w-5 h-5"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2m-6 5v6m4-6v6"
+                  />
+                </svg>
+              </button>
+              <button
+                onClick={onClose}
+                className="text-slate-400 hover:text-slate-200 transition-colors"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
           </div>
           <div className="p-4 overflow-y-auto">
             <PopupForm
