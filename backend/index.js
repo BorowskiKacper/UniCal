@@ -26,12 +26,9 @@ const eventSchema = z.object({
 });
 const courseSchema = z.object({
   className: z.string(),
+  classSection: z.string(),
   occurences: z.array(eventSchema),
 });
-// const coursesSchema = z.object({
-//   courses: z.array(courseSchema),
-//   unsure: z.string(),
-// });
 const coursesSchema = z.object({
   courses: z.array(courseSchema),
 });
@@ -40,14 +37,10 @@ const courseCountSchema = z.object({ atLeastOne: z.boolean() });
 // AI functions
 async function textOpenAI(courseText) {
   const processInputInstructions =
-    "ENSURE TO EXTRACT EVERY CLASS | From the following text, extract class names. And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: 00:00-23:59), location (building and room, or remote). Extract the calendar events from the following text: ";
+    "ENSURE TO EXTRACT EVERY CLASS | From the following text, extract class and section names. And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: 00:00-23:59), location (building and room, or remote). Extract the calendar events from the following text: ";
   const input = processInputInstructions + courseText;
   const response = await client.responses.parse({
-    model: "gpt-5-nano",
-    // input: [
-    //   { role: "system", content: processInputInstructions },
-    //   { role: "user", content: courseText },
-    // ],
+    model: "gpt-4.1-nano",
     input: input,
     text: {
       format: zodTextFormat(coursesSchema, "courses"),
@@ -56,11 +49,11 @@ async function textOpenAI(courseText) {
   return response;
 }
 
-async function imageOpenAI(base64ImageUrl, processInputInstructions) {
-  // const processInputInstructions =
-  // "First tell me what you're unsure of (what may be challenging to process). Don't include notes such as 'Enrolled', 'Seats', and 'Wait List' as part of the course details; focus solely on class names, times, and locations. From the following image, extract class names (Ensure each classname is accurate). And for each classname, find all occurences (times when the class occurs). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: HH:MM-HH:MM; don't include AM and/or PM), location (building and room, or remote).  Extract the calendar events from the following image: ";
-  //   const processInputInstructions =
-  //     "From the following image, extract class names (usually the classname is above LEC) (the image structure is class code, class name, weekdays and times, section (ex: LEC 007; don't care about section)). And for each classname, find all occurences (times when the class occurs. Almost all classes should contain at least two lectures). For each occurence say the weekday (format: Mon, Tue, Wed, Thu, Fri, Sat, Sun), time (format: HH:MM-HH:MM; don't include AM and/or PM), location (building and room, or remote).  Extract the calendar events from the following image: ";
+async function imageOpenAI(
+  base64ImageUrl,
+  processInputInstructions,
+  schema = null
+) {
   const response = await client.responses.parse({
     model: "gpt-4.1-nano",
     input: [
@@ -75,64 +68,62 @@ async function imageOpenAI(base64ImageUrl, processInputInstructions) {
         ],
       },
     ],
-    // text: {
-    //   format: zodTextFormat(coursesSchema, "courses"),
-    // },
+    ...(schema && { text: { format: zodTextFormat(schema, "schema") } }),
   });
 
   return response;
 }
 
-// Ensure AI parsed input correctly
-async function isAtLeastOneCourse(instructions) {
-  const response = await client.responses.parse({
-    model: "gpt-4.1-nano",
-    input: instructions,
-    text: {
-      format: zodTextFormat(courseCountSchema, "atleastOne"),
-    },
-  });
-  return response;
-}
-async function validateResponse(courses) {
-  // THIS FUNCTION IS NOT COMPLETE.
-  let processCount = 0;
-  const processCountCapacity = 3;
-  const checkMoreThanOneCourseInstructions =
-    "Determine whether there is more than one course from the following: ";
+// // Ensure AI parsed input correctly
+// async function isAtLeastOneCourse(instructions) {
+//   const response = await client.responses.parse({
+//     model: "gpt-4.1-nano",
+//     input: instructions,
+//     text: {
+//       format: zodTextFormat(courseCountSchema, "atleastOne"),
+//     },
+//   });
+//   return response;
+// }
+// async function validateResponse(courses) {
+//   // THIS FUNCTION IS NOT COMPLETE.
+//   let processCount = 0;
+//   const processCountCapacity = 3;
+//   const checkMoreThanOneCourseInstructions =
+//     "Determine whether there is more than one course from the following: ";
 
-  let [atLeastOneCourse, response] = await Promise.all([
-    checkMoreThanOneCourse(checkMoreThanOneCourseInstructions + courses),
-    processInput(processInputInstructions + coursesInput),
-  ]);
-  let parsedAtLeastOneCourse = JSON.parse(atLeastOneCourse.output_text);
-  let validationResult = coursesSchema.safeParse(
-    JSON.parse(response.output_text)
-  );
+//   let [atLeastOneCourse, response] = await Promise.all([
+//     checkMoreThanOneCourse(checkMoreThanOneCourseInstructions + courses),
+//     processInput(processInputInstructions + coursesInput),
+//   ]);
+//   let parsedAtLeastOneCourse = JSON.parse(atLeastOneCourse.output_text);
+//   let validationResult = coursesSchema.safeParse(
+//     JSON.parse(response.output_text)
+//   );
 
-  while (
-    !validationResult.success ||
-    !(
-      parsedAtLeastOneCourse.atLeastOne ===
-      validationResult.data.courses.length > 1
-    )
-  ) {
-    if (processCount < processCountCapacity) {
-      response = await processInput(processInputInstructions + coursesInput);
-      validationResult = coursesSchema.safeParse(
-        JSON.parse(response.output_text)
-      );
-    } else {
-      console.error("Zod validation failed:", validationResult.error);
-      return res.status(500).json({
-        message:
-          "AI response was not in the expected format. Please try again.",
-      });
-    }
-  }
+//   while (
+//     !validationResult.success ||
+//     !(
+//       parsedAtLeastOneCourse.atLeastOne ===
+//       validationResult.data.courses.length > 1
+//     )
+//   ) {
+//     if (processCount < processCountCapacity) {
+//       response = await processInput(processInputInstructions + coursesInput);
+//       validationResult = coursesSchema.safeParse(
+//         JSON.parse(response.output_text)
+//       );
+//     } else {
+//       console.error("Zod validation failed:", validationResult.error);
+//       return res.status(500).json({
+//         message:
+//           "AI response was not in the expected format. Please try again.",
+//       });
+//     }
+//   }
 
-  const parsedResponse = validationResult.data; // This is what you'll likely return
-}
+//   const parsedResponse = validationResult.data; // This is what you'll likely return
+// }
 
 // Creates calendar events to be sent to frontend
 function createCalendarEvents(parsedResponse) {
@@ -284,7 +275,6 @@ app.post("/api/process-image", upload.single("image"), async (req, res) => {
   }
 
   const imageAsBase64 = req.file.buffer.toString("base64");
-  console.log(`req.file.mimetype: ${req.file.mimetype}`);
   const imageUrl = `data:${req.file.mimetype};base64,${imageAsBase64}`;
 
   const instructionsExtractTextFromImage = "Extract all text from this image: ";
@@ -292,13 +282,8 @@ app.post("/api/process-image", upload.single("image"), async (req, res) => {
     imageUrl,
     instructionsExtractTextFromImage
   );
-  console.log(`-------Text Response------- ${imageResponse.output_text}`);
+  // console.log(`-------Text Response------- ${imageResponse.output_text}`);
   let response = await textOpenAI(imageResponse.output_text);
-
-  // const instructionsValidateImage =
-  //   "Are all events correclty extracted from this image. Events: " + response;
-
-  // const validationResponse =
 
   let validationResult = coursesSchema.safeParse(
     JSON.parse(response.output_text)
@@ -311,8 +296,39 @@ app.post("/api/process-image", upload.single("image"), async (req, res) => {
     });
   }
 
+  // const turnToResponseInTextFormat = validationResult.data;
+  // let responseInTextFormat = "";
+  // for (let i = 0; i < turnToResponseInTextFormat.courses.length; i++) {
+  //   const course = turnToResponseInTextFormat.courses[i];
+  //   responseInTextFormat += `${course.className}\n`;
+  //   for (let j = 0; j < course.occurences.length; j++) {
+  //     const occ = course.occurences[j];
+  //     responseInTextFormat += `  - ${occ.weekDay}: ${occ.time} @ ${occ.location}\n`;
+  //   }
+  //   if (i !== turnToResponseInTextFormat.courses.length - 1) {
+  //     responseInTextFormat += `\n`;
+  //   }
+  // }
+
+  // const instructionsValidateImage =
+  //   "Are all events correctly extracted (correct number of courses? correct weekdays and times for each course? Don't worry about location) from this image (yes or no). If no, why not?. Events: " +
+  //   responseInTextFormat;
+  // const schemaValidateImage = z.object({
+  //   isCorrectlyExtracted: z.enum(["yes", "no"]),
+  //   reasoning: z.string(),
+  // });
+
+  // const validationResponse = await imageOpenAI(
+  //   imageUrl,
+  //   instructionsValidateImage,
+  //   schemaValidateImage
+  // );
+
+  // console.log("instructionsValidateImage", instructionsValidateImage);
+  // console.log(JSON.parse(validationResponse.output_text));
+
   const calendarEvents = createCalendarEvents(validationResult.data);
-  console.log(`Calendar Events: ${JSON.stringify(calendarEvents)}`);
+  // console.log(`Calendar Events: ${JSON.stringify(calendarEvents)}`);
 
   res.json(calendarEvents);
 });
