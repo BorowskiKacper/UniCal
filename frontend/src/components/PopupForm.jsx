@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import SubmitButton from "./SubmitButton";
 
-const PopupForm = ({ activeEvent, setEventProperty, weekdays = [] }) => {
+const PopupForm = ({
+  activeEvent,
+  eventModify,
+  eventDelete,
+  weekdays = [],
+  closePopup,
+}) => {
   const [title, setTitle] = useState(activeEvent.className);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -33,7 +39,8 @@ const PopupForm = ({ activeEvent, setEventProperty, weekdays = [] }) => {
     event.preventDefault();
     console.log("Event submitted");
     const time = `${startTime}-${endTime}`;
-    setEventProperty({ className: title, weekDay, description, time });
+    closePopup();
+    eventModify({ className: title, weekDay, description, time });
   };
 
   const handleKeyDown = (event, index) => {
@@ -113,16 +120,6 @@ const PopupForm = ({ activeEvent, setEventProperty, weekdays = [] }) => {
             >
               Weekday
             </label>
-            {/* <input
-              className="w-full bg-slate-900/50 border border-slate-600 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-              id="weekDay"
-              type="text"
-              value={weekDay}
-              onChange={(event) => setWeekDay(event.target.value)}
-              onKeyDown={(event) => handleKeyDown(event, 3)}
-              ref={inputRefs[3]}
-              placeholder="e.g., Mon"
-            /> */}
             <select
               className="w-full bg-slate-900/50 border border-slate-600 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
               name="weekDay"

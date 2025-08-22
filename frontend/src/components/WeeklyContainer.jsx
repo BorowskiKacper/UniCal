@@ -4,7 +4,9 @@ import HorizontalGridLines from "./HorizontalGridLines";
 import EventPopup from "./EventPopup";
 
 const WeeklyContainer = ({
-  handleEventPropChange,
+  handleEventModify,
+  handleEventAdd,
+  handleEventDelete,
   activeEventId,
   setActiveEventId,
   calendarEvents,
@@ -142,7 +144,9 @@ const WeeklyContainer = ({
           activeEvent={activeEvent}
           anchorRect={popupAnchorRect}
           calendarContainerRect={calendarContainerRef.current?.getBoundingClientRect()}
-          setEventProperty={handleEventPropChange}
+          eventAdd={handleEventAdd}
+          eventModify={handleEventModify}
+          eventDelete={handleEventDelete}
           onClose={closePopup}
           weekdays={weekdays}
         />

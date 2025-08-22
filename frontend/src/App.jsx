@@ -53,7 +53,7 @@ function App() {
     console.log("Successfully fetched and set calendarEvents:", data);
   };
 
-  const handleEventPropChange = (properties) => {
+  const handleEventModify = (properties) => {
     setCalendarEvents((prevEvents) => ({
       ...prevEvents,
       [activeEventId]: {
@@ -61,6 +61,22 @@ function App() {
         ...properties,
       },
     }));
+  };
+
+  const handleEventAdd = (properties) => {
+    setCalendarEvents((prevEvents) => ({
+      ...prevEvents,
+      ["newid"]: {
+        ...properties,
+      },
+    }));
+  };
+
+  const handleEventDelete = () => {
+    setCalendarEvents((prevEvents) => {
+      const { [activeEventId]: _, ...remainingEvents } = prevEvents;
+      return remainingEvents;
+    });
   };
 
   return (
@@ -91,7 +107,9 @@ function App() {
           <UploadContainer fetchEvents={fetchEvents} />
           <WeeklyContainer
             calendarEvents={calendarEvents}
-            handleEventPropChange={handleEventPropChange}
+            handleEventAdd={handleEventAdd}
+            handleEventModify={handleEventModify}
+            handleEventDelete={handleEventDelete}
             setActiveEventId={setActiveEventId}
             activeEventId={activeEventId}
           />

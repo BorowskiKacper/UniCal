@@ -6,7 +6,9 @@ const EventPopup = ({
   anchorRect,
   calendarContainerRect,
   onClose,
-  setEventProperty,
+  eventModify,
+  eventAdd,
+  eventDelete,
   weekdays,
 }) => {
   const isOpen = Boolean(activeEvent);
@@ -109,8 +111,10 @@ const EventPopup = ({
           <div className="p-4 max-h-[80vh] overflow-y-auto">
             <PopupForm
               activeEvent={activeEvent}
-              setEventProperty={setEventProperty}
+              eventModify={eventModify}
+              eventDelete={eventDelete}
               weekdays={weekdays}
+              closePopup={onClose}
             />
           </div>
         </div>
@@ -137,8 +141,10 @@ const EventPopup = ({
           <div className="p-4 overflow-y-auto">
             <PopupForm
               activeEvent={activeEvent}
-              setEventProperty={setEventProperty}
+              eventModify={eventModify}
+              eventDelete={eventDelete}
               weekdays={weekdays}
+              closePopup={onClose}
             />
           </div>
         </div>
