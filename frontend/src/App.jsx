@@ -64,9 +64,10 @@ function App() {
   };
 
   const handleEventAdd = (properties) => {
+    const id = `${properties.className}-${properties.weekDay}-${properties.time}`;
     setCalendarEvents((prevEvents) => ({
       ...prevEvents,
-      ["newid"]: {
+      [id]: {
         ...properties,
       },
     }));
