@@ -1,18 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import SubmitButton from "./SubmitButton";
 
-const PopupForm = ({
-  activeEvent,
-  eventModify,
-  eventDelete,
-  weekdays = [],
-  closePopup,
-}) => {
-  const [title, setTitle] = useState(activeEvent.className);
+const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
+  const [title, setTitle] = useState(activeEvent?.className || "");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [weekDay, setWeekDay] = useState(activeEvent.weekDay);
-  const [description, setDescription] = useState(activeEvent.description);
+  const [weekDay, setWeekDay] = useState(
+    activeEvent?.weekDay || weekdays?.[0] || ""
+  );
+  const [description, setDescription] = useState(
+    activeEvent?.description || ""
+  );
 
   const inputRefs = [
     useRef(null),
@@ -24,20 +22,26 @@ const PopupForm = ({
 
   useEffect(() => {
     if (!activeEvent) return;
-    setStartTime(activeEvent.time.slice(0, 5));
-    setEndTime(activeEvent.time.slice(6, 11));
+    const time = activeEvent.time || "";
+    if (time.includes("-")) {
+      // May cause errors. Delete this comment later if it doens't
+      setStartTime(time.slice(0, 5));
+      setEndTime(time.slice(6, 11));
+    } else {
+      setStartTime("");
+      setEndTime("");
+    }
   }, [activeEvent]);
 
   useEffect(() => {
     if (!activeEvent) return;
     setTitle(activeEvent.className || "");
-    setWeekDay(activeEvent.weekDay || "");
+    setWeekDay(activeEvent.weekDay || weekdays?.[0] || "");
     setDescription(activeEvent.description || "");
-  }, [activeEvent]);
+  }, [activeEvent, weekdays]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Event submitted");
     const time = `${startTime}-${endTime}`;
     closePopup();
     eventModify({ className: title, weekDay, description, time });

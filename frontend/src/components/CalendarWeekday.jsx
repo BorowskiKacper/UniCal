@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
 import CalendarEvent from "./CalendarEvent";
 
-const CalendarWeekday = ({ weekday, events, onEventClick }) => {
+const CalendarWeekday = ({ weekday, events, onEventClick, onWeekdayClick }) => {
+  const weekdayRef = useRef(null);
+
+  const handleWeekdayClick = () => {
+    const rect = weekdayRef.current?.getBoundingClientRect();
+    onWeekdayClick?.(weekday, rect);
+  };
   return (
     <div className="relative w-full h-full border-r border-slate-700/20 last:border-r-0 flex flex-col">
       <div className="sticky top-0 z-10 bg-slate-800/90 backdrop-blur-sm border-b border-slate-700/50">
@@ -14,7 +20,11 @@ const CalendarWeekday = ({ weekday, events, onEventClick }) => {
         </div>
       </div>
 
-      <div className="relative flex-1">
+      <div
+        className="relative flex-1"
+        ref={weekdayRef}
+        onClick={handleWeekdayClick}
+      >
         {Object.entries(events).map(([id, event]) => {
           return (
             <CalendarEvent

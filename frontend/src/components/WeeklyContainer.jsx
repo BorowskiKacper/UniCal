@@ -51,9 +51,17 @@ const WeeklyContainer = ({
   const [popupAnchorRect, setPopupAnchorRect] = useState(null);
   const calendarContainerRef = useRef(null);
   const scrollTargetRef = useRef(null);
+  const [weekdayToAddCourse, setWeekdayToAddCourse] = useState("");
 
   const handleEventClick = (id, rect) => {
+    setWeekdayToAddCourse("");
     setActiveEventId(id);
+    setPopupAnchorRect(rect);
+  };
+
+  const handleWeekdayClick = (weekday, rect) => {
+    setActiveEventId("");
+    setWeekdayToAddCourse(weekday);
     setPopupAnchorRect(rect);
   };
 
@@ -65,6 +73,7 @@ const WeeklyContainer = ({
   const closePopup = () => {
     setActiveEventId("");
     setPopupAnchorRect(null);
+    setWeekdayToAddCourse("");
   };
 
   useEffect(() => {
@@ -134,6 +143,7 @@ const WeeklyContainer = ({
                     calendarEvents={calendarEvents}
                     onEventClick={handleEventClick}
                     weekdays={weekdays}
+                    onWeekdayClick={handleWeekdayClick}
                   />
                 </div>
               </div>
@@ -149,6 +159,8 @@ const WeeklyContainer = ({
           eventDelete={handleEventDelete}
           onClose={closePopup}
           weekdays={weekdays}
+          weekdayAdd={weekdayToAddCourse}
+          calendarEvents={calendarEvents}
         />
       </div>
     </div>

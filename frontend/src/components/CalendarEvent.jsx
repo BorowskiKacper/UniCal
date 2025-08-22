@@ -13,6 +13,7 @@ const CalendarEvent = ({ id, event, onEventClick }) => {
   const height = (eventLengthMinutes / minsPerDay) * 100;
 
   function handleOnclick(e) {
+    e.stopPropagation();
     const target = e.currentTarget;
     const container = target.closest(".calendar-event-anchor");
     const rect = (container || target).getBoundingClientRect();
