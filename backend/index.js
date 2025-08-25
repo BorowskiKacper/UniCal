@@ -103,6 +103,7 @@ function createCalendarEvents(parsedResponse) {
 // Ensure robust responses from AI
 async function parseText(text) {
   async function parseOnceFromText(text) {
+    console.log("Parsing...");
     let response = await textOpenAI(text);
 
     let validationResult = coursesSchema.safeParse(
@@ -200,23 +201,9 @@ app.post("/api/process-text", async (req, res) => {
   if (!text) {
     return res.status(400).json({ message: "No text provided" });
   }
-  console.log(`Processing: ${text}`);
-  let response = await textOpenAI(text);
-  console.log(`Processed response: ${response}`);
 
-  let validationResult = coursesSchema.safeParse(
-    JSON.parse(response.output_text)
-  );
-
-  if (!validationResult.success) {
-    console.error("Zod validation failed:", validationResult.error);
-    return res.status(500).json({
-      message: "AI response was not in the expected format. Please try again.",
-    });
-  }
-
-  const calendarEvents = createCalendarEvents(validationResult.data);
-  console.log(`Calendar Events: ${JSON.stringify(calendarEvents)}`);
+  const parsed = await parseText(text);
+  const calendarEvents = createCalendarEvents(parsed);
 
   res.json(calendarEvents);
 });
@@ -238,7 +225,6 @@ app.post("/api/process-image", upload.single("image"), async (req, res) => {
   );
 
   const parsed = await parseText(imageResponse.output_text);
-
   const calendarEvents = createCalendarEvents(parsed);
 
   res.json(calendarEvents);
