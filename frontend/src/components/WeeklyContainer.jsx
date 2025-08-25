@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState, useLayoutEffect } from "react";
 import CalendarEventGrid from "./CalendarEventGrid";
 import HorizontalGridLines from "./HorizontalGridLines";
 import EventPopup from "./EventPopup";
@@ -50,7 +50,8 @@ const WeeklyContainer = ({
 
   const [popupAnchorRect, setPopupAnchorRect] = useState(null);
   const calendarContainerRef = useRef(null);
-  const scrollTargetRef = useRef(null);
+  const calendarScrollAreaRef = useRef(null);
+  const calendarScrollTargetRef = useRef(null);
   const [weekdayToAddCourse, setWeekdayToAddCourse] = useState("");
 
   const handleEventClick = (id, rect) => {
@@ -76,20 +77,34 @@ const WeeklyContainer = ({
     setWeekdayToAddCourse("");
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if ("test" in calendarEvents) return;
 
-    const scrollToTarget = () => {
-      scrollTargetRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    };
-    scrollToTarget();
+    const containerEl = calendarContainerRef.current;
+    const scrollAreaEl = calendarScrollAreaRef.current;
+    const targetEl = calendarScrollTargetRef.current;
+    if (!containerEl || !scrollAreaEl || !targetEl) return;
+
+    // Scroll the page so the calendar's top (with weekday headers) is visible
+    const headerEl = document.querySelector("header");
+    const headerHeight = headerEl?.getBoundingClientRect().height ?? 64;
+
+    const calendarTopY =
+      containerEl.getBoundingClientRect().top + window.scrollY - headerHeight;
+
+    // Compute internal scroll offset to roughly 7am (the target marker)
+    const targetRect = targetEl.getBoundingClientRect();
+    const scrollAreaRect = scrollAreaEl.getBoundingClientRect();
+    const internalScrollTop =
+      targetRect.top - scrollAreaRect.top + scrollAreaEl.scrollTop;
+
+    // Start both smooth scrolls together
+    window.scrollTo({ top: calendarTopY, behavior: "smooth" });
+    scrollAreaEl.scrollTo({ top: internalScrollTop, behavior: "smooth" });
   }, [calendarEvents]);
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full max-w-7xl mx-auto" ref={calendarContainerRef}>
       {/* Calendar Header */}
       <div className="mb-6 text-center">
         <h2 className="text-xl md:text-2xl font-bold text-white mb-2">
@@ -101,13 +116,13 @@ const WeeklyContainer = ({
       </div>
 
       {/* Calendar Container */}
-      <div
-        className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden"
-        ref={calendarContainerRef}
-      >
+      <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
         {/* Calendar Body */}
         <div className="relative">
-          <div className="max-h-[500px] sm:max-h-[600px] md:max-h-[700px] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800/50">
+          <div
+            className="max-h-[500px] sm:max-h-[600px] md:max-h-[700px] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800/50"
+            ref={calendarScrollAreaRef}
+          >
             <div className="flex min-h-[800px] min-w-[640px] sm:min-w-0">
               {/* Time Column */}
               <div className="w-12 sm:w-16 md:w-20 flex-shrink-0 bg-slate-800 ">
@@ -133,7 +148,7 @@ const WeeklyContainer = ({
                     <div className="flex-9/24 w-full"></div>
                     <div
                       className="flex-17/24 w-full"
-                      ref={scrollTargetRef}
+                      ref={calendarScrollTargetRef}
                     ></div>
                   </div>
                 </div>
