@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
+import dotenv, { parse } from "dotenv";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
@@ -100,6 +100,94 @@ function createCalendarEvents(parsedResponse) {
   return calendarEvents;
 }
 
+// Ensure robust responses from AI
+async function parseText(text) {
+  async function parseOnceFromText(text) {
+    let response = await textOpenAI(text);
+
+    let validationResult = coursesSchema.safeParse(
+      JSON.parse(response.output_text)
+    );
+
+    if (!validationResult.success) {
+      console.log("Zod validation failed:", validationResult.error);
+      return "";
+      // return res.status(500).json({
+      //   message: "AI response was not in the expected format. Please try again.",
+      // });
+    }
+
+    return validationResult.data;
+  }
+
+  async function parseTwiceFromText(text) {
+    const toParse = [text, text];
+    const parsed = await Promise.all(
+      toParse.map((text) => reparseUntilMoreThanOneCourse(text))
+    );
+    return parsed;
+  }
+
+  async function reparseUntilMoreThanOneCourse(text, attempts = 5) {
+    let parsed = "";
+    for (let i = 0; i < attempts; i++) {
+      parsed = await parseOnceFromText(text);
+
+      if (parsed && getCourseCount(parsed) > 1) break;
+    }
+    return parsed;
+  }
+
+  function getCourseCount(parsed) {
+    return parsed.courses.length;
+  }
+
+  function getEventCount(parsed) {
+    let eventCount = 0;
+    for (let i in parsed.courses) {
+      console.log("parsed.courses[i]", parsed.courses[i]);
+      eventCount += parsed.courses[i].occurences.length;
+    }
+    console.log("eventCount", eventCount);
+    return eventCount;
+  }
+
+  function isRepeatedEvent(previousParses, newParsed) {
+    const courseCount = getCourseCount(newParsed);
+    const eventCount = getEventCount(newParsed);
+    console.log("courseCount", courseCount);
+    console.log("eventCount", eventCount);
+    for (const [prevCourseCount, prevEventCount] of previousParses) {
+      if (courseCount === prevCourseCount && eventCount === prevEventCount) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  let isMoreThanOneEvent = true;
+  const parsedTwice = await parseTwiceFromText(text);
+  isMoreThanOneEvent =
+    getCourseCount(parsedTwice[0]) > 1 || getCourseCount(parsedTwice[1]) > 1;
+
+  let previousParses = [
+    [getCourseCount(parsedTwice[0]), getEventCount(parsedTwice[0])],
+  ];
+  let parsed = parsedTwice[1];
+
+  const maxUniqueResults = 10;
+  for (let i = 0; i < maxUniqueResults - 2; i++) {
+    if (isRepeatedEvent(previousParses, parsed)) break;
+    console.log("in loop. i:", i);
+
+    previousParses.push([getCourseCount(parsed), getEventCount(parsed)]);
+    parsed = await (isMoreThanOneEvent
+      ? reparseUntilMoreThanOneCourse(text)
+      : parseOnceFromText(text));
+  }
+  return parsed;
+}
+
 // api endpoints
 app.get("/", (req, res) => {
   res.send("Hello World");
@@ -144,24 +232,14 @@ app.post("/api/process-image", upload.single("image"), async (req, res) => {
   const imageUrl = `data:${req.file.mimetype};base64,${imageAsBase64}`;
 
   const instructionsExtractTextFromImage = "Extract all text from this image: ";
-  let imageResponse = await imageOpenAI(
+  const imageResponse = await imageOpenAI(
     imageUrl,
     instructionsExtractTextFromImage
   );
-  let response = await textOpenAI(imageResponse.output_text);
 
-  let validationResult = coursesSchema.safeParse(
-    JSON.parse(response.output_text)
-  );
+  const parsed = await parseText(imageResponse.output_text);
 
-  if (!validationResult.success) {
-    console.error("Zod validation failed:", validationResult.error);
-    return res.status(500).json({
-      message: "AI response was not in the expected format. Please try again.",
-    });
-  }
-
-  const calendarEvents = createCalendarEvents(validationResult.data);
+  const calendarEvents = createCalendarEvents(parsed);
 
   res.json(calendarEvents);
 });
