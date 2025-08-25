@@ -10,6 +10,7 @@ const WeeklyContainer = ({
   activeEventId,
   setActiveEventId,
   calendarEvents,
+  generatedEvents,
 }) => {
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const hours = [
@@ -78,7 +79,7 @@ const WeeklyContainer = ({
   };
 
   useLayoutEffect(() => {
-    if ("test" in calendarEvents) return;
+    if (!generatedEvents) return;
 
     const containerEl = calendarContainerRef.current;
     const scrollAreaEl = calendarScrollAreaRef.current;
@@ -101,7 +102,7 @@ const WeeklyContainer = ({
     // Start both smooth scrolls together
     window.scrollTo({ top: calendarTopY, behavior: "smooth" });
     scrollAreaEl.scrollTo({ top: internalScrollTop, behavior: "smooth" });
-  }, [calendarEvents]);
+  }, [generatedEvents]);
 
   return (
     <div className="w-full max-w-7xl mx-auto" ref={calendarContainerRef}>

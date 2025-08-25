@@ -19,11 +19,13 @@ function App() {
     },
   });
   const [activeEventId, setActiveEventId] = useState("");
+  const [generatedEvents, setGeneratedEvents] = useState(false);
 
   const fetchEvents = async ({ isText, payload }) => {
     // Pass in either text or image, but not both
 
     console.log("Fetching events");
+    setGeneratedEvents(false);
     let response;
 
     if (isText) {
@@ -50,6 +52,7 @@ function App() {
 
     const data = await response.json();
     setCalendarEvents(data);
+    setGeneratedEvents(true);
     console.log("Successfully fetched and set calendarEvents:", data);
   };
 
@@ -113,6 +116,7 @@ function App() {
             handleEventDelete={handleEventDelete}
             setActiveEventId={setActiveEventId}
             activeEventId={activeEventId}
+            generatedEvents={generatedEvents}
           />
         </div>
       </main>
