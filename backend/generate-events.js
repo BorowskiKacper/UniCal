@@ -98,10 +98,9 @@ async function parseText(text) {
     );
 
     if (!validationResult.success) {
-      console.log("Zod validation failed:", validationResult.error);
+      console.warn("Zod validation failed:", validationResult.error);
       return "";
     }
-
     return validationResult.data;
   }
 
