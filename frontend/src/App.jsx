@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import WeeklyContainer from "./components/WeeklyContainer";
 import UploadContainer from "./components/Upload/UploadContainer";
+import DownloadCalendar from "./components/DownloadCalendar";
 
 function App() {
   const [calendarEvents, setCalendarEvents] = useState({
@@ -83,6 +84,51 @@ function App() {
     });
   };
 
+  const handleDownloadCalendar = async (college) => {
+    try {
+      console.log("Fetching");
+      const response = await fetch(
+        "http://localhost:3000/api/calendar-events-to-ics",
+        {
+          method: "POST",
+          headers: {
+            "content-Type": "application/json",
+          },
+          body: JSON.stringify({ college, calendarEvents, reminder: 30 }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error from server:", errorData.message);
+        alert(`Error: ${errorData.message}`);
+        return;
+      }
+
+      const icsString = await response.json();
+      console.log("Fetched:", icsString);
+
+      const blob = new Blob([icsString], {
+        type: "text/calendar;charset=utf-8",
+      });
+
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${college}-schedule.ics`);
+
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading calendar:", error);
+      alert("Error downloading calendar. Please try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-700/50">
@@ -118,6 +164,7 @@ function App() {
             activeEventId={activeEventId}
             generatedEvents={generatedEvents}
           />
+          <DownloadCalendar handleDownloadCalendar={handleDownloadCalendar} />
         </div>
       </main>
     </div>
