@@ -64,7 +64,7 @@ app.post("/api/semester-details", (req, res) => {
 app.post("/api/calendar-events-to-ics", (req, res) => {
   const { college, calendarEvents, reminder } = req.body || {};
   const ics = calendarEventsToICS(college, calendarEvents, reminder);
-  return res.json({ ics: ics });
+  return res.json(ics);
 });
 
 // 404 handler
