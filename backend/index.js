@@ -3,7 +3,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import multer from "multer";
 import { imageToEvents, textToEvents } from "./generate-events.js";
-import { getColleges, getSemesterDetails } from "./college-semester.js";
+import {
+  getColleges,
+  getSemesterDetails,
+  calendarEventsToICS,
+} from "./college-semester.js";
 
 dotenv.config();
 const PORT = process.env.PORT; // 3000;
@@ -48,12 +52,19 @@ app.get("/api/colleges", (req, res) => {
 });
 
 app.post("/api/semester-details", (req, res) => {
+  // This function may be useless, maybe remove it (In college-semester.js too)
   const { college } = req.body || {};
   if (typeof college !== "string" || college.trim().length === 0) {
     return res.status(400).json({ message: "Invalid or missing 'college'" });
   }
   const details = getSemesterDetails(college);
   return res.json(details);
+});
+
+app.post("/api/calendar-events-to-ics", (req, res) => {
+  const { college, calendarEvents, reminder } = req.body || {};
+  const ics = calendarEventsToICS(college, calendarEvents, reminder);
+  return res.json({ ics: ics });
 });
 
 // 404 handler
