@@ -6,17 +6,47 @@ import DownloadCalendar from "./components/DownloadCalendar";
 
 function App() {
   const [calendarEvents, setCalendarEvents] = useState({
-    test: {
-      weekDay: "Tue",
-      time: "14:00-15:15",
-      className: "test",
-      description: "Location: test",
+    Sun: {
+      weekDay: "Sun",
+      time: "10:00-11:00",
+      className: "Sun Example",
+      description: "Location: undefined",
     },
-    test2: {
+    Mon: {
+      weekDay: "Mon",
+      time: "11:00-12:00",
+      className: "Mon Example",
+      description: "Location: undefined",
+    },
+    Tue: {
+      weekDay: "Tue",
+      time: "12:00-13:00",
+      className: "Tue Example",
+      description: "Location: undefined",
+    },
+    Wed: {
       weekDay: "Wed",
-      time: "14:00-18:15",
-      className: "test2",
-      description: "Location: test2",
+      time: "13:00-14:00",
+      className: "Wed Example",
+      description: "Location: undefined",
+    },
+    Thu: {
+      weekDay: "Thu",
+      time: "14:00-15:00",
+      className: "Thu Example",
+      description: "Location: undefined",
+    },
+    Fri: {
+      weekDay: "Fri",
+      time: "15:00-16:00",
+      className: "Fri Example",
+      description: "Location: undefined",
+    },
+    Sat: {
+      weekDay: "Sat",
+      time: "16:00-17:00",
+      className: "Sat Example",
+      description: "Location: undefined",
     },
   });
   const [activeEventId, setActiveEventId] = useState("");
@@ -48,6 +78,9 @@ function App() {
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Error from server:", errorData.message);
+      alert(
+        "An error has occured while generating your Calendar. Please try again."
+      );
       return;
     }
 
