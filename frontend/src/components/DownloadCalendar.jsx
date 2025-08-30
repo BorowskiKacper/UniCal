@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import ChooseCollege from "./ChooseCollege";
 import SubmitButton from "./SubmitButton";
 
-const DownloadCalendar = ({ handleDownloadCalendar }) => {
+const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
   const [selectedCollege, setSelectedCollege] = useState("");
   const [colleges, setColleges] = useState([]);
+  const [isAddingToCalendar, setIsAddingToCalendar] = useState(false);
 
   useEffect(() => {
     const fetchColleges = async () => {
@@ -44,16 +45,34 @@ const DownloadCalendar = ({ handleDownloadCalendar }) => {
             Download Calendar
           </h2>
           <p className="text-slate-400 text-sm md:text-base">
-            Download .ics file
+            Add To Google Calendar
           </p>
+          <SubmitButton
+            text={"Add To Calendar"}
+            onClick={async () => {
+              setIsAddingToCalendar(true);
+              await handleAddToGoogleCalendar(selectedCollege);
+              setIsAddingToCalendar(false);
+            }}
+            isDisabled={!selectedCollege || isAddingToCalendar}
+            isLoading={isAddingToCalendar}
+          />
+          <p className="text-slate-400 text-sm md:text-base">
+            or download .ics file
+          </p>
+          <SubmitButton
+            text="Download .ics"
+            onClick={() => handleDownloadICS(selectedCollege)}
+            isDisabled={!selectedCollege}
+          />
         </header>
-        <div className="flex justify-center">
+        {/* <div className="flex justify-center">
           <SubmitButton
             text="Download"
             onClick={() => handleDownloadCalendar(selectedCollege)}
             isDisabled={!selectedCollege}
           />
-        </div>
+        </div> */}
       </div>
     </section>
   );

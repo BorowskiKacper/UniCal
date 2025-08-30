@@ -3,6 +3,8 @@ import "./App.css";
 import WeeklyContainer from "./components/WeeklyContainer";
 import UploadContainer from "./components/Upload/UploadContainer";
 import DownloadCalendar from "./components/DownloadCalendar";
+import { signInAndGetCalendarAccess } from "./firebase/auth";
+import { createCalendarEventsFromSchedule } from "./firebase/google-calendar";
 
 function App() {
   const [calendarEvents, setCalendarEvents] = useState({
@@ -117,7 +119,37 @@ function App() {
     });
   };
 
-  const handleDownloadCalendar = async (college) => {
+  const handleAddToGoogleCalendar = async (selectedCollege) => {
+    if (!calendarEvents || Object.keys(calendarEvents).length === 0) {
+      alert("No calendar events to add. Please generate your schedule first.");
+      return;
+    }
+
+    try {
+      // Sign in and get access token
+      const { accessToken } = await signInAndGetCalendarAccess();
+
+      if (accessToken) {
+        // Create calendar events
+        const result = await createCalendarEventsFromSchedule(
+          accessToken,
+          calendarEvents,
+          selectedCollege
+        );
+
+        if (result.success) {
+          alert(`Success! ${result.message}`);
+        } else {
+          alert(`Error: ${result.message}`);
+        }
+      }
+    } catch (error) {
+      console.error("Error adding to calendar:", error);
+      alert(`Failed to add events to calendar: ${error.message}`);
+    }
+  };
+
+  const handleDownloadICS = async (college) => {
     try {
       console.log("Fetching");
       const response = await fetch(
@@ -197,7 +229,10 @@ function App() {
             activeEventId={activeEventId}
             generatedEvents={generatedEvents}
           />
-          <DownloadCalendar handleDownloadCalendar={handleDownloadCalendar} />
+          <DownloadCalendar
+            handleDownloadCalendar={handleDownloadICS}
+            handleAddToGoogleCalendar={handleAddToGoogleCalendar}
+          />
         </div>
       </main>
     </div>
