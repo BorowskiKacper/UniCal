@@ -31,71 +31,169 @@ export async function createCalendarEvent(accessToken, eventData) {
   }
 }
 
+function findFirstOccurrence(semesterStart, targetWeekday) {
+  const startDate = new Date(`${semesterStart}T00:00:00`);
+  const dayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(
+    targetWeekday
+  );
+  while (startDate.getDay() !== dayIndex) {
+    startDate.setDate(startDate.getDate() + 1);
+  }
+  return startDate;
+}
+
 // Function to convert app calendar events to Google Calendar format and create them
 export async function createCalendarEventsFromSchedule(
   accessToken,
   calendarEvents,
-  college
+  college,
+  reminder = 10
 ) {
   const createdEvents = [];
   const errors = [];
 
-  const today = new Date();
+  console.log("Fetching");
+  const response = await fetch("http://localhost:3000/api/semester-details", {
+    method: "POST",
+    headers: {
+      "content-Type": "application/json",
+    },
+    body: JSON.stringify({ college }),
+  });
 
-  // Find the next Monday to start scheduling from
-  const nextMonday = new Date(today);
-  const daysUntilMonday = (7 - today.getDay() + 1) % 7 || 7;
-  nextMonday.setDate(today.getDate() + daysUntilMonday);
-
-  const dayMap = {
-    Sun: 0,
-    Mon: 1,
-    Tue: 2,
-    Wed: 3,
-    Thu: 4,
-    Fri: 5,
-    Sat: 6,
-  };
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error("Error from server:", errorData.message);
+    alert(`Error: ${errorData.message}`);
+    return;
+  }
 
   try {
-    for (const [eventId, event] of Object.entries(calendarEvents)) {
+    const details = await response.json();
+    const { semesterStart, semesterEnd, daysOff, daysMoved, timezone } =
+      details;
+    console.log("Fetched");
+
+    const today = new Date();
+
+    const [year, month, date] = semesterStart.split("-");
+
+    const daysOffByWeekday = [[], [], [], [], [], [], []];
+    const daysToAddByWeekday = {
+      Sun: [],
+      Mon: [],
+      Tue: [],
+      Wed: [],
+      Thu: [],
+      Fri: [],
+      Sat: [],
+    };
+
+    for (const date of daysOff) {
+      const tempDate = new Date(`${date}T00:00:00`);
+      const i = tempDate.getDay();
+      daysOffByWeekday[i].push(date);
+    }
+
+    for (const [date, follows] of daysMoved) {
+      // Day to remove
+      const tempDate = new Date(`${date}T00:00:00`);
+      const i = tempDate.getDay();
+      daysOffByWeekday[i].push(date);
+      // Weekday to add on
+      daysToAddByWeekday[follows].push(date);
+    }
+
+    for (let id in calendarEvents) {
       try {
-        // Parse time (format: "HH:MM-HH:MM")
-        const [startTime, endTime] = event.time.split("-");
+        const { className, weekDay, time, description } = calendarEvents[id];
+        const startTime = time.slice(0, 5);
+        const endTime = time.slice(6, 11);
+
+        const firstClassDate = findFirstOccurrence(semesterStart, weekDay);
+        const startDateTime = new Date(
+          `${firstClassDate.toISOString().slice(0, 10)}T${startTime}:00`
+        );
+        const endDateTime = new Date(
+          `${firstClassDate.toISOString().slice(0, 10)}T${endTime}:00`
+        );
+
+        // Get the weekday index for this class
+        const weekdayIndex = [
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+        ].indexOf(weekDay);
+
+        // Get dates to exclude for this specific weekday
+        const datesToExclude = daysOffByWeekday[weekdayIndex] || [];
+
+        // Get dates to add for this specific weekday
+        const datesToAdd = daysToAddByWeekday[weekDay] || [];
+
         const [startHour, startMin] = startTime.split(":").map(Number);
-        const [endHour, endMin] = endTime.split(":").map(Number);
 
-        // Calculate the date for this event (next occurrence of the weekday)
-        const targetDay = dayMap[event.weekDay];
-        const eventDate = new Date(nextMonday);
-        const daysToAdd = (targetDay - nextMonday.getDay() + 7) % 7;
-        eventDate.setDate(nextMonday.getDate() + daysToAdd);
+        // Format the time for EXDATE and RDATE (HHMMSS format)
+        const formattedStartTime = `T${startHour
+          .toString()
+          .padStart(2, "0")}${startMin.toString().padStart(2, "0")}00`;
 
-        const startDateTime = new Date(eventDate);
-        startDateTime.setHours(startHour, startMin, 0, 0);
+        const formattedExDates = datesToExclude
+          .map((date) => {
+            const cleanDate = date.replace(/-/g, ""); // "YYYY-MM-DD" -> "YYYYMMDD"
+            return cleanDate + formattedStartTime;
+          })
+          .join(",");
+        const exDateString =
+          datesToExclude.length > 0
+            ? `EXDATE;TZID=${timezone}:${formattedExDates}`
+            : null;
+        console.log("exDateString", exDateString);
 
-        const endDateTime = new Date(eventDate);
-        endDateTime.setHours(endHour, endMin, 0, 0);
+        const formattedRDates = datesToAdd
+          .map((date) => {
+            const cleanDate = date.replace(/-/g, ""); // "YYYY-MM-DD" -> "YYYYMMDD"
+            return cleanDate + formattedStartTime;
+          })
+          .join(",");
+
+        const rDateString =
+          datesToAdd.length > 0
+            ? `RDATE;TZID=${timezone}:${formattedRDates}`
+            : null;
+
+        console.log("rDateString", rDateString);
 
         const googleCalendarEvent = {
-          summary: event.className,
-          description: event.description || `Class: ${event.className}`,
+          summary: className,
+          description,
           start: {
             dateTime: startDateTime.toISOString(),
-            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timeZone: timezone,
           },
           end: {
             dateTime: endDateTime.toISOString(),
-            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timeZone: timezone,
           },
           recurrence: [
-            `RRULE:FREQ=WEEKLY;BYDAY=${event.weekDay
+            `RRULE:FREQ=WEEKLY;BYDAY=${weekDay
               .substring(0, 2)
-              .toUpperCase()};COUNT=16`,
+              .toUpperCase()};UNTIL=${
+              semesterEnd.replace(/-/g, "") + "T235959Z"
+            }`,
+            ...(exDateString ? [exDateString] : []),
+            ...(rDateString ? [rDateString] : []),
           ],
           reminders: {
             useDefault: false,
-            overrides: [{ method: "popup", minutes: 30 }],
+            overrides:
+              reminder !== false
+                ? [{ method: "popup", minutes: reminder }]
+                : [],
           },
         };
 
@@ -105,8 +203,8 @@ export async function createCalendarEventsFromSchedule(
         );
         createdEvents.push(createdEvent);
       } catch (eventError) {
-        console.error(`Error creating event ${eventId}:`, eventError);
-        errors.push({ eventId, error: eventError.message });
+        console.error(`Error creating event:`, eventError);
+        errors.push({ error: eventError.message });
       }
     }
 
