@@ -2,6 +2,7 @@ export const colleges = {
   CCNY: {
     semesterStart: "2025-08-26",
     semesterEnd: "2025-12-15",
+    timezone: "America/New_York",
     daysOff: [
       "2025-08-30",
       "2025-08-31",
@@ -17,15 +18,26 @@ export const colleges = {
       "2025-11-28",
       "2025-11-29",
       "2025-11-30",
-      // end
-      "2025-12-24",
-      "2025-12-25",
-      "2025-12-31",
-      "2026-01-01",
     ],
     daysMoved: [
       ["2025-10-14", "Mon"],
       ["2025-10-24", "Mon"],
     ],
+  },
+  NYIT: {
+    semesterStart: "2025-09-03",
+    semesterEnd: "2025-12-10",
+    timezone: "America/New_York",
+    daysOff: [
+      "2025-10-13",
+      "2025-11-05",
+      "2025-11-26",
+      "2025-11-27",
+      "2025-11-28",
+      "2025-11-29",
+      "2025-11-30",
+      "2025-12-09",
+    ],
+    daysMoved: [],
   },
 };

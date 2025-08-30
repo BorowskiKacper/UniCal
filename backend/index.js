@@ -62,6 +62,7 @@ app.post("/api/semester-details", (req, res) => {
 });
 
 app.post("/api/calendar-events-to-ics", (req, res) => {
+  console.log("In /api/calendar-events-to-ics");
   const { college, calendarEvents, reminder } = req.body || {};
   const ics = calendarEventsToICS(college, calendarEvents, reminder);
   return res.json(ics);

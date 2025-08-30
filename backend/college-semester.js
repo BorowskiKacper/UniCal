@@ -44,8 +44,8 @@ export function calendarEventsToICS(college, calendarEvents, reminder) {
     error.statusCode = 400;
     throw error;
   }
-  const { semesterStart, semesterEnd, daysOff, daysMoved } = details;
-  const calendar = ical({ name: "Semester Schedule" });
+  const { semesterStart, semesterEnd, daysOff, daysMoved, timezone } = details;
+  const calendar = ical({ name: "Semester Schedule", timezone: timezone });
   const weekdayConversion = {
     Sun: "SU",
     Mon: "MO",
