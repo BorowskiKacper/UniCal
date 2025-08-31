@@ -10,7 +10,8 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
   useEffect(() => {
     const fetchColleges = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/colleges");
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+        const response = await fetch(`${API_BASE_URL}/api/colleges`);
         const data = await response.json();
         setColleges(data);
       } catch (error) {

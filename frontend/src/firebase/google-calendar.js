@@ -52,8 +52,10 @@ export async function createCalendarEventsFromSchedule(
   const createdEvents = [];
   const errors = [];
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   console.log("Fetching");
-  const response = await fetch("http://localhost:3000/api/semester-details", {
+  const response = await fetch(`${API_BASE_URL}/api/semester-details`, {
     method: "POST",
     headers: {
       "content-Type": "application/json",

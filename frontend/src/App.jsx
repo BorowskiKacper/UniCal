@@ -6,6 +6,8 @@ import DownloadCalendar from "./components/DownloadCalendar";
 import { signInAndGetCalendarAccess } from "./firebase/auth";
 import { createCalendarEventsFromSchedule } from "./firebase/google-calendar";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function App() {
   const [calendarEvents, setCalendarEvents] = useState({
     Sun: {
@@ -62,7 +64,7 @@ function App() {
     let response;
 
     if (isText) {
-      response = await fetch("http://localhost:3000/api/process-text", {
+      response = await fetch(`${API_BASE_URL}/api/process-text`, {
         method: "POST",
         headers: {
           "content-Type": "application/json",
@@ -72,7 +74,7 @@ function App() {
     } else {
       const formData = new FormData();
       formData.append("image", payload);
-      response = await fetch("http://localhost:3000/api/process-image", {
+      response = await fetch(`${API_BASE_URL}/api/process-image`, {
         method: "POST",
         body: formData,
       });
@@ -153,7 +155,7 @@ function App() {
     try {
       console.log("Fetching");
       const response = await fetch(
-        "http://localhost:3000/api/calendar-events-to-ics",
+        `${API_BASE_URL}/api/calendar-events-to-ics`,
         {
           method: "POST",
           headers: {
