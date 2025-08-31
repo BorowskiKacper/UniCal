@@ -8,17 +8,38 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
   const [isAddingToCalendar, setIsAddingToCalendar] = useState(false);
 
   useEffect(() => {
-    const fetchColleges = async () => {
+    let isActive = true;
+    let attempts = 0;
+    let timeoutId;
+
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+    const tryFetchColleges = async () => {
+      attempts += 1;
       try {
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
         const response = await fetch(`${API_BASE_URL}/api/colleges`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        setColleges(data);
+
+        if (isActive && Array.isArray(data) && data.length > 0) {
+          setColleges(data);
+          return; // stop retrying once we have data
+        }
       } catch (error) {
         console.error("Error fetching colleges:", error);
       }
+
+      if (isActive && attempts < 10) {
+        timeoutId = setTimeout(tryFetchColleges, 5000);
+      }
     };
-    fetchColleges();
+
+    tryFetchColleges();
+
+    return () => {
+      isActive = false;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, []);
 
   return (
