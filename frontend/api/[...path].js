@@ -9,13 +9,15 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Build target URL; keep the /api prefix since backend expects it
-    const targetUrl = base.replace(/\/$/, "") + req.url;
+    // Normalize base and construct target. Audience must be the service origin.
+    const baseUrl = new URL(base);
+    const serviceOrigin = baseUrl.origin; // https://<service>-<hash>-<region>.a.run.app
+    const targetUrl = new URL(req.url, serviceOrigin).toString();
 
     const auth = new GoogleAuth({
       credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || "{}"),
     });
-    const idClient = await auth.getIdTokenClient(base);
+    const idClient = await auth.getIdTokenClient(serviceOrigin);
     const authHeaders = await idClient.getRequestHeaders();
 
     // Forward headers except hop-by-hop and client Authorization
