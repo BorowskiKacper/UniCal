@@ -1,6 +1,6 @@
 const HorizontalGridLines = () => {
   return (
-    <div className="absolute inset-0 grid grid-rows-24 h-full w-full pointer-events-none">
+    <div className="grid grid-rows-24 h-full w-full pointer-events-none">
       {[...Array(24)].map((_, index) => (
         <div
           key={`Item-${index}`}

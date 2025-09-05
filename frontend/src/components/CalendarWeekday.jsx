@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import CalendarEvent from "./CalendarEvent";
+import HorizontalGridLines from "./HorizontalGridLines";
 
 const CalendarWeekday = ({ weekday, events, onEventClick, onWeekdayClick }) => {
   const weekdayRef = useRef(null);
@@ -19,22 +20,26 @@ const CalendarWeekday = ({ weekday, events, onEventClick, onWeekdayClick }) => {
           <div className="w-4 sm:w-6 md:w-8 h-0.5 bg-amber-400 dark:bg-emerald-400 mx-auto mt-1 md:mt-2 rounded-full opacity-70" />
         </div>
       </div>
-
-      <div
-        className="relative flex-1"
-        ref={weekdayRef}
-        onClick={handleWeekdayClick}
-      >
-        {Object.entries(events).map(([id, event]) => {
-          return (
-            <CalendarEvent
-              key={id}
-              id={id}
-              event={event}
-              onEventClick={onEventClick}
-            />
-          );
-        })}
+      <div className="relative flex-1">
+        <div className="absolute inset-0 ">
+          <HorizontalGridLines />
+        </div>
+        <div
+          className="absolute inset-0"
+          ref={weekdayRef}
+          onClick={handleWeekdayClick}
+        >
+          {Object.entries(events).map(([id, event]) => {
+            return (
+              <CalendarEvent
+                key={id}
+                id={id}
+                event={event}
+                onEventClick={onEventClick}
+              />
+            );
+          })}
+        </div>
       </div>
     </div>
   );

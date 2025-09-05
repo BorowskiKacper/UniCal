@@ -41,7 +41,7 @@ const WeeklyContainer = ({
   const hoursSideBar = hours.map((hour) => (
     <div
       key={`Hour-${hour}`}
-      className="text-right row-span-2 flex justify-end items-center pr-3 border-r border-slate-600/20"
+      className="text-right row-span-2 flex justify-end items-center pr-3"
     >
       <p className="font-mono text-xs md:text-sm text-slate-400 font-medium">
         {hour}
@@ -135,7 +135,7 @@ const WeeklyContainer = ({
                     <div className="w-4 sm:w-6 md:w-8 h-0.5 bg-transparent mx-auto mt-1 md:mt-2 " />
                   </div>
                 </div>
-                <div className="grid grid-rows-48 h-[800px]">
+                <div className="grid grid-rows-48 h-[800px] border-r border-slate-600/20">
                   <div key="Hour--pre" className="row-span-1"></div>
                   {hoursSideBar}
                   <div key="Hour--post" className="row-span-1"></div>
@@ -153,7 +153,6 @@ const WeeklyContainer = ({
                     ></div>
                   </div>
                 </div>
-                <HorizontalGridLines />
                 <div className="absolute inset-0">
                   <CalendarEventGrid
                     calendarEvents={calendarEvents}
