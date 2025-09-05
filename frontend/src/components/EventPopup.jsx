@@ -169,7 +169,7 @@ const EventPopup = ({
                   </p>
                   <div className="flex gap-2">
                     <select
-                      className="flex-1 px-3 py-2 rounded-md border text-sm bg-white border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:text-slate-100"
+                      className="flex-1 px-3 py-2 rounded-md border text-sm bg-white border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:text-slate-100 dark:focus:border-emerald-400 dark:focus:ring-emerald-400"
                       value={copySelectionId}
                       onChange={(e) => setCopySelectionId(e.target.value)}
                     >
@@ -191,7 +191,7 @@ const EventPopup = ({
                       disabled={!copySelectionId}
                       className={`px-3 py-2 rounded-md border text-sm transition-colors ${
                         copySelectionId
-                          ? "bg-amber-400 hover:bg-amber-500 border-amber-400 text-black dark:bg-emerald-400 dark:hover:bg-emerald-500 dark:border-emerald-400 dark:text-emerald-950"
+                          ? "bg-amber-400 hover:bg-amber-500 border-amber-400 text-black dark:bg-emerald-400 dark:hover:bg-green-400 dark:border-emerald-400 dark:text-emerald-950 dark:hover:text-black"
                           : "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed dark:bg-slate-700/50 dark:border-slate-600 dark:text-slate-400"
                       }`}
                     >

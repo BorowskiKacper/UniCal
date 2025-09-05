@@ -53,7 +53,7 @@ const CalendarEvent = ({ id, event, onEventClick }) => {
     >
       <div
         className={`
-        bg-gradient-to-br ${getEventColors(event.className)}
+        bg-gradient-to-br ${getEventColors(event.className)} hover:text-white
         rounded-lg w-full h-full border shadow-lg
         overflow-hidden backdrop-blur-sm
         hover:shadow-xl hover:scale-[1.02] 

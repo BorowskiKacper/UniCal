@@ -20,8 +20,8 @@ const RadioButton = ({ options, selectedOption, onChange }) => {
             <div
               className="flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200
                            min-w-[80px]
-                           text-gray-600 hover:bg-gray-200 peer-checked:hover:bg-amber-500 peer-checked:bg-amber-400 peer-checked:text-black
-                           dark:text-zinc-300 dark:hover:bg-zinc-800 dark:peer-checked:hover:bg-emerald-500 dark:peer-checked:bg-emerald-400 dark:peer-checked:text-emerald-950"
+                           text-gray-600 hover:bg-gray-200 peer-checked:hover:bg-amber-500 peer-checked:bg-amber-400 peer-checked:text-black hover:text-black
+                           dark:text-zinc-300 dark:hover:text-zinc-100 dark:hover:bg-zinc-800 dark:peer-checked:hover:bg-green-400  dark:peer-checked:bg-emerald-400 dark:peer-checked:text-emerald-950 dark:hover:peer-checked:text-black"
             >
               <span className="flex items-center space-x-2">
                 {option === "image" && (

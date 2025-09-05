@@ -8,7 +8,8 @@ const SubmitButton = ({ text, onClick, isDisabled, isLoading = false }) => {
         ${
           isDisabled || isLoading
             ? "bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-slate-600/50 dark:text-slate-400"
-            : "bg-[#FFC107] text-black hover:bg-[#E0A800] dark:bg-[#34D399] dark:text-emerald-900 dark:hover:bg-[#10B981] shadow-sm"
+            : `shadow-sm bg-[#FFC107] text-gray-950 hover:bg-amber-500 hover:text-black
+              dark:bg-emerald-400 dark:text-emerald-950 dark:hover:bg-green-400 hover:dark:text-black `
         }
         focus:outline-none focus:ring-2 focus:ring-[#FFC107]/50 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-[#34D399]/50 dark:focus:ring-offset-[#18181B]
       `}

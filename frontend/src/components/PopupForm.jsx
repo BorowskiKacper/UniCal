@@ -71,7 +71,7 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
               Title
             </label>
             <input
-              className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600"
+              className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:focus:border-emerald-400 dark:focus:ring-emerald-400"
               id="title"
               type="text"
               value={title}
@@ -90,7 +90,7 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
                 Start
               </label>
               <input
-                className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600"
+                className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:focus:border-emerald-400 dark:focus:ring-emerald-400 dark:[&::-webkit-calendar-picker-indicator]:invert"
                 id="startTime"
                 type="time"
                 value={startTime}
@@ -107,7 +107,7 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
                 End
               </label>
               <input
-                className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600"
+                className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:focus:border-emerald-400 dark:focus:ring-emerald-400 dark:[&::-webkit-calendar-picker-indicator]:invert"
                 id="endTime"
                 type="time"
                 value={endTime}
@@ -125,7 +125,7 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
               Weekday
             </label>
             <select
-              className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600"
+              className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:focus:border-emerald-400 dark:focus:ring-emerald-400"
               name="weekDay"
               id="weekDay"
               value={weekDay}
@@ -152,7 +152,7 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
               Description
             </label>
             <input
-              className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600"
+              className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:focus:border-emerald-400 dark:focus:ring-emerald-400"
               id="description"
               type="text"
               value={description}
