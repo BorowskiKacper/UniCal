@@ -4,14 +4,13 @@ const SubmitButton = ({ text, onClick, isDisabled, isLoading = false }) => {
   return (
     <button
       className={`
-        relative px-8 py-3 rounded-xl font-semibold  transition-all duration-200 ease-in-out
+        relative px-8 py-3 rounded-xl font-semibold transition-all duration-200 ease-in-out min-w-[140px] group
         ${
           isDisabled || isLoading
-            ? "bg-slate-600/50 text-slate-400 cursor-not-allowed"
-            : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-lg hover:shadow-xl hover:shadow-blue-500/25 hover:scale-105 active:scale-95"
+            ? "bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-slate-600/50 dark:text-slate-400"
+            : "bg-[#FFC107] text-black hover:bg-[#E0A800] dark:bg-[#34D399] dark:text-emerald-900 dark:hover:bg-[#10B981] shadow-sm"
         }
-        focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-slate-800
-        min-w-[140px] group
+        focus:outline-none focus:ring-2 focus:ring-[#FFC107]/50 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-[#34D399]/50 dark:focus:ring-offset-[#18181B]
       `}
       onClick={onClick}
       disabled={isDisabled || isLoading}

@@ -108,26 +108,26 @@ const WeeklyContainer = ({
     <div className="w-full max-w-7xl mx-auto" ref={calendarContainerRef}>
       {/* Calendar Header */}
       <div className="mb-6 text-center">
-        <h2 className="text-xl md:text-2xl font-bold text-white mb-2">
+        <h2 className="text-xl md:text-2xl font-bold text-[#212529] mb-2 dark:text-[#F4F4F5]">
           Weekly Schedule
         </h2>
-        <p className="text-slate-400 text-sm">
+        <p className="text-[#6C757D] text-sm dark:text-[#A1A1AA]">
           Your AI-generated calendar view
         </p>
       </div>
 
       {/* Calendar Container */}
-      <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
+      <div className="rounded-2xl overflow-hidden border border-[#DEE2E6] bg-white shadow-sm dark:bg-[#27272A] dark:border-[#3F3F46]">
         {/* Calendar Body */}
         <div className="relative">
           <div
-            className="max-h-[500px] sm:max-h-[600px] md:max-h-[700px] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800/50"
+            className="max-h-[500px] sm:max-h-[600px] md:max-h-[700px] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-[#ADB5BD] scrollbar-track-[#F1F3F5] dark:scrollbar-thumb-[#3F3F46] dark:scrollbar-track-[#18181B]"
             ref={calendarScrollAreaRef}
           >
             <div className="flex min-h-[800px] min-w-[640px] sm:min-w-0">
               {/* Time Column */}
-              <div className="w-12 sm:w-16 md:w-20 flex-shrink-0 bg-slate-800 ">
-                <div className="sticky top-0 z-10 bg-slate-800 backdrop-blur-sm border-b border-slate-700">
+              <div className="w-12 sm:w-16 md:w-20 flex-shrink-0 bg-[#F8F9FA] dark:bg-[#1F1F22]">
+                <div className="sticky top-0 z-10 bg-[#F8F9FA] border-b border-[#DEE2E6] dark:bg-[#1F1F22] dark:border-[#3F3F46]">
                   <div className="py-3 md:py-4 text-center">
                     <p className="font-bold text-xs sm:text-sm md:text-lg lg:text-xl truncate">
                       <span className="text-transparent">:)</span>
@@ -143,7 +143,7 @@ const WeeklyContainer = ({
               </div>
 
               {/* Calendar Grid */}
-              <div className="flex-1 relative bg-slate-900/20 min-w-0">
+              <div className="flex-1 relative bg-[#FFFFFF] dark:bg-[#18181B] min-w-0">
                 <div className="absolute inset-0">
                   <div className="h-full w-full flex flex-col">
                     <div className="flex-9/24 w-full"></div>

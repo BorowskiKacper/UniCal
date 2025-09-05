@@ -114,14 +114,13 @@ const EventPopup = ({
       >
         <div
           ref={panelRef}
-          className={
-            "w-[360px] max-w-[90vw] bg-slate-800 text-slate-100 border border-slate-700 shadow-2xl rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
-          }
+          className={`w-[360px] max-w-[90vw] rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 shadow-2xl border
+             bg-white text-gray-900 border-gray-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700`}
           role="dialog"
           aria-modal="true"
         >
-          <div className="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
-            <h3 className="text-sm font-semibold">
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-100">
               {weekdayAdd ? "Add Event" : "Edit event"}
             </h3>
             <div className="flex items-center gap-2">
@@ -131,7 +130,7 @@ const EventPopup = ({
                     eventDelete();
                     onClose();
                   }}
-                  className="text-slate-400 hover:text-red-400 transition-colors"
+                  className="text-gray-500 hover:text-red-500 transition-colors dark:text-slate-400 dark:hover:text-red-400"
                   aria-label="Delete event"
                   title="Delete event"
                 >
@@ -154,7 +153,7 @@ const EventPopup = ({
               )}
               <button
                 onClick={onClose}
-                className="text-slate-400 hover:text-slate-200 transition-colors"
+                className="text-gray-500 hover:text-gray-700 transition-colors dark:text-slate-400 dark:hover:text-slate-200"
                 aria-label="Close"
               >
                 ✕
@@ -165,19 +164,23 @@ const EventPopup = ({
             {weekdayAdd && (
               <div className="space-y-4 mb-4">
                 <div>
-                  <p className="text-xs uppercase tracking-wide text-slate-400 mb-1">
+                  <p className="text-xs uppercase tracking-wide text-gray-500 mb-1 dark:text-slate-400">
                     Copy existing course into {weekdayAdd}
                   </p>
                   <div className="flex gap-2">
                     <select
-                      className="flex-1 bg-slate-900/50 border border-slate-600 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="flex-1 px-3 py-2 rounded-md border text-sm bg-white border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:text-slate-100"
                       value={copySelectionId}
                       onChange={(e) => setCopySelectionId(e.target.value)}
                     >
                       <option value="">Select a course to copy</option>
                       {Object.entries(calendarEvents || {}).map(
                         ([id, event]) => (
-                          <option key={id} value={id} className="bg-slate-900">
+                          <option
+                            key={id}
+                            value={id}
+                            className="bg-white dark:bg-slate-900"
+                          >
                             {event.className} ({event.time})
                           </option>
                         )
@@ -188,18 +191,18 @@ const EventPopup = ({
                       disabled={!copySelectionId}
                       className={`px-3 py-2 rounded-md border text-sm transition-colors ${
                         copySelectionId
-                          ? "bg-blue-600 hover:bg-blue-500 border-blue-500 text-white"
-                          : "bg-slate-700/50 border-slate-600 text-slate-400 cursor-not-allowed"
+                          ? "bg-amber-400 hover:bg-amber-500 border-amber-400 text-black dark:bg-emerald-400 dark:hover:bg-emerald-500 dark:border-emerald-400 dark:text-emerald-950"
+                          : "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed dark:bg-slate-700/50 dark:border-slate-600 dark:text-slate-400"
                       }`}
                     >
                       Copy
                     </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-slate-400">
-                  <div className="flex-1 h-px bg-slate-700" />
+                <div className="flex items-center gap-2 text-gray-400 dark:text-slate-400">
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-slate-700" />
                   <span className="text-xs">or create new</span>
-                  <div className="flex-1 h-px bg-slate-700" />
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-slate-700" />
                 </div>
               </div>
             )}
@@ -218,12 +221,12 @@ const EventPopup = ({
       {/* Mobile bottom sheet */}
       <div className="md:hidden absolute inset-x-0 bottom-0">
         <div
-          className="w-full bg-slate-800 text-slate-100 border-t border-slate-700 shadow-2xl rounded-t-2xl overflow-hidden transform transition-transform duration-200 translate-y-0 max-h-[80vh]"
+          className={`w-full bg-white text-gray-900 border-t border-gray-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 shadow-2xl rounded-t-2xl overflow-hidden transform transition-transform duration-200 translate-y-0 max-h-[80vh]`}
           role="dialog"
           aria-modal="true"
         >
-          <div className="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
-            <div className="h-1.5 w-10 bg-slate-600/60 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 -top-2" />
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between">
+            <div className="h-1.5 w-10 bg-gray-300 dark:bg-slate-600/60 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 -top-2" />
             <h3 className="text-base font-semibold">
               {weekdayAdd ? "Add Event" : "Edit event"}
             </h3>
@@ -234,7 +237,7 @@ const EventPopup = ({
                     eventDelete?.();
                     onClose?.();
                   }}
-                  className="text-slate-400 hover:text-red-400 transition-colors"
+                  className="text-gray-500 hover:text-red-500 transition-colors dark:text-slate-400 dark:hover:text-red-400"
                   aria-label="Delete event"
                   title="Delete event"
                 >
@@ -257,7 +260,7 @@ const EventPopup = ({
               )}
               <button
                 onClick={onClose}
-                className="text-slate-400 hover:text-slate-200 transition-colors"
+                className="text-gray-500 hover:text-gray-700 transition-colors dark:text-slate-400 dark:hover:text-slate-200"
                 aria-label="Close"
               >
                 ✕
@@ -268,18 +271,22 @@ const EventPopup = ({
             {weekdayAdd && (
               <div className="space-y-4 mb-4">
                 <div>
-                  <p className="text-xs uppercase tracking-wide text-slate-400 mb-1">
+                  <p className="text-xs uppercase tracking-wide text-gray-500 mb-1 dark:text-slate-400">
                     Copy existing course into {weekdayAdd}
                   </p>
                   <div className="flex gap-2">
                     <select
-                      className="flex-1 bg-slate-900/50 border border-slate-600 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="flex-1 px-3 py-2 rounded-md border text-sm bg-white border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:text-slate-100"
                       value={copySelectionId}
                       onChange={(e) => setCopySelectionId(e.target.value)}
                     >
                       <option value="">Select a course to copy</option>
                       {Object.entries(calendarEvents || {}).map(([id, ev]) => (
-                        <option key={id} value={id} className="bg-slate-900">
+                        <option
+                          key={id}
+                          value={id}
+                          className="bg-white dark:bg-slate-900"
+                        >
                           {ev.className} ({ev.time})
                         </option>
                       ))}
@@ -289,18 +296,18 @@ const EventPopup = ({
                       disabled={!copySelectionId}
                       className={`px-3 py-2 rounded-md border text-sm transition-colors ${
                         copySelectionId
-                          ? "bg-blue-600 hover:bg-blue-500 border-blue-500 text-white"
-                          : "bg-slate-700/50 border-slate-600 text-slate-400 cursor-not-allowed"
+                          ? "bg-amber-400 hover:bg-amber-500 border-amber-400 text-black dark:bg-emerald-400 dark:hover:bg-emerald-500 dark:border-emerald-400 dark:text-emerald-950"
+                          : "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed dark:bg-slate-700/50 dark:border-slate-600 dark:text-slate-400"
                       }`}
                     >
                       Copy
                     </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-slate-400">
-                  <div className="flex-1 h-px bg-slate-700" />
+                <div className="flex items-center gap-2 text-gray-400 dark:text-slate-400">
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-slate-700" />
                   <span className="text-xs">or create new</span>
-                  <div className="flex-1 h-px bg-slate-700" />
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-slate-700" />
                 </div>
               </div>
             )}

@@ -46,32 +46,35 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
   }, []);
 
   return (
-    <section className="w-full max-w-4xl mx-auto">
-      <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 md:p-8 shadow-2xl">
-        <header className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+    <section className="w-full max-w-4xl mx-auto space-y-8">
+      <div className="w-full max-w-xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:bg-zinc-800 dark:border-zinc-700">
+        <header className="text-center mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 dark:text-zinc-100">
             Choose your College
           </h2>
-          <p className="text-slate-400 text-sm md:text-base">
-            To match your college Semester (holidays, no classes, days following
-            different schedule)
+          <p className="text-gray-500 text-sm md:text-base dark:text-zinc-400">
+            To match your college Semester dates and special schedules.
           </p>
         </header>
-        <div className="flex justify-center text-slate-400">
+        <div className="flex justify-center text-gray-600 dark:text-zinc-300">
           <ChooseCollege
             selectedCollege={selectedCollege}
             colleges={colleges}
             onChange={setSelectedCollege}
           />
         </div>
-        <div className="h-10"> </div>
-        <header className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+      </div>
+
+      <div className="w-full max-w-xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:bg-zinc-800 dark:border-zinc-700">
+        <header className="text-center mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 dark:text-zinc-100">
             Download Calendar
           </h2>
-          <p className="text-slate-400 text-sm md:text-base">
-            Add To Google Calendar
+          <p className="text-gray-500 text-sm md:text-base dark:text-zinc-400">
+            Add to Google Calendar
           </p>
+        </header>
+        <div className="flex flex-col items-center gap-3">
           <SubmitButton
             text={"Add To Calendar"}
             onClick={async () => {
@@ -82,7 +85,7 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
             isDisabled={!selectedCollege || isAddingToCalendar}
             isLoading={isAddingToCalendar}
           />
-          <p className="text-slate-400 text-sm md:text-base">
+          <p className="text-gray-500 text-sm md:text-base dark:text-zinc-400">
             or download .ics file
           </p>
           <SubmitButton
@@ -90,14 +93,7 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
             onClick={() => handleDownloadICS(selectedCollege)}
             isDisabled={!selectedCollege}
           />
-        </header>
-        {/* <div className="flex justify-center">
-          <SubmitButton
-            text="Download"
-            onClick={() => handleDownloadCalendar(selectedCollege)}
-            isDisabled={!selectedCollege}
-          />
-        </div> */}
+        </div>
       </div>
     </section>
   );

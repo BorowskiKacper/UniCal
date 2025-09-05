@@ -48,9 +48,9 @@ const UploadImage = ({ onChange }) => {
     if (isDragReject) {
       return `${baseClasses} border-red-500 bg-red-500/10 hover:bg-red-500/20`;
     } else if (isDragAccept || isDragActive) {
-      return `${baseClasses} border-blue-500 bg-blue-500/10 hover:bg-blue-500/20`;
+      return `${baseClasses} border-[#FFC107] bg-[#FFC107]/10 hover:bg-[#FFC107]/20 dark:border-[#34D399] dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20`;
     } else {
-      return `${baseClasses} border-slate-600 bg-slate-700/30 hover:bg-slate-700/50 hover:border-blue-500/50`;
+      return `${baseClasses} border-[#DEE2E6] bg-[#F8F9FA] hover:bg-gray-100 dark:border-[#3F3F46] dark:bg-[#18181B] dark:hover:bg-[#27272A]`;
     }
   };
 
@@ -58,29 +58,29 @@ const UploadImage = ({ onChange }) => {
     if (isDragReject) {
       return "w-8 h-8 mb-4 text-red-400 transition-all duration-300";
     } else if (isDragAccept || isDragActive) {
-      return "w-8 h-8 mb-4 text-blue-400 transition-all duration-300 scale-110";
+      return "w-8 h-8 mb-4 text-[#FFC107] dark:text-[#34D399] transition-all duration-300 scale-110";
     } else {
-      return "w-8 h-8 mb-4 text-slate-400 group-hover:text-blue-400 transition-all duration-300 hover:scale-103";
+      return "w-8 h-8 mb-4 text-[#ADB5BD] group-hover:text-[#495057] dark:text-[#52525B] dark:group-hover:text-[#A1A1AA] transition-all duration-300";
     }
   };
 
   const getTextClassName = () => {
     if (isDragReject) {
-      return "mb-2 text-sm text-red-300 transition-colors duration-300";
+      return "mb-2 text-sm text-red-500 transition-colors duration-300";
     } else if (isDragAccept || isDragActive) {
-      return "mb-2 text-sm text-blue-300 transition-colors duration-300";
+      return "mb-2 text-sm text-[#495057] dark:text-[#F4F4F5] transition-colors duration-300";
     } else {
-      return "mb-2 text-sm text-slate-400 group-hover:text-slate-300 transition-colors duration-300";
+      return "mb-2 text-sm text-[#495057] dark:text-[#F4F4F5] transition-colors duration-300";
     }
   };
 
   const getSubTextClassName = () => {
     if (isDragReject) {
-      return "text-xs text-red-400 transition-colors duration-300";
+      return "text-xs text-red-500 transition-colors duration-300";
     } else if (isDragAccept || isDragActive) {
-      return "text-xs text-blue-400 transition-colors duration-300";
+      return "text-xs text-[#6C757D] dark:text-[#A1A1AA] transition-colors duration-300";
     } else {
-      return "text-xs text-slate-500 group-hover:text-slate-400 transition-colors duration-300";
+      return "text-xs text-[#6C757D] dark:text-[#A1A1AA] transition-colors duration-300";
     }
   };
 

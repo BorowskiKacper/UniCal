@@ -60,18 +60,18 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
   };
 
   return (
-    <div className="text-slate-200">
+    <div className="text-gray-900 dark:text-slate-200">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 gap-4">
           <div>
             <label
               htmlFor="title"
-              className="block text-xs uppercase tracking-wide text-slate-400 mb-1"
+              className="block text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400 mb-1"
             >
               Title
             </label>
             <input
-              className="w-full bg-slate-900/50 border border-slate-600 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600"
               id="title"
               type="text"
               value={title}
@@ -85,12 +85,12 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
             <div>
               <label
                 htmlFor="startTime"
-                className="block text-xs uppercase tracking-wide text-slate-400 mb-1"
+                className="block text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400 mb-1"
               >
                 Start
               </label>
               <input
-                className="w-full bg-slate-900/50 border border-slate-600 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600"
                 id="startTime"
                 type="time"
                 value={startTime}
@@ -102,12 +102,12 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
             <div>
               <label
                 htmlFor="endTime"
-                className="block text-xs uppercase tracking-wide text-slate-400 mb-1"
+                className="block text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400 mb-1"
               >
                 End
               </label>
               <input
-                className="w-full bg-slate-900/50 border border-slate-600 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600"
                 id="endTime"
                 type="time"
                 value={endTime}
@@ -120,12 +120,12 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
           <div>
             <label
               htmlFor="weekDay"
-              className="block text-xs uppercase tracking-wide text-slate-400 mb-1"
+              className="block text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400 mb-1"
             >
               Weekday
             </label>
             <select
-              className="w-full bg-slate-900/50 border border-slate-600 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600"
               name="weekDay"
               id="weekDay"
               value={weekDay}
@@ -135,7 +135,7 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
             >
               {weekdays.map((weekday, i) => (
                 <option
-                  className="bg-slate-900 w-full text-slate-400"
+                  className="bg-white w-full text-gray-700 dark:bg-slate-900 dark:text-slate-300"
                   key={i}
                   value={weekday}
                 >
@@ -147,12 +147,12 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
           <div>
             <label
               htmlFor="description"
-              className="block text-xs uppercase tracking-wide text-slate-400 mb-1"
+              className="block text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400 mb-1"
             >
               Description
             </label>
             <input
-              className="w-full bg-slate-900/50 border border-slate-600 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600"
               id="description"
               type="text"
               value={description}

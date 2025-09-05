@@ -2,8 +2,8 @@ import React from "react";
 
 const RadioButton = ({ options, selectedOption, onChange }) => {
   return (
-    <div className="flex justify-center mb-8">
-      <div className="inline-flex bg-slate-700/50 p-1 rounded-xl border border-slate-600/50 shadow-lg">
+    <div className="flex justify-center mb-6">
+      <div className="inline-flex p-1 rounded-lg border bg-gray-50 border-gray-200 shadow-sm dark:bg-zinc-900 dark:border-zinc-700">
         {options.map((option) => (
           <label key={option} className="relative cursor-pointer select-none">
             <input
@@ -18,11 +18,10 @@ const RadioButton = ({ options, selectedOption, onChange }) => {
               }}
             />
             <div
-              className="flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 ease-in-out
-                           peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-purple-600 
-                           peer-checked:text-white peer-checked:shadow-lg peer-checked:scale-105
-                           text-slate-300 hover:text-white hover:bg-slate-600/50
-                           min-w-[80px]"
+              className="flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200
+                           min-w-[80px]
+                           text-gray-600 hover:bg-gray-200 peer-checked:hover:bg-amber-500 peer-checked:bg-amber-400 peer-checked:text-black
+                           dark:text-zinc-300 dark:hover:bg-zinc-800 dark:peer-checked:hover:bg-emerald-500 dark:peer-checked:bg-emerald-400 dark:peer-checked:text-emerald-950"
             >
               <span className="flex items-center space-x-2">
                 {option === "image" && (
