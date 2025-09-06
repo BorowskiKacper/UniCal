@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 
 const UploadImage = ({ onChange }) => {
@@ -40,6 +40,36 @@ const UploadImage = ({ onChange }) => {
     maxSize: 10 * 1024 * 1024, // 10MB
     multiple: false,
   });
+
+  // Handle clipboard paste
+  const handlePaste = useCallback(
+    async (event) => {
+      const items = event.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item.type.indexOf("image") !== -1) {
+          event.preventDefault();
+
+          const file = item.getAsFile();
+          if (!file) continue;
+
+          // Use react-dropzone's built-in validation by simulating a drop
+          onDrop([file], []);
+          break; // Only handle the first image
+        }
+      }
+    },
+    [onDrop]
+  );
+
+  useEffect(() => {
+    document.addEventListener("paste", handlePaste);
+    return () => {
+      document.removeEventListener("paste", handlePaste);
+    };
+  }, [handlePaste]);
 
   const getDropzoneClassName = () => {
     let baseClasses =
@@ -92,8 +122,8 @@ const UploadImage = ({ onChange }) => {
     } else {
       return (
         <>
-          <span className="font-semibold">Click to upload</span> or drag and
-          drop
+          <span className="font-semibold">Click to upload</span>, drag and drop,
+          or paste
         </>
       );
     }
