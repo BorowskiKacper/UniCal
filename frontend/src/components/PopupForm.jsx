@@ -163,7 +163,7 @@ const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
             />
           </div>
         </div>
-        <div className="pt-2">
+        <div className="pt-2 flex justify-center">
           <SubmitButton
             text={"Save"}
             onClick={handleSubmit}

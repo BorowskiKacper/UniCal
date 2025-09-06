@@ -255,7 +255,7 @@ function App() {
               generatedEvents={generatedEvents}
             />
             <DownloadCalendar
-              handleDownloadCalendar={handleDownloadICS}
+              handleDownloadICS={handleDownloadICS}
               handleAddToGoogleCalendar={handleAddToGoogleCalendar}
             />
           </div>

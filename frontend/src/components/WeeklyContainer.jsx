@@ -127,7 +127,7 @@ const WeeklyContainer = ({
             <div className="flex min-h-[800px] min-w-[640px] sm:min-w-0">
               {/* Time Column */}
               <div className="w-12 sm:w-16 md:w-20 flex-shrink-0 bg-[#F8F9FA] dark:bg-[#1F1F22]">
-                <div className="sticky top-0 z-10 bg-[#F8F9FA] border-b border-[#DEE2E6] dark:bg-[#1F1F22] dark:border-[#3F3F46]">
+                <div className="sticky top-0 z-10 bg-gray-50 dark:bg-zinc-800 border-b border-gray-200 dark:border-zinc-700">
                   <div className="py-3 md:py-4 text-center">
                     <p className="font-bold text-xs sm:text-sm md:text-lg lg:text-xl truncate">
                       <span className="text-transparent">:)</span>

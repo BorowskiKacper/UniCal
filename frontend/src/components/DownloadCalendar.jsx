@@ -66,7 +66,7 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
       </div>
 
       <div className="w-full max-w-xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:bg-zinc-800 dark:border-zinc-700">
-        <header className="text-center mb-6">
+        <header className="text-center mb-3">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 dark:text-zinc-100">
             Download Calendar
           </h2>
