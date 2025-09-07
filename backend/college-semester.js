@@ -44,7 +44,8 @@ export function calendarEventsToICS(college, calendarEvents, reminder) {
     error.statusCode = 400;
     throw error;
   }
-  const { semesterStart, semesterEnd, daysOff, daysMoved, timezone } = details;
+  const { semesterStart, semesterEnd, daysOff, dayFollowsWeekday, timezone } =
+    details;
   const calendar = ical({ name: "Semester Schedule", timezone: timezone });
   const weekdayConversion = {
     Sun: "SU",
@@ -115,7 +116,7 @@ export function calendarEventsToICS(college, calendarEvents, reminder) {
   }
 
   // Handle moved days (schedule swaps)
-  for (let [date, follows] of daysMoved) {
+  for (let [date, follows] of dayFollowsWeekday) {
     const dayWeekday = findWeekdayFromDate(date);
 
     // First, cancel all classes that would normally occur on this day

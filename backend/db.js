@@ -19,7 +19,7 @@ export const colleges = {
       "2025-11-29",
       "2025-11-30",
     ],
-    daysMoved: [
+    dayFollowsWeekday: [
       ["2025-10-14", "Mon"],
       ["2025-10-24", "Mon"],
     ],
@@ -38,6 +38,6 @@ export const colleges = {
       "2025-11-30",
       "2025-12-09",
     ],
-    daysMoved: [],
+    dayFollowsWeekday: [],
   },
 };
