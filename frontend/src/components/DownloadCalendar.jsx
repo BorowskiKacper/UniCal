@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import ChooseCollege from "./ChooseCollege";
 import SubmitButton from "./SubmitButton";
+import ReminderRadioButtons from "./ReminderRadioButtons";
 
 const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
+  // College Selection
   const [selectedCollege, setSelectedCollege] = useState("");
   const [colleges, setColleges] = useState([]);
-  const [isAddingToCalendar, setIsAddingToCalendar] = useState(false);
 
   useEffect(() => {
     let isActive = true;
@@ -45,6 +46,23 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
     };
   }, []);
 
+  // Reminder
+  const [reminderOption, setReminderOption] = useState("10");
+  const [customMinutes, setCustomMinutes] = useState(10);
+
+  const getReminderMinutes = () => {
+    if (reminderOption === "none") return false;
+    if (reminderOption === "10") return 10;
+    if (reminderOption === "30") return 30;
+    // custom
+    const mins = Number(customMinutes);
+    if (Number.isFinite(mins) && mins >= 1 && mins <= 1440) return mins;
+    return 10; // fallback
+  };
+
+  // Calendar Download
+  const [isAddingToCalendar, setIsAddingToCalendar] = useState(false);
+
   return (
     <section className="w-full max-w-4xl mx-auto space-y-8">
       <div className="w-full max-w-xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:bg-zinc-800 dark:border-zinc-700">
@@ -63,6 +81,17 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
             onChange={setSelectedCollege}
           />
         </div>
+        <div className="text-center my-6">
+          <p className="text-gray-500 text-sm md:text-base dark:text-zinc-400 mb-3">
+            Select reminder
+          </p>
+          <ReminderRadioButtons
+            reminderOption={reminderOption}
+            setReminderOption={setReminderOption}
+            customMinutes={customMinutes}
+            setCustomMinutes={setCustomMinutes}
+          />
+        </div>
       </div>
 
       <div className="w-full max-w-xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:bg-zinc-800 dark:border-zinc-700">
@@ -79,7 +108,10 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
             text={"Add To Calendar"}
             onClick={async () => {
               setIsAddingToCalendar(true);
-              await handleAddToGoogleCalendar(selectedCollege);
+              await handleAddToGoogleCalendar(
+                selectedCollege,
+                getReminderMinutes()
+              );
               setIsAddingToCalendar(false);
             }}
             isDisabled={!selectedCollege || isAddingToCalendar}
@@ -90,7 +122,9 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
           </p>
           <SubmitButton
             text="Download .ics"
-            onClick={() => handleDownloadICS(selectedCollege)}
+            onClick={() =>
+              handleDownloadICS(selectedCollege, getReminderMinutes())
+            }
             isDisabled={!selectedCollege}
           />
         </div>

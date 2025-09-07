@@ -7,9 +7,7 @@ import { signInAndGetCalendarAccess } from "./firebase/auth";
 import { createCalendarEventsFromSchedule } from "./firebase/google-calendar";
 
 const toggleDark = () => {
-  console.log("toggled dark");
   const root = document.getElementById("root");
-  console.log("root: ", root);
   if (root) {
     root.classList.toggle("dark");
   }
@@ -131,7 +129,7 @@ function App() {
     });
   };
 
-  const handleAddToGoogleCalendar = async (selectedCollege) => {
+  const handleAddToGoogleCalendar = async (selectedCollege, reminder = 10) => {
     if (!calendarEvents || Object.keys(calendarEvents).length === 0) {
       alert("No calendar events to add. Please generate your schedule first.");
       return;
@@ -161,7 +159,7 @@ function App() {
     }
   };
 
-  const handleDownloadICS = async (college) => {
+  const handleDownloadICS = async (college, reminder = 10) => {
     try {
       console.log("Fetching");
       const response = await fetch(
@@ -171,7 +169,7 @@ function App() {
           headers: {
             "content-Type": "application/json",
           },
-          body: JSON.stringify({ college, calendarEvents, reminder: 30 }),
+          body: JSON.stringify({ college, calendarEvents, reminder }),
         }
       );
 
@@ -211,13 +209,13 @@ function App() {
       <header className="p-6 flex justify-between items-center w-full max-w-7xl mx-auto border-b border-gray-200 dark:border-zinc-700">
         <div className="flex items-center gap-2">
           <img
-            src="./src/assets/light-theme-logo.svg"
-            alt="UniCal"
+            src="/light-theme-logo.svg"
+            alt="Logo"
             className="h-7 w-7 dark:hidden"
           />
           <img
-            src="./src/assets/dark-theme-logo.svg"
-            alt="UniCal"
+            src="/dark-theme-logo.svg"
+            alt="Logo"
             className="h-7 w-7 hidden dark:inline"
           />
           <h1 className="text-xl font-bold text-gray-800 dark:text-zinc-100">
