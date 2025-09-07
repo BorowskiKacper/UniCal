@@ -129,7 +129,7 @@ function App() {
     });
   };
 
-  const handleAddToGoogleCalendar = async (selectedCollege, reminder = 10) => {
+  const handleAddToGoogleCalendar = async (selectedCollege, reminder) => {
     if (!calendarEvents || Object.keys(calendarEvents).length === 0) {
       alert("No calendar events to add. Please generate your schedule first.");
       return;
@@ -144,7 +144,8 @@ function App() {
         const result = await createCalendarEventsFromSchedule(
           accessToken,
           calendarEvents,
-          selectedCollege
+          selectedCollege,
+          reminder
         );
 
         if (result.success) {
@@ -159,7 +160,7 @@ function App() {
     }
   };
 
-  const handleDownloadICS = async (college, reminder = 10) => {
+  const handleDownloadICS = async (college, reminder) => {
     try {
       console.log("Fetching");
       const response = await fetch(

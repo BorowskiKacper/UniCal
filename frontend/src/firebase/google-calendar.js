@@ -47,7 +47,7 @@ export async function createCalendarEventsFromSchedule(
   accessToken,
   calendarEvents,
   college,
-  reminder = 10
+  reminder
 ) {
   const createdEvents = [];
   const errors = [];
