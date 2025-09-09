@@ -73,7 +73,7 @@ export async function createCalendarEventsFromSchedule(
 
   try {
     const details = await response.json();
-    const { semesterStart, semesterEnd, daysOff, daysMoved, timezone } =
+    const { semesterStart, semesterEnd, daysOff, dayFollowsWeekday, timezone } =
       details;
     console.log("Fetched");
 
@@ -98,7 +98,7 @@ export async function createCalendarEventsFromSchedule(
       daysOffByWeekday[i].push(date);
     }
 
-    for (const [date, follows] of daysMoved) {
+    for (const [date, follows] of dayFollowsWeekday) {
       // Day to remove
       const tempDate = new Date(`${date}T00:00:00`);
       const i = tempDate.getDay();
