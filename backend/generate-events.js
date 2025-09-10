@@ -72,15 +72,15 @@ function createCalendarEvents(parsedResponse) {
       properties.description = `Location: ${properties.location}`;
 
       delete properties.location;
-      let [startTime, endTime] = properties.time.split("-");
-      if (startTime.length === 4) {
-        startTime = "0" + startTime;
+
+      // Only keep events less than maxEventTime hours long
+      const maxEventTime = 22;
+      const [startTime, endTime] = properties.time.split("-");
+      const [startHour] = startTime.split(":");
+      const [endHour] = endTime.split(":");
+      if (parseInt(endHour) - parseInt(startHour) < maxEventTime) {
+        calendarEvents[id] = properties;
       }
-      if (endTime.length === 4) {
-        endTime = "0" + endTime;
-      }
-      properties.time = startTime + "-" + endTime;
-      calendarEvents[id] = properties;
     }
   }
 
