@@ -9,17 +9,14 @@
 
 <br />
 <div align="center">
-  <a href="https://github.com/BorowskiKacper/UniCal">
-        <img src="images/logo.svg" alt="Logo" width="80" height="80">
-  </a>
-
+  <a href="https://github.com/BorowskiKacper/UniCal"><img src="images/logo.svg" alt="Logo" width="160" height="160"></a>
   <h3 align="center">UniCal</h3>
 
   <p align="center">
     An automation tool to quickly add your university course schedule to your Google Calendar.
     <br />
     <br />
-    <a href="https://collegetocalendar.com">Use</a>
+    <a href="https://collegetocalendar.com">Use UniCal</a>
     ·
     <a href="https://github.com/BorowskiKacper/UniCal/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
