@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   signInWithGoogle,
   signInWithEmail,
@@ -98,15 +98,28 @@ const AuthPopup = ({
     }
   };
 
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      const id = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(id);
+    }
+    setVisible(false);
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center ">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60" onClick={handleClose} />
+      <div
+        className={`absolute inset-0 bg-black/60 transition-opacity duration-200 ease-out ${visible ? "opacity-100" : "opacity-0"}`}
+        onClick={handleClose}
+      />
 
       {/* Popup */}
-      <div className="relative bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 w-full max-w-md mx-4">
+      <div className={`relative bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 w-full max-w-md mx-4 transition-all duration-200 ease-out transform ${visible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-2"}`}>
         <div className="px-6 py-4 border-b border-gray-200 dark:border-slate-700">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
@@ -114,7 +127,7 @@ const AuthPopup = ({
             </h2>
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200"
+              className="text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all duration-100"
               aria-label="Close"
             >
               ✕
@@ -134,7 +147,12 @@ const AuthPopup = ({
             <button
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full flex items-center justify-center gap-3 px-4 py-3 
+                        border border-gray-300 rounded-md bg-white  text-gray-900 dark:text-slate-100 
+                        hover:text-black hover:bg-gray-100 hover:dark:text-white hover:dark:bg-slate-900/80
+                        focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 
+                        dark:bg-slate-900/50 dark:border-slate-600 dark:focus:border-emerald-400 dark:focus:ring-emerald-400 
+                        disabled:opacity-50 disabled:cursor-not-allowed transition-all ease-in-out duration-200"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -189,7 +207,7 @@ const AuthPopup = ({
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white  text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:focus:border-emerald-400 dark:focus:ring-emerald-400"
                   placeholder="Enter your email"
                   disabled={isLoading}
                   required
@@ -208,7 +226,7 @@ const AuthPopup = ({
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white  text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:focus:border-emerald-400 dark:focus:ring-emerald-400"
                   placeholder="Enter your password"
                   disabled={isLoading}
                   required
@@ -228,7 +246,7 @@ const AuthPopup = ({
                     id="confirmPassword"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white  text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 dark:bg-slate-900/50 dark:border-slate-600 dark:focus:border-emerald-400 dark:focus:ring-emerald-400"
                     placeholder="Confirm your password"
                     disabled={isLoading}
                     required
@@ -269,7 +287,7 @@ const AuthPopup = ({
                     setAuthMode(authMode === "signup" ? "signin" : "signup");
                     resetForm();
                   }}
-                  className="hover:text-amber-700 text-amber-600  dark:text-emerald-400 dark:hover:text-green-400 font-medium"
+                  className="transition-colors duration-200 hover:text-amber-700 text-amber-600  dark:text-emerald-400 dark:hover:text-green-400 font-medium"
                 >
                   {authMode === "signup" ? "Sign in" : "Sign up"}
                 </button>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import WeeklyContainer from "./components/WeeklyContainer";
 import UploadContainer from "./components/Upload/UploadContainer";
@@ -74,6 +74,8 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [showAuthPopup, setShowAuthPopup] = useState(false);
   const [authMode, setAuthMode] = useState("signin"); // "signin", "signup"
+  const [userHoverOpen, setUserHoverOpen] = useState(false);
+  const hoverTimeoutRef = useRef(null);
 
   // Listen for authentication state changes
   useEffect(() => {
@@ -293,6 +295,59 @@ function App() {
           <p className="text-gray-500 dark:text-zinc-400 text-sm hidden sm:block">
             AI-Powered Schedule Management
           </p>
+          {currentUser && (
+            <div
+              className="relative"
+              onMouseEnter={() => {
+                if (hoverTimeoutRef.current)
+                  clearTimeout(hoverTimeoutRef.current);
+                setUserHoverOpen(true);
+              }}
+              onMouseLeave={() => {
+                if (hoverTimeoutRef.current)
+                  clearTimeout(hoverTimeoutRef.current);
+                hoverTimeoutRef.current = setTimeout(
+                  () => setUserHoverOpen(false),
+                  120
+                );
+              }}
+            >
+              <button
+                type="button"
+                className="outline-none"
+                aria-label="Account hover card"
+              >
+                <img
+                  src={currentUser.photoURL}
+                  alt="User Img"
+                  className="w-8 h-8 rounded-full border-2 border-gray-200 dark:border-zinc-700"
+                />
+              </button>
+
+              {userHoverOpen && (
+                <div className="absolute right-0 mt-2 z-50 w-64 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-lg p-2 m-1">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400">
+                    UniCal Account
+                  </p>
+                  <p className="pt-1 text-sm text-gray-900 dark:text-zinc-100 truncate">
+                    {currentUser.displayName || "Unnamed User"}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-zinc-300 truncate">
+                    {currentUser.email}
+                  </p>
+
+                  <div className="mt-3 border-t border-gray-200 dark:border-zinc-700 pt-2">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-3 py-2 text-sm rounded-md text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           <button
             type="button"
             onClick={toggleDark}
