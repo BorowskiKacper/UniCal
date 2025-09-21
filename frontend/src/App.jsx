@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import WeeklyContainer from "./components/WeeklyContainer";
 import UploadContainer from "./components/Upload/UploadContainer";
 import DownloadCalendar from "./components/DownloadCalendar";
-import { signInAndGetCalendarAccess } from "./firebase/auth";
+import AuthPopup from "./components/AuthPopup";
+import {
+  signInWithGoogleAndGetCalendarAccess,
+  getCurrentUser,
+  onAuthChange,
+  logout,
+} from "./firebase/auth";
 import { createCalendarEventsFromSchedule } from "./firebase/google-calendar";
 
 const toggleDark = () => {
@@ -64,9 +70,33 @@ function App() {
   const [activeEventId, setActiveEventId] = useState("");
   const [generatedEvents, setGeneratedEvents] = useState(false);
 
-  const fetchEvents = async ({ isText, payload }) => {
-    // Pass in either text or image, but not both
+  // Authentication state
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
+  const [authMode, setAuthMode] = useState("signin"); // "signin", "signup"
 
+  // Listen for authentication state changes
+  useEffect(() => {
+    const unsubscribe = onAuthChange((user) => {
+      setCurrentUser(user);
+    });
+
+    // Check if user is already signed in
+    const user = getCurrentUser();
+    setCurrentUser(user);
+
+    return unsubscribe;
+  }, []);
+
+  const fetchEvents = async ({ isText, payload }) => {
+    // Check if user is authenticated
+    if (!currentUser) {
+      setShowAuthPopup(true);
+      setAuthMode("signin");
+      return;
+    }
+
+    // Pass in either text or image, but not both
     console.log("Fetching events");
     setGeneratedEvents(false);
     let response;
@@ -76,6 +106,7 @@ function App() {
         method: "POST",
         headers: {
           "content-Type": "application/json",
+          Authorization: `Bearer ${currentUser.uid}`,
         },
         body: JSON.stringify({ text: payload }),
       });
@@ -84,6 +115,9 @@ function App() {
       formData.append("image", payload);
       response = await fetch(`${API_BASE_URL}/api/process-image`, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${currentUser.uid}`,
+        },
         body: formData,
       });
     }
@@ -129,6 +163,26 @@ function App() {
     });
   };
 
+  const handleAuthSuccess = (user) => {
+    setCurrentUser(user);
+    setShowAuthPopup(false);
+    console.log("User authenticated:", user.email || user.displayName);
+  };
+
+  const handleShowAuthPopup = (mode = "signin") => {
+    setAuthMode(mode);
+    setShowAuthPopup(true);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setCurrentUser(null);
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
   const handleAddToGoogleCalendar = async (selectedCollege, reminder) => {
     if (!calendarEvents || Object.keys(calendarEvents).length === 0) {
       alert("No calendar events to add. Please generate your schedule first.");
@@ -137,7 +191,7 @@ function App() {
 
     try {
       // Sign in and get access token
-      const { accessToken } = await signInAndGetCalendarAccess();
+      const { accessToken } = await signInWithGoogleAndGetCalendarAccess();
 
       if (accessToken) {
         // Create calendar events
@@ -161,6 +215,18 @@ function App() {
   };
 
   const handleDownloadICS = async (college, reminder) => {
+    if (!calendarEvents || Object.keys(calendarEvents).length === 0) {
+      alert("No calendar events to add. Please generate your schedule first.");
+      return;
+    }
+
+    // Check if user is authenticated
+    if (!currentUser) {
+      setShowAuthPopup(true);
+      setAuthMode("signin");
+      return;
+    }
+
     try {
       console.log("Fetching");
       const response = await fetch(
@@ -260,6 +326,15 @@ function App() {
           </div>
         </div>
       </main>
+
+      {/* Authentication Popup */}
+      <AuthPopup
+        isOpen={showAuthPopup}
+        onClose={() => setShowAuthPopup(false)}
+        onAuthSuccess={handleAuthSuccess}
+        authMode={authMode}
+        setAuthMode={setAuthMode}
+      />
     </div>
   );
 }

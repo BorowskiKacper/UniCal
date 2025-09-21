@@ -3,8 +3,6 @@ import {
   signInWithGoogle,
   signInWithEmail,
   signUpWithEmail,
-  linkGoogleAccount,
-  getCurrentUser,
 } from "../firebase/auth";
 import SubmitButton from "./SubmitButton";
 
@@ -12,10 +10,9 @@ const AuthPopup = ({
   isOpen,
   onClose,
   onAuthSuccess,
-  initialMode = "signin",
-  showAccountLinking = false,
+  authMode,
+  setAuthMode,
 }) => {
-  const [mode, setMode] = useState(initialMode); // "signin", "signup", "link"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -101,21 +98,6 @@ const AuthPopup = ({
     }
   };
 
-  const handleAccountLinking = async () => {
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const { user } = await linkGoogleAccount();
-      onAuthSuccess(user);
-      handleClose();
-    } catch (error) {
-      setError("Failed to link Google account. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -128,11 +110,7 @@ const AuthPopup = ({
         <div className="px-6 py-4 border-b border-gray-200 dark:border-slate-700">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
-              {mode === "signup"
-                ? "Sign Up"
-                : mode === "link"
-                ? "Link Account"
-                : "Sign In"}
+              {authMode === "signup" ? "Sign Up" : "Sign In"}
             </h2>
             <button
               onClick={handleClose}
@@ -194,7 +172,9 @@ const AuthPopup = ({
 
           {/* Email Form */}
           <form
-            onSubmit={mode === "signup" ? handleEmailSignUp : handleEmailSignIn}
+            onSubmit={
+              authMode === "signup" ? handleEmailSignUp : handleEmailSignIn
+            }
           >
             <div className="space-y-4">
               <div>
@@ -235,7 +215,7 @@ const AuthPopup = ({
                 />
               </div>
 
-              {mode === "signup" && (
+              {authMode === "signup" && (
                 <div>
                   <label
                     htmlFor="confirmPassword"
@@ -261,12 +241,14 @@ const AuthPopup = ({
                   text={
                     isLoading
                       ? "Please wait..."
-                      : mode === "signup"
+                      : authMode === "signup"
                       ? "Sign up"
                       : "Sign in"
                   }
                   onClick={
-                    mode === "signup" ? handleEmailSignUp : handleEmailSignIn
+                    authMode === "signup"
+                      ? handleEmailSignUp
+                      : handleEmailSignIn
                   }
                   isDisabled={isLoading}
                   disableLightning={true}
@@ -279,37 +261,21 @@ const AuthPopup = ({
           <div className="mt-4 text-center">
             <p className="text-sm text-gray-600 dark:text-slate-400">
               <>
-                {mode === "signup"
+                {authMode === "signup"
                   ? "Already have an account? "
                   : "Don't have an account? "}
                 <button
                   onClick={() => {
-                    setMode(mode === "signup" ? "signin" : "signup");
+                    setAuthMode(authMode === "signup" ? "signin" : "signup");
                     resetForm();
                   }}
                   className="hover:text-amber-700 text-amber-600  dark:text-emerald-400 dark:hover:text-green-400 font-medium"
                 >
-                  {mode === "signup" ? "Sign in" : "Sign up"}
+                  {authMode === "signup" ? "Sign in" : "Sign up"}
                 </button>
               </>
             </p>
           </div>
-
-          {/* Account Linking */}
-          {showAccountLinking && mode === "signin" && (
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-slate-600">
-              <p className="text-sm text-gray-600 dark:text-slate-400 mb-2">
-                Want to link your Google account?
-              </p>
-              <button
-                onClick={handleAccountLinking}
-                disabled={isLoading}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-medium py-2 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-              >
-                {isLoading ? "Linking..." : "Link Google Account"}
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>
