@@ -7,6 +7,7 @@ const CalendarWeekday = ({ weekday, events, onEventClick, onWeekdayClick }) => {
 
   const handleWeekdayClick = () => {
     const rect = weekdayRef.current?.getBoundingClientRect();
+    console.log(rect);
     onWeekdayClick?.(weekday, rect);
   };
   return (

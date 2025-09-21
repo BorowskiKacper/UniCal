@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState, useLayoutEffect } from "react";
 import CalendarEventGrid from "./CalendarEventGrid";
-import HorizontalGridLines from "./HorizontalGridLines";
 import EventPopup from "./EventPopup";
+import useMouseClickPosition from "../hooks/useMouseClickPosition";
 
 const WeeklyContainer = ({
   handleEventModify,
@@ -54,6 +54,7 @@ const WeeklyContainer = ({
   const calendarScrollAreaRef = useRef(null);
   const calendarScrollTargetRef = useRef(null);
   const [weekdayToAddCourse, setWeekdayToAddCourse] = useState("");
+  const mouseClickPosition = useMouseClickPosition();
 
   const handleEventClick = (id, rect) => {
     setWeekdayToAddCourse("");
@@ -174,8 +175,9 @@ const WeeklyContainer = ({
           eventDelete={handleEventDelete}
           onClose={closePopup}
           weekdays={weekdays}
-          weekdayAdd={weekdayToAddCourse}
+          weekdayToAddCourse={weekdayToAddCourse}
           calendarEvents={calendarEvents}
+          mouseClickPosition={mouseClickPosition}
         />
       </div>
     </div>

@@ -10,10 +10,11 @@ const EventPopup = ({
   eventAdd,
   eventDelete,
   weekdays,
-  weekdayAdd,
+  weekdayToAddCourse,
   calendarEvents,
+  mouseClickPosition,
 }) => {
-  const isOpen = Boolean(activeEvent) || Boolean(weekdayAdd);
+  const isOpen = Boolean(activeEvent) || Boolean(weekdayToAddCourse);
 
   // Close on Esc
   useEffect(() => {
@@ -31,6 +32,8 @@ const EventPopup = ({
     top: 0,
     side: "right",
   });
+  const clickedPercentageAwayFromTop =
+    (mouseClickPosition?.y - anchorRect?.y) / anchorRect?.height;
 
   useLayoutEffect(() => {
     if (!isOpen || !anchorRect) return;
@@ -80,8 +83,8 @@ const EventPopup = ({
 
   if (!isOpen) return null;
 
-  const activeEventForForm = weekdayAdd
-    ? { className: "", weekDay: weekdayAdd, description: "", time: "" }
+  const activeEventForForm = weekdayToAddCourse
+    ? { className: "", weekDay: weekdayToAddCourse, description: "", time: "" }
     : activeEvent;
 
   const handleCopySelected = () => {
@@ -92,7 +95,7 @@ const EventPopup = ({
       className: src.className || "",
       description: src.description || "",
       time: src.time || "",
-      weekDay: weekdayAdd,
+      weekDay: weekdayToAddCourse,
     };
     eventAdd?.(newEvent);
     onClose?.();
@@ -121,10 +124,10 @@ const EventPopup = ({
         >
           <div className="px-4 py-3 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-100">
-              {weekdayAdd ? "Add Event" : "Edit event"}
+              {weekdayToAddCourse ? "Add Event" : "Edit event"}
             </h3>
             <div className="flex items-center gap-2">
-              {!weekdayAdd && (
+              {!weekdayToAddCourse && (
                 <button
                   onClick={() => {
                     eventDelete();
@@ -161,11 +164,11 @@ const EventPopup = ({
             </div>
           </div>
           <div className="p-4 max-h-[80vh] overflow-y-auto">
-            {weekdayAdd && (
+            {weekdayToAddCourse && (
               <div className="space-y-4 mb-4">
                 <div>
                   <p className="text-xs uppercase tracking-wide text-gray-500 mb-1 dark:text-slate-400">
-                    Copy existing course into {weekdayAdd}
+                    Copy existing course into {weekdayToAddCourse}
                   </p>
                   <div className="flex gap-2">
                     <select
@@ -209,7 +212,9 @@ const EventPopup = ({
             <PopupForm
               activeEvent={activeEventForForm}
               eventModify={
-                weekdayAdd ? (props) => eventAdd?.({ ...props }) : eventModify
+                weekdayToAddCourse
+                  ? (props) => eventAdd?.({ ...props })
+                  : eventModify
               }
               weekdays={weekdays}
               closePopup={onClose}
@@ -228,10 +233,10 @@ const EventPopup = ({
           <div className="px-4 py-3 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between">
             <div className="h-1.5 w-10 bg-gray-300 dark:bg-slate-600/60 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 -top-2" />
             <h3 className="text-base font-semibold">
-              {weekdayAdd ? "Add Event" : "Edit event"}
+              {weekdayToAddCourse ? "Add Event" : "Edit event"}
             </h3>
             <div className="flex items-center gap-3">
-              {!weekdayAdd && (
+              {!weekdayToAddCourse && (
                 <button
                   onClick={() => {
                     eventDelete?.();
@@ -268,11 +273,11 @@ const EventPopup = ({
             </div>
           </div>
           <div className="p-4 overflow-y-auto">
-            {weekdayAdd && (
+            {weekdayToAddCourse && (
               <div className="space-y-4 mb-4">
                 <div>
                   <p className="text-xs uppercase tracking-wide text-gray-500 mb-1 dark:text-slate-400">
-                    Copy existing course into {weekdayAdd}
+                    Copy existing course into {weekdayToAddCourse}
                   </p>
                   <div className="flex gap-2">
                     <select
@@ -314,7 +319,9 @@ const EventPopup = ({
             <PopupForm
               activeEvent={activeEvent}
               eventModify={
-                weekdayAdd ? (props) => eventAdd?.({ ...props }) : eventModify
+                weekdayToAddCourse
+                  ? (props) => eventAdd?.({ ...props })
+                  : eventModify
               }
               weekdays={weekdays}
               closePopup={onClose}
