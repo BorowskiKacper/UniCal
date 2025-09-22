@@ -171,3 +171,15 @@ export function getCurrentUser() {
 export function onAuthChange(callback) {
   return onAuthStateChanged(auth, callback);
 }
+
+export async function getIdToken() {
+  const user = auth.currentUser;
+  if (!user) return null;
+  try {
+    const token = await user.getIdToken(/* forceRefresh */ false);
+    return token;
+  } catch (e) {
+    console.error("Failed to get ID token", e);
+    return null;
+  }
+}

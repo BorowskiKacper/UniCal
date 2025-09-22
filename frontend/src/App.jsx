@@ -9,6 +9,7 @@ import {
   getCurrentUser,
   onAuthChange,
   logout,
+  getIdToken,
 } from "./firebase/auth";
 import { createCalendarEventsFromSchedule } from "./firebase/google-calendar";
 
@@ -19,8 +20,7 @@ const toggleDark = () => {
   }
 };
 
-const API_BASE_URL =
-  import.meta.env.MODE === "production" ? "" : process.env.VITE_API_BASE_URL;
+const API_BASE_URL = process.env.VITE_API_BASE_URL || "";
 
 function App() {
   const [calendarEvents, setCalendarEvents] = useState({
@@ -103,12 +103,13 @@ function App() {
     setGeneratedEvents(false);
     let response;
 
+    const idToken = await getIdToken();
     if (isText) {
       response = await fetch(`${API_BASE_URL}/api/process-text`, {
         method: "POST",
         headers: {
           "content-Type": "application/json",
-          Authorization: `Bearer ${currentUser.uid}`,
+          ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
         },
         body: JSON.stringify({ text: payload }),
       });
@@ -117,9 +118,7 @@ function App() {
       formData.append("image", payload);
       response = await fetch(`${API_BASE_URL}/api/process-image`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${currentUser.uid}`,
-        },
+        headers: idToken ? { Authorization: `Bearer ${idToken}` } : {},
         body: formData,
       });
     }
@@ -231,12 +230,14 @@ function App() {
 
     try {
       console.log("Fetching");
+      const idToken = await getIdToken();
       const response = await fetch(
         `${API_BASE_URL}/api/calendar-events-to-ics`,
         {
           method: "POST",
           headers: {
             "content-Type": "application/json",
+            ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
           },
           body: JSON.stringify({ college, calendarEvents, reminder }),
         }
