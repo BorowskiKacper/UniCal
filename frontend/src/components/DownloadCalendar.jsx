@@ -13,7 +13,7 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
     let attempts = 0;
     let timeoutId;
 
-    const API_BASE_URL = process.env.API_BASE_URL || "";
+    const API_BASE_URL = process.env.VITE_API_BASE_URL || "";
 
     const tryFetchColleges = async () => {
       attempts += 1;

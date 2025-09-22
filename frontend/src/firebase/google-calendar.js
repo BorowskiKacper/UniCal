@@ -54,7 +54,7 @@ export async function createCalendarEventsFromSchedule(
   const createdEvents = [];
   const errors = [];
 
-  const API_BASE_URL = process.env.API_BASE_URL || "";
+  const API_BASE_URL = process.env.VITE_API_BASE_URL || "";
 
   console.log("Fetching");
   const idToken = await getIdToken();

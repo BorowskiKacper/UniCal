@@ -20,7 +20,7 @@ const toggleDark = () => {
   }
 };
 
-const API_BASE_URL = process.env.API_BASE_URL || "";
+const API_BASE_URL = process.env.VITE_API_BASE_URL || "";
 
 function App() {
   const [calendarEvents, setCalendarEvents] = useState({
