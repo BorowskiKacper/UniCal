@@ -5,13 +5,10 @@ yarn-error.log*
 .npm
 .yarn-integrity
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
 .git
 .gitignore
-# README.md
+README.md
 Dockerfile
 .dockerignore
 .nyc_output
@@ -22,3 +19,6 @@ coverage
 *.log
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
+*~
