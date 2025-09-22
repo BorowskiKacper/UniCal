@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import multer from "multer";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 import { imageToEvents, textToEvents } from "./generate-events.js";
 import {
   getColleges,
@@ -13,37 +14,70 @@ dotenv.config();
 const PORT = process.env.PORT || 8080; // Cloud Run provides PORT; default to 8080
 
 const app = express();
-app.use(cors());
+
+// CORS configuration: allow prod domain and localhost in dev
+const allowedOrigins = new Set([
+  "https://collegetocalendar.com",
+  "https://www.collegetocalendar.com",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:3000",
+]);
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true); // Non-browser or same-origin
+      if (allowedOrigins.has(origin)) return callback(null, true);
+      return callback(null, false);
+    },
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Accept",
+      "X-Requested-With",
+    ],
+  })
+);
 app.use(express.json());
+
+// Firebase ID token verification (via Google JWKS)
+const firebaseProjectId = process.env.FIREBASE_PROJECT_ID;
+if (!firebaseProjectId) {
+  console.warn(
+    "FIREBASE_PROJECT_ID is not set. Token verification will fail. Set it in environment."
+  );
+}
+const JWKS = createRemoteJWKSet(
+  new URL(
+    "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"
+  )
+);
+
+async function authenticate(req, res, next) {
+  try {
+    const authHeader = req.headers["authorization"] || "";
+    const [scheme, token] = authHeader.split(" ");
+    if (scheme !== "Bearer" || !token) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const { payload } = await jwtVerify(token, JWKS, {
+      issuer: `https://securetoken.google.com/${firebaseProjectId}`,
+      audience: firebaseProjectId,
+    });
+    req.user = { uid: payload.sub, email: payload.email };
+    return next();
+  } catch (err) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+}
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// api endpoints
+// Unprotected endpoints
 app.get("/", (req, res) => {
   res.send("Hello World");
-});
-
-app.post("/api/process-text", async (req, res) => {
-  console.log("in /api/process-text");
-
-  const { text } = req.body;
-  if (!text) {
-    return res.status(400).json({ message: "No text provided" });
-  }
-
-  const calendarEvents = await textToEvents(text);
-
-  res.json(calendarEvents);
-});
-
-app.post("/api/process-image", upload.single("image"), async (req, res) => {
-  console.log("In /api/process-image");
-  if (!req.file) {
-    return res.status(400).json({ message: "No image file provided" });
-  }
-  const calendarEvents = await imageToEvents(req.file);
-  return res.json(calendarEvents);
 });
 
 app.get("/api/colleges", (req, res) => {
@@ -51,8 +85,30 @@ app.get("/api/colleges", (req, res) => {
   return res.json(colleges);
 });
 
+// Protect all other /api/* routes
+app.use("/api", authenticate);
+
+// Protected endpoints
+app.post("/api/process-text", async (req, res) => {
+  console.log("in /api/process-text", req.user?.uid);
+  const { text } = req.body;
+  if (!text) {
+    return res.status(400).json({ message: "No text provided" });
+  }
+  const calendarEvents = await textToEvents(text);
+  return res.json(calendarEvents);
+});
+
+app.post("/api/process-image", upload.single("image"), async (req, res) => {
+  console.log("In /api/process-image", req.user?.uid);
+  if (!req.file) {
+    return res.status(400).json({ message: "No image file provided" });
+  }
+  const calendarEvents = await imageToEvents(req.file);
+  return res.json(calendarEvents);
+});
+
 app.post("/api/semester-details", (req, res) => {
-  // This function may be useless, maybe remove it (In college-semester.js too)
   const { college } = req.body || {};
   if (typeof college !== "string" || college.trim().length === 0) {
     return res.status(400).json({ message: "Invalid or missing 'college'" });
@@ -62,7 +118,7 @@ app.post("/api/semester-details", (req, res) => {
 });
 
 app.post("/api/calendar-events-to-ics", (req, res) => {
-  console.log("In /api/calendar-events-to-ics");
+  console.log("In /api/calendar-events-to-ics", req.user?.uid);
   const { college, calendarEvents, reminder } = req.body || {};
   const ics = calendarEventsToICS(college, calendarEvents, reminder);
   return res.json(ics);
