@@ -5,6 +5,7 @@ const CalendarEvent = ({ id, event, onEventClick }) => {
   const eventStartMinute = Number(event.time.slice(3, 5));
   const eventEndHour = Number(event.time.slice(6, 8));
   const eventEndMinute = Number(event.time.slice(9, 11));
+  console.log(eventStartHour);
 
   const minsPerDay = 60 * 24;
   const top = ((eventStartHour * 60 + eventStartMinute) / minsPerDay) * 100;
@@ -74,7 +75,23 @@ const CalendarEvent = ({ id, event, onEventClick }) => {
                 {event.description}
               </div>
             )}
-            <div className="text-xs opacity-75 font-mono">{event.time}</div>
+            <div className="text-xs opacity-75 font-mono">
+              {eventStartHour < 12
+                ? `${
+                    eventStartHour === 0 ? 12 : eventStartHour
+                  }:${eventStartMinute.toString().padStart(2, "0")} AM`
+                : `${
+                    eventStartHour % 12 === 0 ? 12 : eventStartHour % 12
+                  }:${eventStartMinute.toString().padStart(2, "0")} PM`}
+              {` - `}
+              {eventEndHour < 12
+                ? `${eventEndHour === 0 ? 12 : eventEndHour}:${eventEndMinute
+                    .toString()
+                    .padStart(2, "0")} AM`
+                : `${
+                    eventEndHour % 12 === 0 ? 12 : eventEndHour % 12
+                  }:${eventEndMinute.toString().padStart(2, "0")} PM`}
+            </div>
           </div>
         </button>
       </div>
