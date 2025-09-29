@@ -25,7 +25,6 @@ export async function createCalendarEvent(accessToken, eventData) {
     }
 
     const createdEvent = await response.json();
-    console.log("Created event:", createdEvent);
     return createdEvent;
   } catch (error) {
     console.error("Error creating calendar event:", error);
@@ -33,14 +32,16 @@ export async function createCalendarEvent(accessToken, eventData) {
   }
 }
 
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 function findFirstOccurrence(semesterStart, targetWeekday) {
   const startDate = new Date(`${semesterStart}T00:00:00`);
-  const dayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(
-    targetWeekday
-  );
+  const dayIndex = WEEKDAYS.indexOf(targetWeekday);
+
   while (startDate.getDay() !== dayIndex) {
     startDate.setDate(startDate.getDate() + 1);
   }
+
   return startDate;
 }
 
@@ -56,7 +57,6 @@ export async function createCalendarEventsFromSchedule(
 
   const API_BASE_URL = process.env.VITE_API_BASE_URL || "";
 
-  console.log("Fetching");
   const idToken = await getIdToken();
   const response = await fetch(`${API_BASE_URL}/api/semester-details`, {
     method: "POST",
@@ -78,11 +78,6 @@ export async function createCalendarEventsFromSchedule(
     const details = await response.json();
     const { semesterStart, semesterEnd, daysOff, dayFollowsWeekday, timezone } =
       details;
-    console.log("Fetched");
-
-    const today = new Date();
-
-    const [year, month, date] = semesterStart.split("-");
 
     const daysOffByWeekday = [[], [], [], [], [], [], []];
     const daysToAddByWeekday = {
@@ -125,15 +120,7 @@ export async function createCalendarEventsFromSchedule(
         );
 
         // Get the weekday index for this class
-        const weekdayIndex = [
-          "Sun",
-          "Mon",
-          "Tue",
-          "Wed",
-          "Thu",
-          "Fri",
-          "Sat",
-        ].indexOf(weekDay);
+        const weekdayIndex = WEEKDAYS.indexOf(weekDay);
 
         // Get dates to exclude for this specific weekday
         const datesToExclude = daysOffByWeekday[weekdayIndex] || [];
@@ -144,35 +131,24 @@ export async function createCalendarEventsFromSchedule(
         const [startHour, startMin] = startTime.split(":").map(Number);
 
         // Format the time for EXDATE and RDATE (HHMMSS format)
-        const formattedStartTime = `T${startHour
-          .toString()
-          .padStart(2, "0")}${startMin.toString().padStart(2, "0")}00`;
+        const formattedStartTime = `T${startHour.padStart(
+          2,
+          "0"
+        )}${startMin.padStart(2, "0")}00`;
 
-        const formattedExDates = datesToExclude
-          .map((date) => {
-            const cleanDate = date.replace(/-/g, ""); // "YYYY-MM-DD" -> "YYYYMMDD"
-            return cleanDate + formattedStartTime;
-          })
-          .join(",");
         const exDateString =
           datesToExclude.length > 0
-            ? `EXDATE;TZID=${timezone}:${formattedExDates}`
+            ? `EXDATE;TZID=${timezone}:${datesToExclude
+                .map((date) => date.replace(/-/g, "") + formattedStartTime)
+                .join(",")}`
             : null;
-        console.log("exDateString", exDateString);
-
-        const formattedRDates = datesToAdd
-          .map((date) => {
-            const cleanDate = date.replace(/-/g, ""); // "YYYY-MM-DD" -> "YYYYMMDD"
-            return cleanDate + formattedStartTime;
-          })
-          .join(",");
 
         const rDateString =
           datesToAdd.length > 0
-            ? `RDATE;TZID=${timezone}:${formattedRDates}`
+            ? `RDATE;TZID=${timezone}:${datesToAdd
+                .map((date) => date.replace(/-/g, "") + formattedStartTime)
+                .join(",")}`
             : null;
-
-        console.log("rDateString", rDateString);
 
         const googleCalendarEvent = {
           summary: className,
@@ -188,9 +164,7 @@ export async function createCalendarEventsFromSchedule(
           recurrence: [
             `RRULE:FREQ=WEEKLY;BYDAY=${weekDay
               .substring(0, 2)
-              .toUpperCase()};UNTIL=${
-              semesterEnd.replace(/-/g, "") + "T235959Z"
-            }`,
+              .toUpperCase()};UNTIL=${semesterEnd.replace(/-/g, "")}T235959Z`,
             ...(exDateString ? [exDateString] : []),
             ...(rDateString ? [rDateString] : []),
           ],
