@@ -1,10 +1,45 @@
 import { getIdToken } from "./auth";
 
-// Function to create a single calendar event
-export async function createCalendarEvent(accessToken, eventData) {
+// Function to create a secondary calendar
+async function createDedicatedCalendar(accessToken, timeZone) {
   try {
     const response = await fetch(
-      "https://www.googleapis.com/calendar/v3/calendars/primary/events",
+      "https://www.googleapis.com/calendar/v3/calendars",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          summary: "College Semester",
+          description: "Events managed by the UniCal application.",
+          timeZone,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        `API error creating calendar: ${errorData.error?.message}`
+      );
+    }
+
+    const newCalendar = await response.json();
+    console.log("✅ Successfully created calendar:", newCalendar.summary);
+    return newCalendar.id; // Return the ID of the new calendar
+  } catch (error) {
+    console.error("Error creating dedicated calendar:", error);
+    return null;
+  }
+}
+
+// Function to create a single calendar event
+export async function createCalendarEvent(accessToken, calendarID, eventData) {
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${calendarID}/events`,
       {
         method: "POST",
         headers: {
@@ -25,7 +60,6 @@ export async function createCalendarEvent(accessToken, eventData) {
     }
 
     const createdEvent = await response.json();
-    console.log("Created event:", createdEvent);
     return createdEvent;
   } catch (error) {
     console.error("Error creating calendar event:", error);
@@ -33,14 +67,16 @@ export async function createCalendarEvent(accessToken, eventData) {
   }
 }
 
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 function findFirstOccurrence(semesterStart, targetWeekday) {
   const startDate = new Date(`${semesterStart}T00:00:00`);
-  const dayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(
-    targetWeekday
-  );
+  const dayIndex = WEEKDAYS.indexOf(targetWeekday);
+
   while (startDate.getDay() !== dayIndex) {
     startDate.setDate(startDate.getDate() + 1);
   }
+
   return startDate;
 }
 
@@ -56,7 +92,6 @@ export async function createCalendarEventsFromSchedule(
 
   const API_BASE_URL = process.env.VITE_API_BASE_URL || "";
 
-  console.log("Fetching");
   const idToken = await getIdToken();
   const response = await fetch(`${API_BASE_URL}/api/semester-details`, {
     method: "POST",
@@ -78,11 +113,6 @@ export async function createCalendarEventsFromSchedule(
     const details = await response.json();
     const { semesterStart, semesterEnd, daysOff, dayFollowsWeekday, timezone } =
       details;
-    console.log("Fetched");
-
-    const today = new Date();
-
-    const [year, month, date] = semesterStart.split("-");
 
     const daysOffByWeekday = [[], [], [], [], [], [], []];
     const daysToAddByWeekday = {
@@ -110,6 +140,8 @@ export async function createCalendarEventsFromSchedule(
       daysToAddByWeekday[follows].push(date);
     }
 
+    const calendarID = await createDedicatedCalendar(accessToken, timezone);
+
     for (let id in calendarEvents) {
       try {
         const { className, weekDay, time, description } = calendarEvents[id];
@@ -125,15 +157,7 @@ export async function createCalendarEventsFromSchedule(
         );
 
         // Get the weekday index for this class
-        const weekdayIndex = [
-          "Sun",
-          "Mon",
-          "Tue",
-          "Wed",
-          "Thu",
-          "Fri",
-          "Sat",
-        ].indexOf(weekDay);
+        const weekdayIndex = WEEKDAYS.indexOf(weekDay);
 
         // Get dates to exclude for this specific weekday
         const datesToExclude = daysOffByWeekday[weekdayIndex] || [];
@@ -148,31 +172,19 @@ export async function createCalendarEventsFromSchedule(
           .toString()
           .padStart(2, "0")}${startMin.toString().padStart(2, "0")}00`;
 
-        const formattedExDates = datesToExclude
-          .map((date) => {
-            const cleanDate = date.replace(/-/g, ""); // "YYYY-MM-DD" -> "YYYYMMDD"
-            return cleanDate + formattedStartTime;
-          })
-          .join(",");
         const exDateString =
           datesToExclude.length > 0
-            ? `EXDATE;TZID=${timezone}:${formattedExDates}`
+            ? `EXDATE;TZID=${timezone}:${datesToExclude
+                .map((date) => date.replace(/-/g, "") + formattedStartTime)
+                .join(",")}`
             : null;
-        console.log("exDateString", exDateString);
-
-        const formattedRDates = datesToAdd
-          .map((date) => {
-            const cleanDate = date.replace(/-/g, ""); // "YYYY-MM-DD" -> "YYYYMMDD"
-            return cleanDate + formattedStartTime;
-          })
-          .join(",");
 
         const rDateString =
           datesToAdd.length > 0
-            ? `RDATE;TZID=${timezone}:${formattedRDates}`
+            ? `RDATE;TZID=${timezone}:${datesToAdd
+                .map((date) => date.replace(/-/g, "") + formattedStartTime)
+                .join(",")}`
             : null;
-
-        console.log("rDateString", rDateString);
 
         const googleCalendarEvent = {
           summary: className,
@@ -188,9 +200,7 @@ export async function createCalendarEventsFromSchedule(
           recurrence: [
             `RRULE:FREQ=WEEKLY;BYDAY=${weekDay
               .substring(0, 2)
-              .toUpperCase()};UNTIL=${
-              semesterEnd.replace(/-/g, "") + "T235959Z"
-            }`,
+              .toUpperCase()};UNTIL=${semesterEnd.replace(/-/g, "")}T235959Z`,
             ...(exDateString ? [exDateString] : []),
             ...(rDateString ? [rDateString] : []),
           ],
@@ -205,6 +215,7 @@ export async function createCalendarEventsFromSchedule(
 
         const createdEvent = await createCalendarEvent(
           accessToken,
+          calendarID,
           googleCalendarEvent
         );
         createdEvents.push(createdEvent);

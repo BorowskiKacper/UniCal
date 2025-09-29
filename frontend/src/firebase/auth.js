@@ -25,9 +25,7 @@ const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 // Google auth with calendar scope for calendar operations
-googleProvider.addScope(
-  "https://www.googleapis.com/auth/calendar.events.owned"
-);
+googleProvider.addScope("https://www.googleapis.com/auth/calendar.app.created");
 
 // Basic Google auth without calendar scope for initial signup/login
 const basicGoogleProvider = new GoogleAuthProvider();
