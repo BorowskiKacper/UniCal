@@ -11,7 +11,7 @@ import {
   logout,
   getIdToken,
 } from "./firebase/auth";
-import { createCalendarEventsFromSchedule } from "./firebase/google-calendar";
+import { createCalendarEventsFromSchedule } from "./download-events/google-calendar";
 
 const toggleDark = () => {
   const root = document.getElementById("root");

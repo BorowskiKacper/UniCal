@@ -1,4 +1,4 @@
-import { getIdToken } from "./auth";
+import { getIdToken } from "../firebase/auth";
 
 // Function to create a secondary calendar
 async function createDedicatedCalendar(accessToken, timeZone) {
