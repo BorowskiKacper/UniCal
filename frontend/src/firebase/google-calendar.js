@@ -1,10 +1,45 @@
 import { getIdToken } from "./auth";
 
-// Function to create a single calendar event
-export async function createCalendarEvent(accessToken, eventData) {
+// Function to create a secondary calendar
+async function createDedicatedCalendar(accessToken, timeZone) {
   try {
     const response = await fetch(
-      "https://www.googleapis.com/calendar/v3/calendars/primary/events",
+      "https://www.googleapis.com/calendar/v3/calendars",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          summary: "College Semester",
+          description: "Events managed by the UniCal application.",
+          timeZone,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        `API error creating calendar: ${errorData.error?.message}`
+      );
+    }
+
+    const newCalendar = await response.json();
+    console.log("✅ Successfully created calendar:", newCalendar.summary);
+    return newCalendar.id; // Return the ID of the new calendar
+  } catch (error) {
+    console.error("Error creating dedicated calendar:", error);
+    return null;
+  }
+}
+
+// Function to create a single calendar event
+export async function createCalendarEvent(accessToken, calendarID, eventData) {
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${calendarID}/events`,
       {
         method: "POST",
         headers: {
@@ -105,6 +140,8 @@ export async function createCalendarEventsFromSchedule(
       daysToAddByWeekday[follows].push(date);
     }
 
+    const calendarID = await createDedicatedCalendar(accessToken, timezone);
+
     for (let id in calendarEvents) {
       try {
         const { className, weekDay, time, description } = calendarEvents[id];
@@ -178,6 +215,7 @@ export async function createCalendarEventsFromSchedule(
 
         const createdEvent = await createCalendarEvent(
           accessToken,
+          calendarID,
           googleCalendarEvent
         );
         createdEvents.push(createdEvent);
