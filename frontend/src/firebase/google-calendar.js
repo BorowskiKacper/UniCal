@@ -131,10 +131,9 @@ export async function createCalendarEventsFromSchedule(
         const [startHour, startMin] = startTime.split(":").map(Number);
 
         // Format the time for EXDATE and RDATE (HHMMSS format)
-        const formattedStartTime = `T${startHour.padStart(
-          2,
-          "0"
-        )}${startMin.padStart(2, "0")}00`;
+        const formattedStartTime = `T${startHour
+          .toString()
+          .padStart(2, "0")}${startMin.toString().padStart(2, "0")}00`;
 
         const exDateString =
           datesToExclude.length > 0
