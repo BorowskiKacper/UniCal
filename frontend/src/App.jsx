@@ -14,10 +14,53 @@ import {
 import { createCalendarEventsFromSchedule } from "./download-events/google-calendar";
 import { downloadICS } from "./download-events/ics-calendar";
 
-const toggleDark = () => {
+function setCookie(cname, cvalue, exdays) {
+  const d = new Date();
+  d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+  let expires = "expires=" + d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+  let name = cname + "=";
+  let ca = document.cookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == " ") {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+const setDarkMode = (toggle = false) => {
   const root = document.getElementById("root");
   if (root) {
-    root.classList.toggle("dark");
+    const darkModeCookieText = "darkmode";
+    const trueText = "true";
+    const falseText = "false";
+    const darkModeCookie = getCookie(darkModeCookieText);
+    if (toggle) {
+      if (darkModeCookie === falseText) {
+        setCookie(darkModeCookieText, trueText, 9999999);
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+        setCookie(darkModeCookieText, falseText, 9999999);
+      }
+    } else {
+      if (darkModeCookie === falseText) {
+        if (root.classList.contains("dark")) {
+          root.classList.remove("dark");
+        }
+      } else {
+        root.classList.add("dark");
+        setCookie(darkModeCookieText, trueText, 9999999);
+      }
+    }
   }
 };
 
@@ -77,6 +120,11 @@ function App() {
   const [authMode, setAuthMode] = useState("signin"); // "signin", "signup"
   const [userHoverOpen, setUserHoverOpen] = useState(false);
   const hoverTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    console.log("cookies");
+    setDarkMode();
+  }, []);
 
   // Listen for authentication state changes
   useEffect(() => {
@@ -320,7 +368,7 @@ function App() {
           )}
           <button
             type="button"
-            onClick={toggleDark}
+            onClick={() => setDarkMode(true)}
             className="ml-2 rounded-md px-3 py-2 text-sm font-medium border border-gray-200 bg-white text-gray-900 hover:bg-gray-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
             aria-label="Toggle dark mode"
             title="Toggle theme"
