@@ -4,11 +4,7 @@ import dotenv from "dotenv";
 import multer from "multer";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { imageToEvents, textToEvents } from "./generate-events.js";
-import {
-  getColleges,
-  getSemesterDetails,
-  calendarEventsToICS,
-} from "./college-semester.js";
+import { getColleges, getSemesterDetails } from "./college-semester.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 8080; // Cloud Run provides PORT; default to 8080
@@ -115,13 +111,6 @@ app.post("/api/semester-details", (req, res) => {
   }
   const details = getSemesterDetails(college);
   return res.json(details);
-});
-
-app.post("/api/calendar-events-to-ics", (req, res) => {
-  console.log("In /api/calendar-events-to-ics", req.user?.uid);
-  const { college, calendarEvents, reminder } = req.body || {};
-  const ics = calendarEventsToICS(college, calendarEvents, reminder);
-  return res.json(ics);
 });
 
 // 404 handler

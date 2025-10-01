@@ -1,4 +1,8 @@
-import { getIdToken } from "../firebase/auth";
+import {
+  getSemesterDetails,
+  calculateDaysOffAndMoved,
+  createProcessedEvent,
+} from "./main.js";
 
 // Function to create a secondary calendar
 async function createDedicatedCalendar(accessToken, timeZone) {
@@ -67,19 +71,6 @@ export async function createCalendarEvent(accessToken, calendarID, eventData) {
   }
 }
 
-const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-function findFirstOccurrence(semesterStart, targetWeekday) {
-  const startDate = new Date(`${semesterStart}T00:00:00`);
-  const dayIndex = WEEKDAYS.indexOf(targetWeekday);
-
-  while (startDate.getDay() !== dayIndex) {
-    startDate.setDate(startDate.getDate() + 1);
-  }
-
-  return startDate;
-}
-
 // Function to convert app calendar events to Google Calendar format and create them
 export async function createCalendarEventsFromSchedule(
   accessToken,
@@ -90,98 +81,60 @@ export async function createCalendarEventsFromSchedule(
   const createdEvents = [];
   const errors = [];
 
-  const API_BASE_URL = process.env.VITE_API_BASE_URL || "";
-
-  const idToken = await getIdToken();
-  const response = await fetch(`${API_BASE_URL}/api/semester-details`, {
-    method: "POST",
-    headers: {
-      "content-Type": "application/json",
-      ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
-    },
-    body: JSON.stringify({ college }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    console.error("Error from server:", errorData.message);
-    alert(`Error: ${errorData.message}`);
-    return;
-  }
-
   try {
-    const details = await response.json();
+    const details = await getSemesterDetails(college);
     const { semesterStart, semesterEnd, daysOff, dayFollowsWeekday, timezone } =
       details;
 
-    const daysOffByWeekday = [[], [], [], [], [], [], []];
-    const daysToAddByWeekday = {
-      Sun: [],
-      Mon: [],
-      Tue: [],
-      Wed: [],
-      Thu: [],
-      Fri: [],
-      Sat: [],
-    };
-
-    for (const date of daysOff) {
-      const tempDate = new Date(`${date}T00:00:00`);
-      const i = tempDate.getDay();
-      daysOffByWeekday[i].push(date);
-    }
-
-    for (const [date, follows] of dayFollowsWeekday) {
-      // Day to remove
-      const tempDate = new Date(`${date}T00:00:00`);
-      const i = tempDate.getDay();
-      daysOffByWeekday[i].push(date);
-      // Weekday to add on
-      daysToAddByWeekday[follows].push(date);
-    }
+    const { daysOffByWeekday, daysToAddByWeekday } = calculateDaysOffAndMoved(
+      daysOff,
+      dayFollowsWeekday
+    );
 
     const calendarID = await createDedicatedCalendar(accessToken, timezone);
 
     for (let id in calendarEvents) {
       try {
-        const { className, weekDay, time, description } = calendarEvents[id];
-        const startTime = time.slice(0, 5);
-        const endTime = time.slice(6, 11);
-
-        const firstClassDate = findFirstOccurrence(semesterStart, weekDay);
-        const startDateTime = new Date(
-          `${firstClassDate.toISOString().slice(0, 10)}T${startTime}:00`
-        );
-        const endDateTime = new Date(
-          `${firstClassDate.toISOString().slice(0, 10)}T${endTime}:00`
+        const processedEvent = createProcessedEvent(
+          calendarEvents[id],
+          semesterStart,
+          semesterEnd,
+          timezone,
+          daysOffByWeekday,
+          daysToAddByWeekday,
+          reminder
         );
 
-        // Get the weekday index for this class
-        const weekdayIndex = WEEKDAYS.indexOf(weekDay);
-
-        // Get dates to exclude for this specific weekday
-        const datesToExclude = daysOffByWeekday[weekdayIndex] || [];
-
-        // Get dates to add for this specific weekday
-        const datesToAdd = daysToAddByWeekday[weekDay] || [];
+        const {
+          className,
+          weekDay,
+          startDateTime,
+          endDateTime,
+          description,
+          datesToExclude,
+          datesToAdd,
+          startTime,
+          timezone: eventTimezone,
+          semesterEnd: eventSemesterEnd,
+          reminder: eventReminder,
+        } = processedEvent;
 
         const [startHour, startMin] = startTime.split(":").map(Number);
 
-        // Format the time for EXDATE and RDATE (HHMMSS format)
         const formattedStartTime = `T${startHour
           .toString()
           .padStart(2, "0")}${startMin.toString().padStart(2, "0")}00`;
 
         const exDateString =
           datesToExclude.length > 0
-            ? `EXDATE;TZID=${timezone}:${datesToExclude
+            ? `EXDATE;TZID=${eventTimezone}:${datesToExclude
                 .map((date) => date.replace(/-/g, "") + formattedStartTime)
                 .join(",")}`
             : null;
 
         const rDateString =
           datesToAdd.length > 0
-            ? `RDATE;TZID=${timezone}:${datesToAdd
+            ? `RDATE;TZID=${eventTimezone}:${datesToAdd
                 .map((date) => date.replace(/-/g, "") + formattedStartTime)
                 .join(",")}`
             : null;
@@ -191,24 +144,27 @@ export async function createCalendarEventsFromSchedule(
           description,
           start: {
             dateTime: startDateTime.toISOString(),
-            timeZone: timezone,
+            timeZone: eventTimezone,
           },
           end: {
             dateTime: endDateTime.toISOString(),
-            timeZone: timezone,
+            timeZone: eventTimezone,
           },
           recurrence: [
             `RRULE:FREQ=WEEKLY;BYDAY=${weekDay
               .substring(0, 2)
-              .toUpperCase()};UNTIL=${semesterEnd.replace(/-/g, "")}T235959Z`,
+              .toUpperCase()};UNTIL=${eventSemesterEnd.replace(
+              /-/g,
+              ""
+            )}T235959Z`,
             ...(exDateString ? [exDateString] : []),
             ...(rDateString ? [rDateString] : []),
           ],
           reminders: {
             useDefault: false,
             overrides:
-              reminder !== false
-                ? [{ method: "popup", minutes: reminder }]
+              eventReminder !== false
+                ? [{ method: "popup", minutes: eventReminder }]
                 : [],
           },
         };
