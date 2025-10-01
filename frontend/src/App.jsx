@@ -11,7 +11,8 @@ import {
   logout,
   getIdToken,
 } from "./firebase/auth";
-import { createCalendarEventsFromSchedule } from "./firebase/google-calendar";
+import { createCalendarEventsFromSchedule } from "./download-events/google-calendar";
+import { downloadICS } from "./download-events/ics-calendar";
 
 const toggleDark = () => {
   const root = document.getElementById("root");
@@ -229,45 +230,13 @@ function App() {
     }
 
     try {
-      console.log("Fetching");
-      const idToken = await getIdToken();
-      const response = await fetch(
-        `${API_BASE_URL}/api/calendar-events-to-ics`,
-        {
-          method: "POST",
-          headers: {
-            "content-Type": "application/json",
-            ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
-          },
-          body: JSON.stringify({ college, calendarEvents, reminder }),
-        }
-      );
+      const result = await downloadICS(calendarEvents, college, reminder);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error from server:", errorData.message);
-        alert(`Error: ${errorData.message}`);
-        return;
+      if (result.success) {
+        console.log("✅ Calendar downloaded successfully");
+      } else {
+        alert(`Error: ${result.message}`);
       }
-
-      const icsString = await response.json();
-      console.log("Fetched:", icsString);
-
-      const blob = new Blob([icsString], {
-        type: "text/calendar;charset=utf-8",
-      });
-
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${college}-schedule.ics`);
-
-      document.body.appendChild(link);
-      link.click();
-
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error downloading calendar:", error);
       alert("Error downloading calendar. Please try again.");
