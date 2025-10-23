@@ -1,3 +1,7 @@
+import Database from "better-sqlite3";
+
+const db = new Database("colleges.db");
+
 import { colleges } from "./db.js";
 
 export function getColleges() {
