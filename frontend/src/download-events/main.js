@@ -37,17 +37,17 @@ export function findWeekdayFromDate(dateString) {
 /**
  * Fetch semester details from the API
  */
-export async function getSemesterDetails(college) {
+export async function getSemesterDetails(termID) {
   const API_BASE_URL = process.env.VITE_API_BASE_URL || "";
 
   const idToken = await getIdToken();
-  const response = await fetch(`${API_BASE_URL}/api/semester-details`, {
+  const response = await fetch(`${API_BASE_URL}/api/db/semester-details`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
     },
-    body: JSON.stringify({ college }),
+    body: JSON.stringify({ termID }),
   });
 
   if (!response.ok) {

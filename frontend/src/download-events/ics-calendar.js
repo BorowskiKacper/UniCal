@@ -7,15 +7,17 @@ import {
 } from "./main.js";
 
 // Convert calendar events to ICS format
-export async function createICSFromSchedule(calendarEvents, college, reminder) {
+export async function createICSFromSchedule(
+  calendarEvents,
+  { selectedTermID, timezone, semesterStart, semesterEnd, reminder }
+) {
   if (!calendarEvents || Object.keys(calendarEvents).length === 0) {
     throw new Error("Invalid Calendar Events");
   }
 
   try {
-    const details = await getSemesterDetails(college);
-    const { semesterStart, semesterEnd, daysOff, dayFollowsWeekday, timezone } =
-      details;
+    const details = await getSemesterDetails(selectedTermID);
+    const { daysOff, dayFollowsWeekday } = details;
 
     const { daysOffByWeekday, daysToAddByWeekday } = calculateDaysOffAndMoved(
       daysOff,
@@ -106,12 +108,11 @@ export async function createICSFromSchedule(calendarEvents, college, reminder) {
 }
 
 // Download the ICS file
-export async function downloadICS(calendarEvents, college, reminder) {
+export async function downloadICS(calendarEvents, collegeTermInfo) {
   try {
     const icsContent = await createICSFromSchedule(
       calendarEvents,
-      college,
-      reminder
+      collegeTermInfo
     );
 
     // Create a blob and download it

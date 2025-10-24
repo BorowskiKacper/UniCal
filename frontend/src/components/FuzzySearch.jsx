@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Fuse from "fuse.js";
 
-const FuzzySearch = ({ colleges, selectedCollege, onChange }) => {
+const FuzzySearch = ({ colleges, selectedCollegeID, onChange }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredResults, setFilteredResults] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -42,9 +42,9 @@ const FuzzySearch = ({ colleges, selectedCollege, onChange }) => {
 
   // Display selected college name in input
   const getDisplayValue = () => {
-    if (selectedCollege) {
+    if (selectedCollegeID) {
       const college = colleges.find(
-        (c) => c.id === selectedCollege || c.name === selectedCollege
+        (c) => c.id === selectedCollegeID || c.name === selectedCollegeID
       );
       return college ? college.name : "";
     }
@@ -56,7 +56,7 @@ const FuzzySearch = ({ colleges, selectedCollege, onChange }) => {
     setSearchTerm(value);
     setIsOpen(true);
     // Clear selection when user starts typing
-    if (selectedCollege) {
+    if (selectedCollegeID) {
       onChange("");
     }
   };

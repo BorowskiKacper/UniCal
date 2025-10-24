@@ -233,7 +233,7 @@ function App() {
     }
   };
 
-  const handleAddToGoogleCalendar = async (selectedCollege, reminder) => {
+  const handleAddToGoogleCalendar = async (selectedTermID, reminder) => {
     if (!calendarEvents || Object.keys(calendarEvents).length === 0) {
       alert("No calendar events to add. Please generate your schedule first.");
       return;
@@ -264,7 +264,7 @@ function App() {
     }
   };
 
-  const handleDownloadICS = async (college, reminder) => {
+  const handleDownloadICS = async (collegeTermInfo) => {
     if (!calendarEvents || Object.keys(calendarEvents).length === 0) {
       alert("No calendar events to add. Please generate your schedule first.");
       return;
@@ -278,8 +278,7 @@ function App() {
     }
 
     try {
-      const result = await downloadICS(calendarEvents, college, reminder);
-
+      const result = await downloadICS(calendarEvents, collegeTermInfo);
       if (result.success) {
         console.log("✅ Calendar downloaded successfully");
       } else {

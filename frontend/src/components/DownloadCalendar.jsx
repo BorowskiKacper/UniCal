@@ -5,10 +5,13 @@ import FuzzySearch from "./FuzzySearch";
 import AcademicTermSelector from "./AcademicTermSelector";
 
 const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
-  // College Selection
-  const [selectedCollege, setSelectedCollege] = useState("");
+  // College and Term Selection
+  const [selectedCollegeID, setSelectedCollegeID] = useState("");
   const [colleges, setColleges] = useState([]);
-  const [selectedTerm, setSelectedTerm] = useState("");
+  const [selectedTermID, setSelectedTermID] = useState("");
+  const [timezone, setTimezone] = useState("");
+  const [semesterStart, setSemesterStart] = useState("");
+  const [semesterEnd, setSemesterEnd] = useState("");
 
   useEffect(() => {
     let isActive = true;
@@ -45,6 +48,23 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (selectedCollegeID) {
+      const college = colleges.find((c) => c.id === selectedCollegeID);
+      setTimezone(college.timezone);
+    }
+  }, [selectedCollegeID]);
+
+  useEffect(() => {
+    if (selectedTermID) {
+      const term = colleges
+        .find((c) => c.id === selectedCollegeID)
+        .academic_terms.find((t) => t.id === selectedTermID);
+      setSemesterStart(term.start_date);
+      setSemesterEnd(term.end_date);
+    }
+  }, [selectedTermID]);
+
   // Reminder
   const [reminderOption, setReminderOption] = useState("10");
   const [customMinutes, setCustomMinutes] = useState(10);
@@ -61,6 +81,7 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
 
   // Calendar Download
   const [isAddingToCalendar, setIsAddingToCalendar] = useState(false);
+  const [isDownloadingICS, setIsDownloadingICS] = useState(false);
 
   return (
     <section className="w-full max-w-4xl mx-auto space-y-8">
@@ -82,18 +103,18 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
               Select College
             </label>
             <FuzzySearch
-              selectedCollege={selectedCollege}
+              selectedCollegeID={selectedCollegeID}
               colleges={colleges}
-              onChange={setSelectedCollege}
+              onChange={setSelectedCollegeID}
             />
           </div>
         </div>
         <div className="flex justify-center my-6">
           <AcademicTermSelector
-            selectedCollege={selectedCollege}
+            selectedCollegeID={selectedCollegeID}
             colleges={colleges}
-            selectedTerm={selectedTerm}
-            onChange={setSelectedTerm}
+            selectedTermID={selectedTermID}
+            onChange={setSelectedTermID}
           />
         </div>
         <div className="text-center my-6">
@@ -124,12 +145,12 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
             onClick={async () => {
               setIsAddingToCalendar(true);
               await handleAddToGoogleCalendar(
-                selectedCollege,
+                selectedTermID,
                 getReminderMinutes()
               );
               setIsAddingToCalendar(false);
             }}
-            isDisabled={!selectedCollege || isAddingToCalendar}
+            isDisabled={!selectedTermID || isAddingToCalendar}
             isLoading={isAddingToCalendar}
           />
           <p className="text-gray-500 text-sm md:text-base dark:text-zinc-400">
@@ -137,10 +158,19 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
           </p>
           <SubmitButton
             text="Download .ics"
-            onClick={() =>
-              handleDownloadICS(selectedCollege, getReminderMinutes())
-            }
-            isDisabled={!selectedCollege}
+            onClick={async () => {
+              setIsDownloadingICS(true);
+              await handleDownloadICS({
+                selectedTermID,
+                timezone,
+                semesterStart,
+                semesterEnd,
+                reminder: getReminderMinutes(),
+              });
+              setIsDownloadingICS(false);
+            }}
+            isDisabled={!selectedTermID || isDownloadingICS}
+            isLoading={isDownloadingICS}
           />
         </div>
       </div>
