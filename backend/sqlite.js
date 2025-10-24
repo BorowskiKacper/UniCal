@@ -4,7 +4,7 @@ const db = new Database("college_calendar.db");
 
 export function getAllColleges() {
   const query = db.prepare(
-    "SELECT id, name, acronym, timezone FROM colleges ORDER BY name ASC"
+    "SELECT id, name, acronym, aliases, timezone FROM colleges ORDER BY name ASC"
   );
   return query.all();
 }
