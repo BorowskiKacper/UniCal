@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import SubmitButton from "./SubmitButton";
 import ReminderRadioButtons from "./ReminderRadioButtons";
 import FuzzySearch from "./FuzzySearch";
+import AcademicTermSelector from "./AcademicTermSelector";
 
 const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
   // College Selection
   const [selectedCollege, setSelectedCollege] = useState("");
   const [colleges, setColleges] = useState([]);
+  const [selectedTerm, setSelectedTerm] = useState("");
 
   useEffect(() => {
     let isActive = true;
@@ -65,17 +67,33 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
       <div className="w-full max-w-xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:bg-zinc-800 dark:border-zinc-700">
         <header className="text-center mb-6">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 dark:text-zinc-100">
-            Choose your College
+            Options
           </h2>
           <p className="text-gray-500 text-sm md:text-base dark:text-zinc-400">
             To match your college Semester dates and special schedules.
           </p>
         </header>
-        <div className="flex justify-center text-gray-600 dark:text-zinc-300">
-          <FuzzySearch
+        <div className="flex justify-center">
+          <div className="w-full max-w-md">
+            <label
+              htmlFor="college-search"
+              className="block text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400 mb-1"
+            >
+              Select College
+            </label>
+            <FuzzySearch
+              selectedCollege={selectedCollege}
+              colleges={colleges}
+              onChange={setSelectedCollege}
+            />
+          </div>
+        </div>
+        <div className="flex justify-center my-6">
+          <AcademicTermSelector
             selectedCollege={selectedCollege}
             colleges={colleges}
-            onChange={setSelectedCollege}
+            selectedTerm={selectedTerm}
+            onChange={setSelectedTerm}
           />
         </div>
         <div className="text-center my-6">
