@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import ChooseCollege from "./ChooseCollege";
 import SubmitButton from "./SubmitButton";
 import ReminderRadioButtons from "./ReminderRadioButtons";
+import FuzzySearch from "./FuzzySearch";
 
 const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
   // College Selection
@@ -18,7 +18,7 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
     const tryFetchColleges = async () => {
       attempts += 1;
       try {
-        const response = await fetch(`${API_BASE_URL}/api/colleges`);
+        const response = await fetch(`${API_BASE_URL}/db/colleges-terms`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
 
@@ -72,7 +72,7 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
           </p>
         </header>
         <div className="flex justify-center text-gray-600 dark:text-zinc-300">
-          <ChooseCollege
+          <FuzzySearch
             selectedCollege={selectedCollege}
             colleges={colleges}
             onChange={setSelectedCollege}
