@@ -16,9 +16,9 @@ export function getTermsForCollege(collegeId, startDate, endDate) {
   return query.all(collegeId, startDate, endDate);
 }
 
-export function getCalendarDataForTerm(termId) {
+export function getSemesterDetails(termId) {
   const daysOffQuery = db.prepare(
-    "SELECT off_date, reason FROM days_off WHERE term_id = ?"
+    "SELECT off_date FROM days_off WHERE term_id = ?"
   );
   const conversionQuery = db.prepare(
     "SELECT conversion_date, follows_schedule_of FROM instructional_conversions WHERE term_id = ? ORDER BY conversion_date ASC"
@@ -26,8 +26,17 @@ export function getCalendarDataForTerm(termId) {
 
   const daysOff = daysOffQuery.all(termId);
   const conversions = conversionQuery.all(termId);
+  const formatted_daysOff = daysOff.map((dayOff) => {
+    return dayOff.off_date;
+  });
+  const formatted_conversions = conversions.map((conversion) => {
+    return [conversion.conversion_date, conversion.follows_schedule_of];
+  });
 
-  return { daysOff, conversions };
+  return {
+    daysOff: formatted_daysOff,
+    dayFollowsWeekday: formatted_conversions,
+  };
 }
 
 // function runExample() {
@@ -55,3 +64,5 @@ export function getCalendarDataForTerm(termId) {
 //     }
 //   }
 // }
+
+getSemesterDetails(1);

@@ -8,7 +8,7 @@ import { imageToEvents, textToEvents } from "./generate-events.js";
 import {
   getAllColleges,
   getTermsForCollege,
-  getCalendarDataForTerm,
+  getSemesterDetails,
 } from "./sqlite.js";
 
 dotenv.config();
@@ -130,12 +130,12 @@ app.post("/api/process-image", upload.single("image"), async (req, res) => {
   return res.json(calendarEvents);
 });
 
-app.post("/api/semester-details", (req, res) => {
-  const { college } = req.body || {};
-  if (typeof college !== "string" || college.trim().length === 0) {
-    return res.status(400).json({ message: "Invalid or missing 'college'" });
+app.post("/api/db/semester-details", (req, res) => {
+  const { termID } = req.body || {};
+  if (typeof termID !== "number" || termID <= 0) {
+    return res.status(400).json({ message: "Invalid or missing 'termID'" });
   }
-  const details = getSemesterDetails(college);
+  const details = getSemesterDetails(termID);
   return res.json(details);
 });
 
