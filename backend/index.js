@@ -90,7 +90,7 @@ app.get("/", (req, res) => {
   timezone: str, 
   academic_terms: [{id: int, college_id: int, name: str, start_date: 'YYYY-MM-DD' (str), end_date: 'YYYY-MM-DD' (str)}]
 */
-app.get("/db/college-terms", (req, res) => {
+app.get("/db/colleges-terms", (req, res) => {
   const earliestTermStart = "2025-01-01";
   const latestTermEnd = "2026-07-30";
   const colleges = getAllColleges();
