@@ -4,7 +4,12 @@ import dotenv from "dotenv";
 import multer from "multer";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { imageToEvents, textToEvents } from "./generate-events.js";
-import { getColleges, getSemesterDetails } from "./college-semester.js";
+// import { getColleges, getSemesterDetails } from "./college-semester.js";
+import {
+  getAllColleges,
+  getTermsForCollege,
+  getCalendarDataForTerm,
+} from "./sqlite.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 8080; // Cloud Run provides PORT; default to 8080
@@ -76,8 +81,29 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.get("/api/colleges", (req, res) => {
-  const colleges = getColleges();
+/*
+* returns an array of college objects
+* Each college object has format: 
+* {id: int, 
+  name: str, 
+  acronym: str, 
+  timezone: str, 
+  academic_terms: [{id: int, college_id: int, name: str, start_date: 'YYYY-MM-DD' (str), end_date: 'YYYY-MM-DD' (str)}]
+*/
+app.get("/db/college-terms", (req, res) => {
+  const earliestTermStart = "2025-01-01";
+  const latestTermEnd = "2026-07-30";
+  const colleges = getAllColleges();
+
+  for (const college of colleges) {
+    const academic_terms = getTermsForCollege(
+      college.id,
+      earliestTermStart,
+      latestTermEnd
+    );
+    college.academic_terms = academic_terms;
+  }
+
   return res.json(colleges);
 });
 

@@ -1,4 +1,3 @@
 .env
 node_modules
-test.js
-database_setup.js
+dev_db
