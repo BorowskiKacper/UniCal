@@ -144,10 +144,13 @@ const DownloadCalendar = ({ handleDownloadICS, handleAddToGoogleCalendar }) => {
             text={"Add To Calendar"}
             onClick={async () => {
               setIsAddingToCalendar(true);
-              await handleAddToGoogleCalendar(
+              await handleAddToGoogleCalendar({
                 selectedTermID,
-                getReminderMinutes()
-              );
+                timezone,
+                semesterStart,
+                semesterEnd,
+                reminder: getReminderMinutes(),
+              });
               setIsAddingToCalendar(false);
             }}
             isDisabled={!selectedTermID || isAddingToCalendar}

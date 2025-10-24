@@ -75,16 +75,14 @@ export async function createCalendarEvent(accessToken, calendarID, eventData) {
 export async function createCalendarEventsFromSchedule(
   accessToken,
   calendarEvents,
-  college,
-  reminder
+  { selectedTermID, timezone, semesterStart, semesterEnd, reminder }
 ) {
   const createdEvents = [];
   const errors = [];
 
   try {
-    const details = await getSemesterDetails(college);
-    const { semesterStart, semesterEnd, daysOff, dayFollowsWeekday, timezone } =
-      details;
+    const details = await getSemesterDetails(selectedTermID);
+    const { daysOff, dayFollowsWeekday } = details;
 
     const { daysOffByWeekday, daysToAddByWeekday } = calculateDaysOffAndMoved(
       daysOff,

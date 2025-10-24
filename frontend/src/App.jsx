@@ -233,7 +233,7 @@ function App() {
     }
   };
 
-  const handleAddToGoogleCalendar = async (selectedTermID, reminder) => {
+  const handleAddToGoogleCalendar = async (collegeTermInfo) => {
     if (!calendarEvents || Object.keys(calendarEvents).length === 0) {
       alert("No calendar events to add. Please generate your schedule first.");
       return;
@@ -248,8 +248,7 @@ function App() {
         const result = await createCalendarEventsFromSchedule(
           accessToken,
           calendarEvents,
-          selectedCollege,
-          reminder
+          collegeTermInfo
         );
 
         if (result.success) {
