@@ -5,7 +5,7 @@ const db = new Database("college_calendar.db", { verbose: console.log });
 
 // --- Your Data ---
 const newTerm = {
-  college_id: 1,
+  college_id: 4,
   name: "Spring 2026",
   start_date: "2026-01-26",
   end_date: "2026-05-19",
