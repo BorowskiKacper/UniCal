@@ -1,11 +1,6 @@
-import CalendarWeekday from "./CalendarWeekday";
+import Weekday from "./Weekday";
 
-const CalendarEventGrid = ({
-  calendarEvents,
-  weekdays,
-  onEventClick,
-  onWeekdayClick,
-}) => {
+const Week = ({ calendarEvents, weekdays, onEventClick, onWeekdayClick }) => {
   const eventsByWeekday = {};
   weekdays.map((weekday) => {
     eventsByWeekday[weekday] = {};
@@ -22,7 +17,7 @@ const CalendarEventGrid = ({
   return (
     <div className="flex w-full h-full">
       {weekdays.map((weekday) => (
-        <CalendarWeekday
+        <Weekday
           key={weekday}
           weekday={weekday}
           events={eventsByWeekday[weekday]}
@@ -34,4 +29,4 @@ const CalendarEventGrid = ({
   );
 };
 
-export default CalendarEventGrid;
+export default Week;

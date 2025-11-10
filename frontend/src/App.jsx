@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
-import WeeklyContainer from "./components/WeeklyContainer";
+import WeeklyContainer from "./components/Calendar/Container";
 import UploadContainer from "./components/Upload/UploadContainer";
 import DownloadCalendar from "./components/DownloadCalendar";
 import AuthPopup from "./components/AuthPopup";

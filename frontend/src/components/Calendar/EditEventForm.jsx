@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import SubmitButton from "./SubmitButton";
+import { useState, useEffect, useRef } from "react";
+import SubmitButton from "../SubmitButton";
 
 const PopupForm = ({ activeEvent, eventModify, weekdays = [], closePopup }) => {
   const [title, setTitle] = useState(activeEvent?.className || "");

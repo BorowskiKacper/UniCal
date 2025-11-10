@@ -1,9 +1,9 @@
-import React, { useMemo, useRef, useState, useLayoutEffect } from "react";
-import CalendarEventGrid from "./CalendarEventGrid";
-import EventPopup from "./EventPopup";
-import useMouseClickPosition from "../hooks/useMouseClickPosition";
+import { useMemo, useRef, useState, useLayoutEffect } from "react";
+import Week from "./Week";
+import EditEventPopup from "./EditEventPopup";
+import useMouseClickPosition from "../../hooks/useMouseClickPosition";
 
-const WeeklyContainer = ({
+const Container = ({
   handleEventModify,
   handleEventAdd,
   handleEventDelete,
@@ -155,7 +155,7 @@ const WeeklyContainer = ({
                   </div>
                 </div>
                 <div className="absolute inset-0">
-                  <CalendarEventGrid
+                  <Week
                     calendarEvents={calendarEvents}
                     onEventClick={handleEventClick}
                     weekdays={weekdays}
@@ -166,7 +166,7 @@ const WeeklyContainer = ({
             </div>
           </div>
         </div>
-        <EventPopup
+        <EditEventPopup
           activeEvent={activeEvent}
           anchorRect={popupAnchorRect}
           calendarContainerRect={calendarContainerRef.current?.getBoundingClientRect()}
@@ -184,4 +184,4 @@ const WeeklyContainer = ({
   );
 };
 
-export default WeeklyContainer;
+export default Container;

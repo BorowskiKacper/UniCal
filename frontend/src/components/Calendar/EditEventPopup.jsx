@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState, useLayoutEffect } from "react";
-import PopupForm from "./PopupForm";
+import { useEffect, useRef, useState, useLayoutEffect } from "react";
+import EditEventForm from "./EditEventForm";
 
 const EventPopup = ({
   activeEvent,
@@ -209,7 +209,7 @@ const EventPopup = ({
                 </div>
               </div>
             )}
-            <PopupForm
+            <EditEventForm
               activeEvent={activeEventForForm}
               eventModify={
                 weekdayToAddCourse
@@ -316,7 +316,7 @@ const EventPopup = ({
                 </div>
               </div>
             )}
-            <PopupForm
+            <EditEventForm
               activeEvent={activeEvent}
               eventModify={
                 weekdayToAddCourse

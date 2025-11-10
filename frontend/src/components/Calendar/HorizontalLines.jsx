@@ -1,4 +1,4 @@
-const HorizontalGridLines = () => {
+const HorizontalLines = () => {
   return (
     <div className="grid grid-rows-24 h-full w-full pointer-events-none">
       {[...Array(24)].map((_, index) => (
@@ -11,4 +11,4 @@ const HorizontalGridLines = () => {
   );
 };
 
-export default HorizontalGridLines;
+export default HorizontalLines;

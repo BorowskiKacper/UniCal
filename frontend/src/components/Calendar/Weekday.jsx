@@ -1,8 +1,8 @@
-import React, { useRef } from "react";
-import CalendarEvent from "./CalendarEvent";
-import HorizontalGridLines from "./HorizontalGridLines";
+import { useRef } from "react";
+import Event from "./Event";
+import HorizontalLines from "./HorizontalLines";
 
-const CalendarWeekday = ({ weekday, events, onEventClick, onWeekdayClick }) => {
+const Weekday = ({ weekday, events, onEventClick, onWeekdayClick }) => {
   const weekdayRef = useRef(null);
 
   const handleWeekdayClick = () => {
@@ -22,7 +22,7 @@ const CalendarWeekday = ({ weekday, events, onEventClick, onWeekdayClick }) => {
       </div>
       <div className="relative flex-1 dark:border-l dark:border-zinc-800">
         <div className="absolute inset-0 ">
-          <HorizontalGridLines />
+          <HorizontalLines />
         </div>
         <div
           className="absolute inset-0"
@@ -31,7 +31,7 @@ const CalendarWeekday = ({ weekday, events, onEventClick, onWeekdayClick }) => {
         >
           {Object.entries(events).map(([id, event]) => {
             return (
-              <CalendarEvent
+              <Event
                 key={id}
                 id={id}
                 event={event}
@@ -45,4 +45,4 @@ const CalendarWeekday = ({ weekday, events, onEventClick, onWeekdayClick }) => {
   );
 };
 
-export default CalendarWeekday;
+export default Weekday;

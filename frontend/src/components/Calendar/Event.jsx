@@ -1,6 +1,4 @@
-import React from "react";
-
-const CalendarEvent = ({ id, event, onEventClick }) => {
+const Event = ({ id, event, onEventClick }) => {
   const eventStartHour = Number(event.time.slice(0, 2));
   const eventStartMinute = Number(event.time.slice(3, 5));
   const eventEndHour = Number(event.time.slice(6, 8));
@@ -99,4 +97,4 @@ const CalendarEvent = ({ id, event, onEventClick }) => {
   );
 };
 
-export default CalendarEvent;
+export default Event;
