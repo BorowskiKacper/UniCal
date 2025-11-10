@@ -276,6 +276,8 @@ function App() {
       return;
     }
 
+    console.log(currentUser.photoURL);
+
     try {
       const result = await downloadICS(calendarEvents, collegeTermInfo);
       if (result.success) {
@@ -333,11 +335,19 @@ function App() {
                 className="outline-none"
                 aria-label="Account hover card"
               >
-                <img
-                  src={currentUser.photoURL}
-                  alt="User Img"
-                  className="w-8 h-8 rounded-full border-2 border-gray-200 dark:border-zinc-700"
-                />
+                {currentUser.photoURL ? (
+                  <img
+                    src={currentUser.photoURL}
+                    alt="User Img"
+                    className="w-8 h-8 rounded-full border-2 border-gray-200 dark:border-zinc-700"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full border-2 border-gray-200 dark:border-zinc-700">
+                    {currentUser.displayName?.[0].toUpperCase() ||
+                      currentUser.email?.[0].toUpperCase() ||
+                      "U"}
+                  </div>
+                )}
               </button>
 
               {userHoverOpen && (
