@@ -3,7 +3,7 @@ import Week from "./Week";
 import EditEventPopup from "./EditEventPopup";
 import useMouseClickPosition from "../../hooks/useMouseClickPosition";
 
-const Container = ({
+const CalendarContainer = ({
   handleEventModify,
   handleEventAdd,
   handleEventDelete,
@@ -184,4 +184,4 @@ const Container = ({
   );
 };
 
-export default Container;
+export default CalendarContainer;

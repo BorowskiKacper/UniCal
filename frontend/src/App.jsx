@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
-import WeeklyContainer from "./components/Calendar/Container";
-import UploadContainer from "./components/Upload/UploadContainer";
+import CalendarContainer from "./components/Calendar/Container";
+import UploadContainer from "./components/Upload/Container";
 import DownloadCalendar from "./components/Download/DownloadCalendar";
 import AuthPopup from "./components/AuthPopup";
 import {
@@ -381,7 +381,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="space-y-8">
             <UploadContainer fetchEvents={fetchEvents} />
-            <WeeklyContainer
+            <CalendarContainer
               calendarEvents={calendarEvents}
               handleEventAdd={handleEventAdd}
               handleEventModify={handleEventModify}
