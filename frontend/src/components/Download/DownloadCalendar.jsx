@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import SubmitButton from "./SubmitButton";
+import SubmitButton from "../SubmitButton";
 import ReminderRadioButtons from "./ReminderRadioButtons";
 import FuzzySearch from "./FuzzySearch";
 import AcademicTermSelector from "./AcademicTermSelector";
