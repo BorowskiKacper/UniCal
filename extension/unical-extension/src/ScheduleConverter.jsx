@@ -29,13 +29,21 @@ const ScheduleConverter = () => {
   const scrapeDOM = () => {
     console.log("Clicked scrapeDOM");
     const scrapedElements = {};
-    const elementTags = ["header_cell", "inner_legend_table"];
+    // const elementTags = ["header_cell", "inner_legend_table"];
+    const elementTags = ["location_block", "course_title"];
+    const elementIds = ["hoursInLegend"]
 
     for (const tag of elementTags) {
       scrapedElements[tag] = [];
 
       const elements = document.querySelectorAll(`.${tag}`);
       elements.forEach((el) => scrapedElements[tag].push(el.innerText));
+    }
+    for (const id of elementIds) {
+      scrapedElements[id] = [];
+
+      const elements = document.querySelectorAll(`.${id}`);
+      elements.forEach((el) => scrapedElements[id].push(el.innerText));
     }
     return scrapedElements;
   };
@@ -88,8 +96,8 @@ const ScheduleConverter = () => {
                 <div key={elementTag}>
                   <h3>{elementTag}</h3>
                   <ul>
-                    {elementTag.map((el) => (
-                      <li key={el.substring(0, 10)}>{el}</li>
+                    {scheduleData[elementTag].map((el) => (
+                      <li key={el}>{el}</li>
                     ))}
                   </ul>
                 </div>
