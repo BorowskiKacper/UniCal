@@ -1,0 +1,9 @@
+{
+    "manifest_version": 3,
+    "name": "college2calendar",
+    "version": 1.0,
+    "description": "Add courses to your calendar while taking into account days off.",
+    "action": {
+        "default_popup": "index.html"
+    }
+}
