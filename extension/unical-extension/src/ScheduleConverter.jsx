@@ -6,7 +6,7 @@ const ScheduleConverter = () => {
   const [isTargetPage, setIsTargetPage] = useState(false);
   const [scheduleData, setScheduleData] = useState(null);
 
-  // 1. DEFINE YOUR TARGET URL SNIPPET HERE
+  // DEFINE YOUR TARGET URL SNIPPET HERE
   const TARGET_URL_KEYWORD = "https://sb.cunyfirst.cuny.edu/criteria";
   const chrome = window.chrome;
 
@@ -25,12 +25,11 @@ const ScheduleConverter = () => {
     }
   }, [chrome]);
 
-  // 2. THE SCRAPING FUNCTION
   const scrapeDOM = () => {
     console.log("Clicked scrapeDOM");
     const scrapedElements = {};
     // const elementTags = ["header_cell", "inner_legend_table"];
-    const elementTags = ["location_block", "course_title"];
+    const elementTags = ["course_title", "location_block"];
     const elementIds = ["hoursInLegend"]
 
     for (const tag of elementTags) {
@@ -45,12 +44,21 @@ const ScheduleConverter = () => {
       const elements = document.querySelectorAll(`.${id}`);
       elements.forEach((el) => scrapedElements[id].push(el.innerText));
     }
+
+    for (const i = 0; i < scrapedElements[elementTags[0]].length; i++) {
+      scrapedElements[elementTags[0]][i] = {
+        title: scrapedElements[elementTags[0]][i],
+        location: scrapedElements[elementTags[1]][i],
+        hours: scrapedElements[elementIds[0]][i],
+      };
+    }
+
     return scrapedElements;
   };
 
-  // 3. HANDLE BUTTON CLICK
   const handleConvert = () => {
     console.log("Clicked handleConvert");
+
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.scripting.executeScript(
         {
@@ -58,7 +66,6 @@ const ScheduleConverter = () => {
           func: scrapeDOM, // The function above is injected into the page
         },
         (results) => {
-          // 4. RECEIVE DATA BACK
           if (results && results[0] && results[0].result) {
             const dataFromPage = results[0].result;
             console.log("Scraped Data:", dataFromPage);
@@ -92,7 +99,7 @@ const ScheduleConverter = () => {
           {scheduleData && (
             <div className="mt-2.5">
               <h3>Success! Found {scheduleData.length} courses.</h3>
-              {Object.keys(scheduleData).map((elementTag) => (
+              {/* {Object.keys(scheduleData).map((elementTag) => (
                 <div key={elementTag}>
                   <h3>{elementTag}</h3>
                   <ul>
@@ -101,7 +108,8 @@ const ScheduleConverter = () => {
                     ))}
                   </ul>
                 </div>
-              ))}
+              ))} */}
+              {}
             </div>
           )}
         </>
