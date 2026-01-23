@@ -30,7 +30,7 @@ const ScheduleConverter = () => {
     const scrapedElements = {};
     // const elementTags = ["header_cell", "inner_legend_table"];
     const elementTags = ["course_title", "location_block"];
-    const elementIds = ["hoursInLegend"]
+    const elementIds = ["hoursInLegend"];
 
     for (const tag of elementTags) {
       scrapedElements[tag] = [];
@@ -45,7 +45,7 @@ const ScheduleConverter = () => {
       elements.forEach((el) => scrapedElements[id].push(el.innerText));
     }
 
-    for (const i = 0; i < scrapedElements[elementTags[0]].length; i++) {
+    for (let i = 0; i < scrapedElements[elementTags[0]].length; i++) {
       scrapedElements[elementTags[0]][i] = {
         title: scrapedElements[elementTags[0]][i],
         location: scrapedElements[elementTags[1]][i],
@@ -73,7 +73,7 @@ const ScheduleConverter = () => {
 
             // ics
           }
-        }
+        },
       );
     });
   };
