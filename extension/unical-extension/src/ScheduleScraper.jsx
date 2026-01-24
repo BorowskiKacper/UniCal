@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { devUrl } from "./content";
 
-const ScheduleConverter = () => {
+const ScheduleScraper = ({ scheduleData, setScheduleData }) => {
   const [currentUrl, setCurrentUrl] = useState("");
   const [isTargetPage, setIsTargetPage] = useState(false);
-  const [scheduleData, setScheduleData] = useState(null);
 
   // DEFINE YOUR TARGET URL SNIPPET HERE
   const TARGET_URL_KEYWORD = "https://sb.cunyfirst.cuny.edu/criteria";
@@ -187,8 +186,8 @@ const ScheduleConverter = () => {
     return eventsByIndex;
   };
 
-  const handleConvert = () => {
-    console.log("Clicked handleConvert");
+  const handleScrape = () => {
+    console.log("Clicked handleScrape");
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.scripting.executeScript(
@@ -223,9 +222,9 @@ const ScheduleConverter = () => {
           <p className="text-green-400">✓ Schedule Builder Detected</p>
           <button
             className="text-slate-600 hover:text-slate-800 border-10 border-amber-600"
-            onClick={handleConvert}
+            onClick={handleScrape}
           >
-            handleConvert
+            Scrape Schedule
           </button>
           {scheduleData && (
             <div className="mt-2.5">
@@ -259,4 +258,4 @@ const ScheduleConverter = () => {
   );
 };
 
-export default ScheduleConverter;
+export default ScheduleScraper;
