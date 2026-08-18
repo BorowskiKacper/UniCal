@@ -113,7 +113,8 @@ const CalendarContainer = ({
           Weekly Schedule
         </h2>
         <p className="text-[#6C757D] text-sm dark:text-[#A1A1AA]">
-          Your AI-generated calendar view
+          AI-generated calendar view. Click on the calendar to add, edit, or
+          delete events!
         </p>
       </div>
 
