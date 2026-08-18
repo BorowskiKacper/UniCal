@@ -14,6 +14,21 @@ import {
 dotenv.config();
 const PORT = process.env.PORT || 8080; // Cloud Run provides PORT; default to 8080
 
+// Terms that ended more than this many months ago are hidden from /db/colleges-terms
+const TERM_LOOKBACK_MONTHS = 6;
+
+// Returns the date `months` months before today as a 'YYYY-MM-DD' string.
+// Built from local date components rather than toISOString(), which converts to
+// UTC first and can land on the wrong calendar day near midnight.
+function monthsAgoISODate(months) {
+  const date = new Date();
+  date.setMonth(date.getMonth() - months);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 const app = express();
 
 // CORS configuration: allow prod domain and localhost in dev
@@ -38,7 +53,7 @@ app.use(
       "Accept",
       "X-Requested-With",
     ],
-  })
+  }),
 );
 app.use(express.json());
 
@@ -46,13 +61,13 @@ app.use(express.json());
 const firebaseProjectId = process.env.FIREBASE_PROJECT_ID;
 if (!firebaseProjectId) {
   console.warn(
-    "FIREBASE_PROJECT_ID is not set. Token verification will fail. Set it in environment."
+    "FIREBASE_PROJECT_ID is not set. Token verification will fail. Set it in environment.",
   );
 }
 const JWKS = createRemoteJWKSet(
   new URL(
-    "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"
-  )
+    "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com",
+  ),
 );
 
 async function authenticate(req, res, next) {
@@ -89,22 +104,22 @@ app.get("/", (req, res) => {
   acronym: str, 
   timezone: str, 
   academic_terms: [{id: int, college_id: int, name: str, start_date: 'YYYY-MM-DD' (str), end_date: 'YYYY-MM-DD' (str)}]
+*
+* academic_terms only includes terms ending on or after the cutoff date,
+* which is TERM_LOOKBACK_MONTHS months before today. Colleges left with no
+* terms are omitted entirely, so they never reach the dropdown.
 */
 app.get("/db/colleges-terms", (req, res) => {
-  const earliestTermStart = "2025-01-01";
-  const latestTermEnd = "2026-07-30";
+  const earliestTermEnd = monthsAgoISODate(TERM_LOOKBACK_MONTHS);
   const colleges = getAllColleges();
 
   for (const college of colleges) {
-    const academic_terms = getTermsForCollege(
-      college.id,
-      earliestTermStart,
-      latestTermEnd
-    );
-    college.academic_terms = academic_terms;
+    college.academic_terms = getTermsForCollege(college.id, earliestTermEnd);
   }
 
-  return res.json(colleges);
+  return res.json(
+    colleges.filter((college) => college.academic_terms.length > 0),
+  );
 });
 
 // Protect all other /api/* routes

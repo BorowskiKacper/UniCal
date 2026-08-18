@@ -39,10 +39,10 @@ async function textOpenAI(courseText) {
 async function imageOpenAI(
   base64ImageUrl,
   processInputInstructions,
-  schema = null
+  schema = null,
 ) {
   const response = await client.responses.parse({
-    model: "gpt-4.1-nano",
+    model: "gpt-5-nano",
     input: [
       {
         role: "user",
@@ -94,7 +94,7 @@ async function parseText(text) {
     let response = await textOpenAI(text);
 
     let validationResult = coursesSchema.safeParse(
-      JSON.parse(response.output_text)
+      JSON.parse(response.output_text),
     );
 
     if (!validationResult.success) {
@@ -107,7 +107,7 @@ async function parseText(text) {
   async function parseTwiceFromText(text) {
     const toParse = [text, text];
     const parsed = await Promise.all(
-      toParse.map((text) => reparseUntilMoreThanOneCourse(text))
+      toParse.map((text) => reparseUntilMoreThanOneCourse(text)),
     );
     return parsed;
   }
@@ -176,7 +176,7 @@ export async function imageToEvents(file) {
   const instructionsExtractTextFromImage = "Extract all text from this image: ";
   const imageResponse = await imageOpenAI(
     imageUrl,
-    instructionsExtractTextFromImage
+    instructionsExtractTextFromImage,
   );
 
   const parsed = await parseText(imageResponse.output_text);

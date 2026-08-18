@@ -9,11 +9,13 @@ export function getAllColleges() {
   return query.all();
 }
 
-export function getTermsForCollege(collegeId, startDate, endDate) {
+// minEndDate is a 'YYYY-MM-DD' string; dates are stored as TEXT in that format,
+// so a lexicographic comparison is a correct date comparison.
+export function getTermsForCollege(collegeId, minEndDate) {
   const query = db.prepare(
-    "SELECT * FROM academic_terms WHERE college_id = ? AND start_date >= ? AND end_date <= ? ORDER BY start_date ASC"
+    "SELECT * FROM academic_terms WHERE college_id = ? AND end_date >= ? ORDER BY start_date ASC"
   );
-  return query.all(collegeId, startDate, endDate);
+  return query.all(collegeId, minEndDate);
 }
 
 export function getSemesterDetails(termId) {
